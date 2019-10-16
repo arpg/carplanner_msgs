@@ -1,11 +1,11 @@
+std_msgs/Header header
 
-geometry_msgs/TransformStamped m_dTwv
-geometry_msgs/TransformStamped[] m_vWheelStates
-std_msgs/Bool[] m_vWheelContacts
+geometry_msgs/TransformStamped pose
+geometry_msgs/TransformStamped[] wheel_poses
+bool[] wheel_contacts
 
-geometry_msgs/Vector3 m_dV
-geometry_msgs/Vector3 m_dW
+geometry_msgs/Vector3 lin_vel
+geometry_msgs/Vector3 ang_vel
 
-float64 m_dCurvature
-float64 m_dSteering
-float64 m_dTime
+float64 curvature
+float64 steering
