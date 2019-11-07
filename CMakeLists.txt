@@ -29,16 +29,29 @@ generate_messages(
   roscpp
   std_msgs
   geometry_msgs
-  
+
 )
 
 catkin_package(
-  INCLUDE_DIRS 
+  INCLUDE_DIRS
   CATKIN_DEPENDS roscpp std_msgs geometry_msgs message_runtime
   )
 
 include_directories(
-	${CarPlanner_INCLUDE_DIRS} 
+	${CarPlanner_INCLUDE_DIRS}
 	${catkin_INCLUDE_DIRS}
 	)
 
+add_executable( command2cmdvel
+  src/command2cmdvel.cpp
+)
+target_link_libraries( command2cmdvel
+  ${catkin_LIBRARIES}
+)
+
+add_executable( vehiclestate2pose
+  src/vehiclestate2pose.cpp
+)
+target_link_libraries( vehiclestate2pose
+  ${catkin_LIBRARIES}
+)

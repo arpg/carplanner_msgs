@@ -1,0 +1,26 @@
+<launch>
+
+  <node pkg="carplanner_msgs" type="command2cmdvel" name="command2cmdvel">
+  </node>
+
+  <node pkg="carplanner_msgs" type="vehiclestate2pose" name="vehiclestate2pose">
+  </node>
+
+  <!-- RELAYS -->
+  <node pkg="topic_tools" type="relay" name="Relay_mesh"
+    args="/infinitam/mesh /mochagui/input_mesh"/>
+
+  <node pkg="topic_tools" type="relay" name="Relay_waypoint"
+    args="/rviz/nav_goal_2d /mochagui/waypoint"/>
+
+  <!-- STATIC TRANSFORMS -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="T_infinitam"
+    args="0 0 0 -1.57 0 -1.57 world infinitam"/>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="T_camera_cameralink"
+    args="0 0 0 0 0 0 camera camera_link"/>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="T_camera_baselink"
+    args="0 0 0 0 0 0 camera base_link"/>
+
+</launch>

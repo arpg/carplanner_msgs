@@ -1,0 +1,11 @@
+<launch>
+
+
+  <include file="$(find vrpn_client_ros)/launch/sample.launch">
+    <arg name="server"    value="tracker"/>
+  </include>
+
+  <include file="$(find carplanner_msgs)/launch/demo.launch">
+  </include>
+
+</launch>
