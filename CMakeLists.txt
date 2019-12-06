@@ -11,6 +11,7 @@ find_package( catkin REQUIRED
     std_msgs
     tf
     geometry_msgs
+    nav_msgs
     message_generation
 )
 
@@ -22,6 +23,14 @@ add_message_files(
   FILES
   Command.msg
   VehicleState.msg
+  PathArray.msg
+)
+
+add_service_files(
+  DIRECTORY
+  srv
+  FILES
+  ResetMesh.srv
 )
 
 generate_messages(
@@ -29,12 +38,12 @@ generate_messages(
   roscpp
   std_msgs
   geometry_msgs
-
+  nav_msgs
 )
 
 catkin_package(
   INCLUDE_DIRS
-  CATKIN_DEPENDS roscpp std_msgs geometry_msgs message_runtime
+  CATKIN_DEPENDS message_runtime
   )
 
 include_directories(
@@ -53,5 +62,12 @@ add_executable( vehiclestate2pose
   src/vehiclestate2pose.cpp
 )
 target_link_libraries( vehiclestate2pose
+  ${catkin_LIBRARIES}
+)
+
+add_executable( patharrayparser
+  src/patharrayparser.cpp
+)
+target_link_libraries( patharrayparser
   ${catkin_LIBRARIES}
 )

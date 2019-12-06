@@ -1,26 +1,44 @@
 <launch>
 
-  <node pkg="carplanner_msgs" type="command2cmdvel" name="command2cmdvel">
-  </node>
+  <node pkg="carplanner_msgs" type="command2cmdvel" name="command2cmdvel"/>
 
-  <node pkg="carplanner_msgs" type="vehiclestate2pose" name="vehiclestate2pose">
-  </node>
+  <node pkg="carplanner_msgs" type="vehiclestate2pose" name="vehiclestate2pose"/>
+
+  <node pkg="carplanner_msgs" type="patharrayparser" name="patharrayparser"/>
+
+  <node pkg="infinitam_msgs" type="image_nanner" name="image_nanner"/>
 
   <!-- RELAYS -->
   <node pkg="topic_tools" type="relay" name="Relay_mesh"
-    args="/infinitam/mesh /mochagui/input_mesh"/>
+    args="infinitam/mesh mochagui/input_terrain_mesh"/>
+
+  <node pkg="topic_tools" type="relay" name="Relay_image_raw"
+    args="royale_camera/depth_image image_nanner/image_in"/>
+
+  <node pkg="topic_tools" type="relay" name="Relay_image_proc"
+    args="image_nanner/image_out infinitam/image_in"/>
 
   <node pkg="topic_tools" type="relay" name="Relay_waypoint"
-    args="/rviz/nav_goal_2d /mochagui/waypoint"/>
+    args="/move_base_simple/goal mochagui/goal"/>
 
   <!-- STATIC TRANSFORMS -->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="T_infinitam"
-    args="0 0 0 -1.57 0 -1.57 world infinitam"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="T_infinitam_nwu"
+    args="0 0 0 1.57 -1.57 0 infinitam infinitam_nwu"/>
 
   <node pkg="tf2_ros" type="static_transform_publisher" name="T_camera_cameralink"
-    args="0 0 0 0 0 0 camera camera_link"/>
+    args=".1 0 -.03 0 0.52 0 head camera_link"/>
+  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_camera_cameralink"
+    args=".1 0 -.03 0 0 0 head camera_link"/> -->
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="T_camera_royalecameralink"
+    args=".1 0 -.03 0 0.785 -1.57 head royale_camera_link"/>
+  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_camera_royalecameralink"
+    args=".1 0 -.03 0 0 -1.57 head royale_camera_link"/> -->
 
   <node pkg="tf2_ros" type="static_transform_publisher" name="T_camera_baselink"
-    args="0 0 0 0 0 0 camera base_link"/>
+    args="-.15 0 -.47 0 0 0 head base_link"/>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="T_base_footprint_link"
+    args="0 0 -.15 0 0 0 base_link base_footprint_link"/>
 
 </launch>

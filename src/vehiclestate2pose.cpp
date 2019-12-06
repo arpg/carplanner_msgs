@@ -25,8 +25,8 @@ int main( int argc, char* argv[] )
     ros::init(argc, argv, "vehicestate2pose");
 
     ros::NodeHandle nh;
-    ros::Subscriber vehicle_state_sub = nh.subscribe<carplanner_msgs::VehicleState>("/mochagui/state", 1, vehicle_state_cb);
-    pose_pub = nh.advertise<geometry_msgs::PoseStamped>("/mochagui/pose_from_state",1);
+    ros::Subscriber vehicle_state_sub = nh.subscribe<carplanner_msgs::VehicleState>("mochagui/state", 5, vehicle_state_cb);
+    pose_pub = nh.advertise<geometry_msgs::PoseStamped>("mochagui/pose_from_state",5);
 
     printf("%sInitialized.\n","[vehicestate2pose] ");
 

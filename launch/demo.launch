@@ -3,12 +3,18 @@
     <!-- <include file="$(find realsense2_camera)/launch/rs_camera"/> -->
 
     <include file="$(find realsense2_camera)/launch/rs_camera.launch">
-      <arg name="align_depth"   value="true"/>
+      <arg name="align_depth"       value="true"/>
+      <arg name="filters"           value="temporal,spatial,hole_filling"/> 
+      <arg name="initial_reset"     value="true"/>
+      <arg name="enable_pointcloud" value="true"/>
     </include>
+    <!-- disparity,decimation,temporal,spatial,hole_filling -->
+
+    <include file="$(find royale_in_ros)/launch/camera_driver.launch"/>
 
     <!-- <node pkg="infinitam_ros" type="infinitam" name="infinitam" output="screen">
     </node> -->
-
+ 
     <!-- <node pkg="mochagui" type="gui" name="mochagui" output="screen"
       args=" -params ~/code/MochaGui_ros/learning_params.csv
       -mode Experiment
