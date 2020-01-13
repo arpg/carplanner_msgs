@@ -42,14 +42,18 @@ generate_messages(
 )
 
 catkin_package(
-  INCLUDE_DIRS
+  INCLUDE_DIRS include
   CATKIN_DEPENDS message_runtime
   )
 
 include_directories(
 	${CarPlanner_INCLUDE_DIRS}
 	${catkin_INCLUDE_DIRS}
+  include
 	)
+
+install(DIRECTORY include/${PROJECT_NAME}/
+        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
 add_executable( command2cmdvel
   src/command2cmdvel.cpp

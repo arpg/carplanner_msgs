@@ -10,7 +10,7 @@
     </include>
     <!-- disparity,decimation,temporal,spatial,hole_filling -->
 
-    <include file="$(find royale_in_ros)/launch/camera_driver.launch"/>
+   <!-- <include file="$(find royale_in_ros)/launch/camera_driver.launch"/> -->
 
     <!-- <node pkg="infinitam_ros" type="infinitam" name="infinitam" output="screen">
     </node> -->
