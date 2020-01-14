@@ -1,28 +1,6 @@
 <launch>
 
-  <param name="robot_description" command="$(find xacro)/xacro '$(find carplanner_msgs)/urdf/ninjacar.urdf.xacro'" />
-  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
-
-  <include file="$(find microstrain_driver)/launch/3dm_gx5_15.launch"/>
-
-  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
-    <arg name="align_depth"       value="true"/>
-    <arg name="filters"           value="temporal,spatial,hole_filling"/> 
-    <arg name="initial_reset"     value="true"/>
-    <arg name="enable_pointcloud" value="true"/>
-  </include>
-
-  <include file="$(find ouster_ros)/os1.launch">
-    <arg name="os1_hostname"    value="10.42.0.196"        doc="hostname or IP in dotted decimal form of the sensor"/>
-    <arg name="os1_udp_dest"    value="10.42.0.1"        doc="hostname or IP where the sensor will send data packets"/>
-    <arg name="os1_lidar_port"  value="7502"    doc="port to which the sensor should send lidar data"/>
-    <arg name="os1_imu_port"    value="7503"    doc="port to which the sensor should send imu data"/>
-    <arg name="replay"          value="false"   doc="do not connect to a sensor; expect /os1_node/{lidar,imu}_packets from replay"/>
-    <arg name="lidar_mode"      value=""        doc="resolution and rate: either 512x10, 512x20, 1024x10, 1024x20, or 2048x10"/>
-    <arg name="metadata"        value=""        doc="override default metadata file for replays"/>
-    <arg name="viz"             value="false"   doc="whether to run a simple visualizer"/>
-    <arg name="image"           value="true"   doc="publish range/intensity/noise image topic"/>
-  </include>
+  <include file="$(find carplanner_msgs)/launch/sensors.launch"/>
 
   <include file="$(find cartographer_ros)/launch/3d_localization.launch">
     <arg name="pointcloud_topic" value="os1_cloud_node/points"/>
