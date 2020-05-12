@@ -5,6 +5,7 @@ enable_testing()
 # Add to module path, so we can find our cmake modules
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules )
 
+find_package( carplanner REQUIRED )
 find_package( catkin REQUIRED
   COMPONENTS
     roscpp
@@ -13,6 +14,8 @@ find_package( catkin REQUIRED
     geometry_msgs
     nav_msgs
     message_generation
+    visualization_msgs
+    actionlib_msgs
 )
 
 add_definitions(${EIGEN_DEFINITIONS})
@@ -21,16 +24,32 @@ add_message_files(
   DIRECTORY
   msg
   FILES
+  MotionSample.msg
   Command.msg
   VehicleState.msg
   PathArray.msg
+  OdometryArray.msg
 )
 
 add_service_files(
   DIRECTORY
-  srv
+    srv
   FILES
-  ResetMesh.srv
+    ResetMesh.srv
+    EnablePlanning.srv
+)
+
+add_action_files(
+  DIRECTORY 
+    action
+  FILES 
+    ApplyVelocities.action
+#    UpdateState.action 
+#    GetGravityCompensation.action 
+#    GetFrictionCompensation.action 
+    GetControlDelay.action 
+    GetInertiaTensor.action
+    SetNoDelay.action
 )
 
 generate_messages(
@@ -39,15 +58,19 @@ generate_messages(
   std_msgs
   geometry_msgs
   nav_msgs
+  actionlib_msgs
+  carplanner_msgs
 )
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS message_runtime
+  CATKIN_DEPENDS message_runtime actionlib_msgs nav_msgs
+  #LIBRARIES 
   )
 
 include_directories(
-	${CarPlanner_INCLUDE_DIRS}
+	#${CarPlanner_INCLUDE_DIRS}
+  ${carplanner_INCLUDE_DIRS}
 	${catkin_INCLUDE_DIRS}
   include
 	)

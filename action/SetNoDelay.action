@@ -1,0 +1,11 @@
+# Use input command to determine updated state and return it
+
+# Goal definition
+bool no_delay
+
+---
+# Result definition
+std_msgs/Empty result
+
+---
+# Feedback definition

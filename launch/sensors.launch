@@ -3,8 +3,7 @@
   <arg name="rs_fwd" default="836612071916"/>
   <arg name="rs_low" default="838212073252"/>
 
-  <param name="robot_description" command="$(find xacro)/xacro '$(find carplanner_msgs)/urdf/ninjacar.urdf.xacro'" />
-  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+  <include file="$(find carplanner_msgs)/launch/robot_state_publisher.launch"/>
 
   <include file="$(find microstrain_driver)/launch/3dm_gx5_15.launch"/>
 

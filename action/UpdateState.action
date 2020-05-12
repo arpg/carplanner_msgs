@@ -1,0 +1,15 @@
+# Use input command to determine updated state and return it
+
+# Goal definition
+int8 worldId
+carplanner_msgs/Command command
+float64 forceDt
+bool noDelay 
+bool noUpdate 
+
+---
+# Result definition
+carplanner_msgs/VehicleState state
+
+---
+# Feedback definition

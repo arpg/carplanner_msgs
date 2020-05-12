@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
 <robot name="ninjacar" xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <material name="aluminum">
+	  <color rgba="0.5 0.5 0.5 1"/>
+    </material>
 
   <link name="imu_link"/>
   <link name="body_aligned_imu_link"/>
@@ -48,9 +51,9 @@
     <origin xyz="0.1971268 0 -0.0007798" rpy="0 0 0" />
   </joint> -->
 
-  <xacro:include filename="$(find realsense2_camera)/urdf/_d435.urdf.xacro"/>
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
 
-  <link name="camera_fwd"/>
+  <!-- <link name="camera_fwd"/>
   <joint name="camera_fwd" type="fixed">
     <parent link="xavier" />
     <child link="camera_fwd" />
@@ -67,6 +70,13 @@
   </joint>
   <sensor_d435 parent="camera_low">
     <origin xyz="0 0 0" rpy="0 0 0" />
+  </sensor_d435> -->
+
+  <sensor_d435 parent="xavier" name="camera_fwd">
+    <origin xyz="0.2219971 0 0.0130257" rpy="0 0 0" />
+  </sensor_d435>
+  <sensor_d435 parent="camera_fwd_bottom_screw_frame" name="camera_low">
+    <origin xyz="-0.0136486 0 -0.0366877" rpy="0 0.523599 0" />
   </sensor_d435>
 
 <!-- OUSTER -->

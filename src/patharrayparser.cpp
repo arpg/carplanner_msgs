@@ -18,8 +18,8 @@ int main( int argc, char* argv[] )
     ros::init(argc, argv, "patharrayparser");
 
     ros::NodeHandle nh;
-    ros::Subscriber sub = nh.subscribe<carplanner_msgs::PathArray>("mochagui/path_array", 1, callback);
-    pub = nh.advertise<nav_msgs::Path>("mochagui/path",1);
+    ros::Subscriber sub = nh.subscribe<carplanner_msgs::PathArray>("path_array", 1, callback);
+    pub = nh.advertise<nav_msgs::Path>("path",1);
 
     printf("%sInitialized.\n","[patharrayparser] ");
 

@@ -1,0 +1,11 @@
+# Use input command to determine updated state and return it
+
+# Goal definition
+int8 worldId
+
+---
+# Result definition
+float64 val
+
+---
+# Feedback definition

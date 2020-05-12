@@ -1,29 +1,29 @@
 <launch>
 
-    <!-- <include file="$(find realsense2_camera)/launch/rs_camera"/> -->
-
-    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <!-- <include file="$(find realsense2_camera)/launch/rs_camera.launch">
       <arg name="align_depth"       value="true"/>
-      <arg name="filters"           value="temporal,spatial,hole_filling"/> 
+      <arg name="filters"           value="temporal,spatial,hole_filling"/>
       <arg name="initial_reset"     value="true"/>
       <arg name="enable_pointcloud" value="true"/>
-    </include>
+    </include> -->
     <!-- disparity,decimation,temporal,spatial,hole_filling -->
 
    <!-- <include file="$(find royale_in_ros)/launch/camera_driver.launch"/> -->
 
     <!-- <node pkg="infinitam_ros" type="infinitam" name="infinitam" output="screen">
     </node> -->
- 
-    <!-- <node pkg="mochagui" type="gui" name="mochagui" output="screen"
-      args=" -params ~/code/MochaGui_ros/learning_params.csv
-      -mode Experiment
-      -mesh ~/code/MochaGui_ros/labLoop.ply
-      -logfile ~/code/MochaGui_ros/1.log
-      -car ~/code/MochaGui_ros/herbie/herbie.blend
-      -wheel ~/code/MochaGui_ros/herbie/wheel.blend">
-        <remap from="input_mesh" to="/infinitam/mesh"/>
-    </node> -->
+
+    <include file="$(find carplanner_msgs)/launch/mochagui.launch">
+      <arg name="input_mesh" default="/infinitam/mesh"/>
+      <arg name="params_file" default="/home/mike/code/mochagui/learning_params.csv"/>
+      <arg name="terrain_mesh_file" default="/home/mike/code/mochagui/labLoop.ply"/>
+      <arg name="mode" default="Simulation"/>
+      <arg name="refplane_file" default=""/>
+      <arg name="log_file" default="/home/mike/code/mochagui/mocha.log"/>
+      <arg name="car_mesh_file" default="/home/mike/code/mochagui/herbie/herbie.blend"/>
+      <arg name="wheel_mesh_file" default="/home/mike/code/mochagui/herbie/wheel.blend"/>
+      <arg name="localizer" default="false"/>
+    </include>
 
     <include file="$(find carplanner_msgs)/launch/tools.launch">
     </include>

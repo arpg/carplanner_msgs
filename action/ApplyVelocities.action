@@ -1,0 +1,15 @@
+# Use input command to determine updated state and return it
+
+# Goal definition
+carplanner_msgs/VehicleState initial_state
+carplanner_msgs/MotionSample initial_motion_sample
+int8 world_id
+bool no_compensation
+
+---
+# Result definition
+carplanner_msgs/MotionSample motion_sample
+# carplanner_msgs/VehicleState last_state
+
+---
+# Feedback definition
