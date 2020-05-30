@@ -102,21 +102,21 @@ inline void convertPathArrayMsg2LineStripArrayMsg(carplanner_msgs::PathArray& pa
     (*markarr_msg_out) = markarr_msg;
 }
 
-inline void convertSomePath2PathArrayMsg(std::list<std::vector<VehicleState> *>& path, carplanner_msgs::PathArray* patharr_msg_out)
+inline void convertSomePath2PathArrayMsg(std::list<std::vector<VehicleState> *>& path, carplanner_msgs::PathArray* patharr_msg_out, std::string frame_id="world")
 {
     carplanner_msgs::PathArray patharr_msg;
-    patharr_msg.header.frame_id = "world";
+    patharr_msg.header.frame_id = frame_id;
     patharr_msg.header.stamp = ros::Time::now();
     for(std::list<std::vector<VehicleState> *>::iterator i_seg=path.begin(); i_seg!=path.end(); advance(i_seg,1))
     {
         nav_msgs::Path path_msg;
-        path_msg.header.frame_id = "world";
+        path_msg.header.frame_id = frame_id;
         path_msg.header.stamp = ros::Time::now();
         for(uint i_state=0; i_state < (*i_seg)->size(); i_state++)
         {
             carplanner_msgs::VehicleState state_msg = (**i_seg)[i_state].FlipCoordFrame().toROS();
             geometry_msgs::PoseStamped pose_msg;
-            pose_msg.header.frame_id = "world";
+            pose_msg.header.frame_id = frame_id;
             pose_msg.header.stamp = ros::Time::now();
             pose_msg.pose.position.x = state_msg.pose.transform.translation.x;
             pose_msg.pose.position.y = state_msg.pose.transform.translation.y;
@@ -133,19 +133,19 @@ inline void convertSomePath2PathArrayMsg(std::list<std::vector<VehicleState> *>&
     (*patharr_msg_out) = patharr_msg;
 }
 
-inline void convertSomePath2PathMsg(std::list<std::vector<VehicleState> *>& path, nav_msgs::Path* path_msg_out)
+inline void convertSomePath2PathMsg(std::list<std::vector<VehicleState> *>& path, nav_msgs::Path* path_msg_out, std::string frame_id="world")
 {
     carplanner_msgs::PathArray patharr_msg;
-    convertSomePath2PathArrayMsg(path, &patharr_msg);
+    convertSomePath2PathArrayMsg(path, &patharr_msg, frame_id);
     nav_msgs::Path path_msg;
     convertPathArrayMsg2PathMsg(patharr_msg, &path_msg);
     (*path_msg_out) = path_msg;
 }
 
-inline void convertSomePath2PathMsg(Eigen::Vector3dAlignedVec& path, nav_msgs::Path* path_msg_out)
+inline void convertSomePath2PathMsg(Eigen::Vector3dAlignedVec& path, nav_msgs::Path* path_msg_out, std::string frame_id="world")
 {   
     nav_msgs::Path path_msg;
-    path_msg.header.frame_id = "world";
+    path_msg.header.frame_id = frame_id;
     path_msg.header.stamp = ros::Time::now();
     for(Eigen::Vector3dAlignedVec::iterator i_seg=path.begin(); i_seg!=path.end(); advance(i_seg,1))
     {
@@ -156,7 +156,7 @@ inline void convertSomePath2PathMsg(Eigen::Vector3dAlignedVec& path, nav_msgs::P
         pose = rot_180_x * pose * rot_180_x;
 
         geometry_msgs::PoseStamped pose_msg;
-        pose_msg.header.frame_id = "world";
+        pose_msg.header.frame_id = frame_id;
         pose_msg.header.stamp = ros::Time::now();
         pose_msg.pose.position.x = pose.getOrigin().getX();
         pose_msg.pose.position.y = pose.getOrigin().getY();
@@ -167,21 +167,21 @@ inline void convertSomePath2PathMsg(Eigen::Vector3dAlignedVec& path, nav_msgs::P
     (*path_msg_out) = path_msg;
 }
 
-inline void convertSomePath2PathArrayMsg(std::vector<MotionSample>& path, carplanner_msgs::PathArray* patharr_msg_out)
+inline void convertSomePath2PathArrayMsg(std::vector<MotionSample>& path, carplanner_msgs::PathArray* patharr_msg_out, std::string frame_id="world")
 {   
     carplanner_msgs::PathArray patharr_msg;
-    patharr_msg.header.frame_id = "world";
+    patharr_msg.header.frame_id = frame_id;
     patharr_msg.header.stamp = ros::Time::now();
     for(std::vector<MotionSample>::iterator it_seg=path.begin(); it_seg!=path.end(); advance(it_seg,1))
     {
         nav_msgs::Path path_msg;
-        path_msg.header.frame_id = "world";
+        path_msg.header.frame_id = frame_id;
         path_msg.header.stamp = ros::Time::now();
         for(uint i_state=0; i_state < it_seg->m_vStates.size(); i_state++)
         {
             carplanner_msgs::VehicleState state_msg = it_seg->m_vStates[i_state].FlipCoordFrame().toROS();
             geometry_msgs::PoseStamped pose_msg;
-            pose_msg.header.frame_id = "world";
+            pose_msg.header.frame_id = frame_id;
             pose_msg.header.stamp = ros::Time::now();
             pose_msg.pose.position.x = state_msg.pose.transform.translation.x;
             pose_msg.pose.position.y = state_msg.pose.transform.translation.y;
@@ -198,10 +198,10 @@ inline void convertSomePath2PathArrayMsg(std::vector<MotionSample>& path, carpla
     (*patharr_msg_out) = patharr_msg;
 }
 
-inline void convertSomePath2PathMsg(std::vector<MotionSample>& path, nav_msgs::Path* path_msg_out)
+inline void convertSomePath2PathMsg(std::vector<MotionSample>& path, nav_msgs::Path* path_msg_out, std::string frame_id="world")
 {   
     carplanner_msgs::PathArray patharr_msg;
-    convertSomePath2PathArrayMsg(path, &patharr_msg);
+    convertSomePath2PathArrayMsg(path, &patharr_msg, frame_id);
     nav_msgs::Path path_msg;
     convertPathArrayMsg2PathMsg(patharr_msg, &path_msg);
     (*path_msg_out) = path_msg;

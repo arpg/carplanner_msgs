@@ -32,7 +32,7 @@ void command_cb(const carplanner_msgs::Command::ConstPtr msg)
   // cmd_vel.linear.z = msg->target_vel[2];
   cmd_vel.angular.x = 0;
   cmd_vel.angular.y = 0;
-  cmd_vel.angular.z = (msg->phi - steer_offset*servo_range)/servo_range;
+  cmd_vel.angular.z = (msg->dphi - steer_offset*servo_range)/servo_range;
   // cmd_vel.angular.z = (msg->phi/phi_rng)*max_ang_z;
   // cmd_vel.angular.z = msg->phi;
 

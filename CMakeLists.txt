@@ -10,6 +10,7 @@ find_package( catkin REQUIRED
   COMPONENTS
     roscpp
     std_msgs
+    std_srvs
     tf
     geometry_msgs
     nav_msgs
@@ -36,7 +37,8 @@ add_service_files(
     srv
   FILES
     ResetMesh.srv
-    EnablePlanning.srv
+    EnableTerrainPlanning.srv
+    EnableContinuousPlanning.srv
 )
 
 add_action_files(
@@ -50,12 +52,14 @@ add_action_files(
     GetControlDelay.action 
     GetInertiaTensor.action
     SetNoDelay.action
+    Raycast.action
 )
 
 generate_messages(
   DEPENDENCIES
   roscpp
   std_msgs
+  std_srvs
   geometry_msgs
   nav_msgs
   actionlib_msgs

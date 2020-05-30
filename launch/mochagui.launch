@@ -10,7 +10,8 @@
   <arg name="wheel_mesh_file" default="/home/mike/code/mochagui/herbie/wheel.blend"/>
   <arg name="localizer" default="false"/>
 
-  <node pkg="mochagui" type="gui" name="mochagui" output="screen">
+  <node pkg="mochagui" type="gui" name="mochagui" output="screen" 
+    args=" ">
     <remap from="input_mesh" to="$(arg input_mesh)"/>
     <param name="params_file" value="$(arg params_file)"/>
     <param name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
