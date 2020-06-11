@@ -1,11 +1,11 @@
 <launch>
 
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
-  <arg name="params_file" default="/home/mike/code/mochapc/learning_params.csv"/>
-  <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/labLoop.ply"/>
+  <arg name="params_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
+  <arg name="terrain_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/labLoop.ply"/>
 
-  <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager"/>
-  <node pkg="nodelet" type="nodelet" name="mocha_planner" args="load mochapc/MochaPlannerNodelet mocha_manager">
+  <!-- <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager"/> -->
+  <node pkg="nodelet" type="nodelet" name="mocha_planner" args="load mochapc/MochaPlannerNodelet mocha_manager" launch-prefix="bash -c 'sleep 1.0; $0 $@' ">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
     <param name="params_file" value="$(arg params_file)"/>
     <param name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>

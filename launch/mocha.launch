@@ -1,25 +1,25 @@
 <launch>
 
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
-  <arg name="params_file" default="/home/mike/code/mochapc/learning_params.csv"/>
+  <arg name="params_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
   <arg name="mode" default="0"/>
-  <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/labLoop.ply"/>
-  <arg name="car_mesh_file" default="/home/mike/code/mochapc/herbie/herbie.blend"/>
-  <arg name="wheel_mesh_file" default="/home/mike/code/mochapc/herbie/wheel.blend"/>
+  <arg name="terrain_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/labLoop.ply"/>
+  <arg name="car_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/herbie/herbie.blend"/>
+  <arg name="wheel_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/herbie/wheel.blend"/>
 
-  <!-- <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager" output="screen"/> -->
-  <node pkg="nodelet" type="nodelet" name="mocha_vehicle" args="load mochapc/MochaVehicleNodelet mocha_manager" output="screen">
+  <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager" output="screen"/>
+  <include file="$(find carplanner_msgs)/launch/mochavehicle.launch">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
-    <param name="params_file" value="$(arg params_file)"/>
-    <param name="mode" value="$(arg mode)"/>
-    <param name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
-    <param name="car_mesh_file" value="$(arg car_mesh_file)"/>
-    <param name="wheel_mesh_file" value="$(arg wheel_mesh_file)"/>
-  </node>
-  <node pkg="nodelet" type="nodelet" name="mocha_planner" args="load mochapc/MochaPlannerNodelet mocha_manager" output="screen" launch-prefix="bash -c 'sleep 1.0; $0 $@' ">
+    <arg name="params_file" value="$(arg params_file)"/>
+    <arg name="mode" value="$(arg mode)"/>
+    <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
+    <arg name="car_mesh_file" value="$(arg car_mesh_file)"/>
+    <arg name="wheel_mesh_file" value="$(arg wheel_mesh_file)"/>
+  </include>
+  <include file="$(find carplanner_msgs)/launch/mochaplanner.launch">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
-    <param name="params_file" value="$(arg params_file)"/>
-    <param name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
-  </node>
+    <arg name="params_file" value="$(arg params_file)"/>
+    <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
+  </include>
 
 </launch>

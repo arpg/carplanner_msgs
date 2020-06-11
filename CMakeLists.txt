@@ -5,7 +5,7 @@ enable_testing()
 # Add to module path, so we can find our cmake modules
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules )
 
-find_package( carplanner REQUIRED )
+#find_package( carplanner REQUIRED )
 find_package( catkin REQUIRED
   COMPONENTS
     roscpp
@@ -74,7 +74,7 @@ catkin_package(
 
 include_directories(
 	#${CarPlanner_INCLUDE_DIRS}
-  ${carplanner_INCLUDE_DIRS}
+	#${carplanner_INCLUDE_DIRS}
 	${catkin_INCLUDE_DIRS}
   include
 	)
@@ -100,5 +100,12 @@ add_executable( patharrayparser
   src/patharrayparser.cpp
 )
 target_link_libraries( patharrayparser
+  ${catkin_LIBRARIES}
+)
+
+add_executable( waypoint_generator
+  src/waypoint_generator.cpp
+)
+target_link_libraries( waypoint_generator
   ${catkin_LIBRARIES}
 )
