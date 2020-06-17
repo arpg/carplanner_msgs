@@ -1,5 +1,16 @@
 <launch>
 
+  <arg name="launch_sim" default="false"/>
+  <arg name="robot_name" default="COSTAR_HUSKY"/>
+
+  <include file="$(find subt_ign)/launch/tunnel_circuit_practice.ign" if="$(arg launch_sim)">
+    <arg name="worldName" value="tunnel_circuit_practice_01"/>
+    <arg name="robotName1" value="$(arg robot_name)"/>
+    <arg name="robotConfig1" value="$(arg robot_name)_SENSOR_CONFIG_1"/>
+    <arg name="enableGroundTruth" value="true"/> 
+    <arg name="localModel" value="true"/>
+  </include>
+
   <include file="$(find carplanner_msgs)/launch/mocha.launch">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
     <arg name="params_file" value="/home/marble/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
@@ -10,21 +21,20 @@
   </include>
 
   <include file="$(find infinitam)/launch/sim_demo.launch">
-  </include>
-
-  <include file="$(find subt_ign)/launch/tunnel_circuit_practice.ign">
-    <arg name="worldName" value="tunnel_circuit_practice_01"/>
-    <arg name="robotName1" value="COSTAR_HUSKY"/>
-    <arg name="robotConfig1" value="COSTAR_HUSKY_SENSOR_CONFIG_1"/>
-    <arg name="enableGroundTruth" value="true"/> 
-    <arg name="localModel" value="true"/>
+    <arg name="robot_name" value="$(arg robot_name)"/>
   </include>
 
   <node pkg="carplanner_msgs" type="waypoint_generator" name="waypoint_generator" output="screen">
     <param name="goal_topic" value="/move_base_simple/goal"/> 
     <param name="waypoints_topic" value="/plan_car/input_waypoints"/> 
     <param name="map_frame_id" value="map"/> 
-    <param name="base_frame_id" value="COSTAR_HUSKY/base_link"/> 
+    <param name="base_frame_id" value="$(arg robot_name)/base_link"/> 
+  </node>
+
+  <node pkg="carplanner_msgs" type="goal_generator" name="goal_generator" output="screen">
+    <param name="path_topic" value="/plan_car/global_path"/> 
+    <param name="goal_topic" value="/move_base_simple/goal"/> 
+    <param name="path_intercept_length" value="2.0"/> 
   </node>
 
   <node pkg="tf2_ros" type="static_transform_publisher" name="T_world_map" args="0 0 0 0 0 0 world map"/>

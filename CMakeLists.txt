@@ -6,6 +6,7 @@ enable_testing()
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules )
 
 #find_package( carplanner REQUIRED )
+find_package( Eigen3 REQUIRED )
 find_package( catkin REQUIRED
   COMPONENTS
     roscpp
@@ -76,6 +77,7 @@ include_directories(
 	#${CarPlanner_INCLUDE_DIRS}
 	#${carplanner_INCLUDE_DIRS}
 	${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
   include
 	)
 
@@ -107,5 +109,12 @@ add_executable( waypoint_generator
   src/waypoint_generator.cpp
 )
 target_link_libraries( waypoint_generator
+  ${catkin_LIBRARIES}
+)
+
+add_executable( goal_generator
+  src/goal_generator.cpp
+)
+target_link_libraries( goal_generator
   ${catkin_LIBRARIES}
 )
