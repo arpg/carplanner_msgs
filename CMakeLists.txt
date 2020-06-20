@@ -17,6 +17,7 @@ find_package( catkin REQUIRED
     nav_msgs
     message_generation
     visualization_msgs
+    dynamic_reconfigure
     actionlib_msgs
 )
 
