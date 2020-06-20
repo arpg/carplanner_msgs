@@ -1,31 +1,58 @@
 <launch>
 
-    <!-- <include file="$(find realsense2_camera)/launch/rs_camera.launch">
-      <arg name="align_depth"       value="true"/>
-      <arg name="filters"           value="temporal,spatial,hole_filling"/>
-      <arg name="initial_reset"     value="true"/>
-      <arg name="enable_pointcloud" value="true"/>
-    </include> -->
-    <!-- disparity,decimation,temporal,spatial,hole_filling -->
+  <arg name="launch_sim" default="false"/>
+  <arg name="robot_name" default="COSTAR_HUSKY"/>
 
-   <!-- <include file="$(find royale_in_ros)/launch/camera_driver.launch"/> -->
+  <!-- MIKE LOCAL FILES -->
+  <arg name="params_file" default="/home/mike/code/mochagui/learning_params.csv"/>
+  <arg name="terrain_mesh_file" default="/home/mike/code/mochagui/labLoop.ply"/>
+  <arg name="car_mesh_file" default="/home/mike/code/mochagui/herbie/herbie.blend"/>
+  <arg name="wheel_mesh_file" default="/home/mike/code/mochagui/herbie/wheel.blend"/>
 
-    <!-- <node pkg="infinitam_ros" type="infinitam" name="infinitam" output="screen">
-    </node> -->
+  <!-- ROBOT FILES -->
+  <!-- <arg name="params_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
+  <arg name="terrain_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/labLoop.ply"/>
+  <arg name="car_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/herbie/herbie.blend"/>
+  <arg name="wheel_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/herbie/wheel.blend"/> -->
 
-    <include file="$(find carplanner_msgs)/launch/mochagui.launch">
-      <arg name="input_mesh" default="/infinitam/mesh"/>
-      <arg name="params_file" default="/home/mike/code/mochagui/learning_params.csv"/>
-      <arg name="terrain_mesh_file" default="/home/mike/code/mochagui/labLoop.ply"/>
-      <arg name="mode" default="Simulation"/>
-      <arg name="refplane_file" default=""/>
-      <arg name="log_file" default="/home/mike/code/mochagui/mocha.log"/>
-      <arg name="car_mesh_file" default="/home/mike/code/mochagui/herbie/herbie.blend"/>
-      <arg name="wheel_mesh_file" default="/home/mike/code/mochagui/herbie/wheel.blend"/>
-      <arg name="localizer" default="false"/>
-    </include>
+  <include file="$(find carplanner_msgs)/launch/mocha.launch">
+    <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
+    <arg name="params_file" value="$(arg params_file)"/>
+    <arg name="mode" value="0"/>
+    <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
+    <arg name="car_mesh_file" value="$(arg car_mesh_file)"/>
+    <arg name="wheel_mesh_file" value="$(arg wheel_mesh_file)"/>
+  </include>
 
-    <include file="$(find carplanner_msgs)/launch/tools.launch">
-    </include>
+  <!-- <include file="$(find infinitam)/launch/sim_demo.launch">
+    <arg name="robot_name" value="$(arg robot_name)"/>
+  </include> -->
+
+  <node pkg="carplanner_msgs" type="waypoint_generator" name="waypoint_generator" output="screen">
+    <param name="goal_topic" value="/move_base_simple/goal"/> 
+    <param name="waypoints_topic" value="/plan_car/input_waypoints"/> 
+    <param name="map_frame_id" value="map"/> 
+    <param name="base_frame_id" value="base_link"/> 
+  </node>
+
+  <node pkg="carplanner_msgs" type="goal_generator" name="goal_generator" output="screen">
+    <param name="path_topic" value="/plan_car/global_path"/> 
+    <param name="goal_topic" value="/move_base_simple/goal"/> 
+    <param name="path_intercept_length" value="2.0"/> 
+  </node>
+
+  <include file="$(find marble_guidance)/launch/guidance.launch">
+    <arg name="vehicle_type" type="string" default="ground" />
+    <arg name="fixed_frame" type="string"  default="map" />
+    <arg name="speed"                      default="1.0" />
+    <arg name="Tstar"                      default="1.0" />
+    <arg name="reverse"                    default="false" />
+    <arg name="odometry_topic"             default="odometry" />
+    <arg name="path_topic"                 default="plan_car/actual_traj"/>
+    <arg name="goal_pose_topic"            default="goal"/>
+    <arg name="cmd_vel_topic"              default="cmd_vel"/>
+    <arg name="lookahead_point_topic"      default="lookahead_point"/>
+    <arg name="lookahead_vec_topic"        default="lookahead_vec"/>
+  </include>
 
 </launch>

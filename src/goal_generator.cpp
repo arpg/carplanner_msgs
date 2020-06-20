@@ -23,15 +23,16 @@ void cb(const nav_msgs::Path::ConstPtr msg)
     Eigen::Vector3d delta;
     for (uint i=0; i<msg->poses.size()-1; i++)
     {
-        delta = Eigen::Vector3d(msg->poses[i].pose.position.x - msg->poses[i+1].pose.position.x,
-                                msg->poses[i].pose.position.y - msg->poses[i+1].pose.position.y,
-                                msg->poses[i].pose.position.z - msg->poses[i+1].pose.position.z );
+        delta = Eigen::Vector3d(msg->poses[i+1].pose.position.x - msg->poses[i].pose.position.x,
+                                msg->poses[i+1].pose.position.y - msg->poses[i].pose.position.y,
+                                msg->poses[i+1].pose.position.z - msg->poses[i].pose.position.z );
 
         if (sum + delta.norm() > path_len)
         {
           double delta_fraction = (path_len - sum)/delta.norm();
           delta *= delta_fraction;
 
+          goal_msg.header = msg->poses[i].header;
           goal_msg.pose.position.x = msg->poses[i].pose.position.x + delta[0];
           goal_msg.pose.position.y = msg->poses[i].pose.position.y + delta[1];
           goal_msg.pose.position.z = msg->poses[i].pose.position.z + delta[2];
@@ -49,7 +50,14 @@ void cb(const nav_msgs::Path::ConstPtr msg)
 
     if (goal_msg.header.seq == -1)
     {
-      goal_msg = *(msg->poses.end());
+      goal_msg.header = msg->poses[msg->poses.size()-1].header;
+      goal_msg.pose.position.x = msg->poses[msg->poses.size()-1].pose.position.x + delta[0];
+      goal_msg.pose.position.y = msg->poses[msg->poses.size()-1].pose.position.y + delta[1];
+      goal_msg.pose.position.z = msg->poses[msg->poses.size()-1].pose.position.z + delta[2];
+      goal_msg.pose.orientation.x = msg->poses[msg->poses.size()-1].pose.orientation.x;
+      goal_msg.pose.orientation.y = msg->poses[msg->poses.size()-1].pose.orientation.y;
+      goal_msg.pose.orientation.z = msg->poses[msg->poses.size()-1].pose.orientation.z;
+      goal_msg.pose.orientation.w = msg->poses[msg->poses.size()-1].pose.orientation.w;
     }
 
     ROS_INFO("Publishing...");
