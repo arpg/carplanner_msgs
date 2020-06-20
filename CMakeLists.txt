@@ -22,6 +22,10 @@ find_package( catkin REQUIRED
 
 add_definitions(${EIGEN_DEFINITIONS})
 
+generate_dynamic_reconfigure_options(
+  cfg/MochaPlannerConfig.cfg
+)
+
 add_message_files(
   DIRECTORY
   msg
