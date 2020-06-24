@@ -1,13 +1,13 @@
 <launch>
 
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
-  <arg name="params_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
+  <arg name="params_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
   <arg name="mode" default="0"/>
-  <arg name="terrain_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/labLoop.ply"/>
-  <arg name="car_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/herbie/herbie.blend"/>
-  <arg name="wheel_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/herbie/wheel.blend"/>
+  <arg name="terrain_mesh_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/labLoop.ply"/>
+  <arg name="car_mesh_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/herbie/herbie.blend"/>
+  <arg name="wheel_mesh_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/herbie/wheel.blend"/>
 
-  <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager" output="screen"/>
+  <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager" output="screen" respawn="true"/>
   <include file="$(find carplanner_msgs)/launch/mochavehicle.launch">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
     <arg name="params_file" value="$(arg params_file)"/>
