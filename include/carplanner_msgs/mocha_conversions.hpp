@@ -114,7 +114,7 @@ inline void convertSomePath2PathArrayMsg(std::list<std::vector<VehicleState> *>&
         path_msg.header.stamp = ros::Time::now();
         for(uint i_state=0; i_state < (*i_seg)->size(); i_state++)
         {
-            carplanner_msgs::VehicleState state_msg = (**i_seg)[i_state].FlipCoordFrame().toROS();
+            carplanner_msgs::VehicleState state_msg = (**i_seg)[i_state].toROS();
             geometry_msgs::PoseStamped pose_msg;
             pose_msg.header.frame_id = frame_id;
             pose_msg.header.stamp = ros::Time::now();
@@ -151,9 +151,9 @@ inline void convertSomePath2PathMsg(Eigen::Vector3dAlignedVec& path, nav_msgs::P
     {
         // carplanner_msgs::VehicleState state_msg = i_seg[i_state].FlipCoordFrame().toROS();
         
-        tf::Transform rot_180_x(tf::Quaternion(1,0,0,0),tf::Vector3(0,0,0));
+        // tf::Transform rot_180_x(tf::Quaternion(1,0,0,0),tf::Vector3(0,0,0));
         tf::Transform pose(tf::Quaternion(0,0,0,1),tf::Vector3((*i_seg)[0],(*i_seg)[1],(*i_seg)[2]));
-        pose = rot_180_x * pose * rot_180_x;
+        // pose = rot_180_x * pose * rot_180_x;
 
         geometry_msgs::PoseStamped pose_msg;
         pose_msg.header.frame_id = frame_id;
@@ -179,7 +179,7 @@ inline void convertSomePath2PathArrayMsg(std::vector<MotionSample>& path, carpla
         path_msg.header.stamp = ros::Time::now();
         for(uint i_state=0; i_state < it_seg->m_vStates.size(); i_state++)
         {
-            carplanner_msgs::VehicleState state_msg = it_seg->m_vStates[i_state].FlipCoordFrame().toROS();
+            carplanner_msgs::VehicleState state_msg = it_seg->m_vStates[i_state].toROS();
             geometry_msgs::PoseStamped pose_msg;
             pose_msg.header.frame_id = frame_id;
             pose_msg.header.stamp = ros::Time::now();

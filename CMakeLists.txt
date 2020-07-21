@@ -52,7 +52,8 @@ add_action_files(
     action
   FILES 
     ApplyVelocities.action
-#    UpdateState.action 
+    SetState.action
+    UpdateState.action 
 #    GetGravityCompensation.action 
 #    GetFrictionCompensation.action 
     GetControlDelay.action 

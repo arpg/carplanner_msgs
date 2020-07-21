@@ -13,27 +13,30 @@
 
   <include file="$(find carplanner_msgs)/launch/mocha.launch">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
-    <arg name="params_file" value="/home/ubuntu/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
+    <arg name="params_file" value="/home/mike/code/mochapc/learning_params.csv"/>
     <arg name="mode" value="0"/>
-    <arg name="terrain_mesh_file" value="/home/ubuntu/mikem_local_planning_ws/src/mochapc/labLoop.ply"/>
-    <arg name="car_mesh_file" value="/home/ubuntu/mikem_local_planning_ws/src/mochapc/herbie/herbie.blend"/>
-    <arg name="wheel_mesh_file" value="/home/ubuntu/mikem_local_planning_ws/src/mochapc/herbie/wheel.blend"/>
+    <arg name="terrain_mesh_file" value="/home/mike/code/mochapc/labLoop.ply"/>
+    <arg name="car_mesh_file" value="/home/mike/code/mochapc/herbie/herbie.blend"/>
+    <arg name="wheel_mesh_file" value="/home/mike/code/mochapc/herbie/wheel.blend"/>
   </include>
 
   <!-- <include file="$(find infinitam)/launch/sim_demo.launch">
     <arg name="robot_name" value="$(arg robot_name)"/>
   </include> -->
 
-  <node pkg="carplanner_msgs" type="waypoint_generator" name="waypoint_generator" output="screen">
-    <param name="goal_topic" value="/move_base_simple/goal"/> 
+  <node pkg="carplanner_msgs" type="waypoint_generator" name="local_goal2local_waypoints" output="screen">
+    <param name="goal_topic" value="/plan_car/goal"/> 
     <param name="waypoints_topic" value="/plan_car/input_waypoints"/> 
     <param name="map_frame_id" value="map"/> 
     <param name="base_frame_id" value="$(arg robot_name)/base_link"/> 
   </node>
 
-  <node pkg="carplanner_msgs" type="goal_generator" name="goal_generator" output="screen">
+  <node pkg="topic_tools" type="relay" name="goal_relay" args="/move_base_simple/goal /plan_car/goal"/>
+  <!-- <node pkg="topic_tools" type="relay" name="goal_relay" args="/move_base_simple/goal /global_path/goal"/> -->
+
+  <node pkg="carplanner_msgs" type="goal_generator" name="global_path2local_goal" output="screen">
     <param name="path_topic" value="/plan_car/global_path"/> 
-    <param name="goal_topic" value="/move_base_simple/goal"/> 
+    <param name="goal_topic" value="/plan_car/goal"/> 
     <param name="path_intercept_length" value="2.0"/> 
   </node>
 
@@ -43,12 +46,12 @@
     <arg name="speed"                 value="1.0" />
     <arg name="Tstar"                 value="1.0" />
     <arg name="reverse"               value="false" />
-    <arg name="odometry_topic"        value="$(arg robot_name)/odom" />
-    <arg name="path_topic"            value="plan_car/actual_traj"/>
-    <arg name="goal_pose_topic"       value="goal"/>
-    <arg name="cmd_vel_topic"         value="$(arg robot_name)/cmd_vel"/>
-    <arg name="lookahead_point_topic" value="lookahead_point"/>
-    <arg name="lookahead_vec_topic"   value="lookahead_vec"/>
+    <arg name="odometry_topic"        value="/$(arg robot_name)/odometry" />
+    <arg name="path_topic"            value="/plan_car/actual_traj"/>
+    <arg name="goal_pose_topic"       value="/plan_car/goal"/>
+    <arg name="cmd_vel_topic"         value="/$(arg robot_name)/cmd_vel"/>
+    <arg name="lookahead_point_topic" value="/lookahead_point"/>
+    <arg name="lookahead_vec_topic"   value="/lookahead_vec"/>
   </include> -->
 
   <node pkg="marble_common" type="robot_tf2odom" name="tf2odom">
