@@ -33,16 +33,20 @@ add_message_files(
   FILES
   MotionSample.msg
   Command.msg
+  #  CommandList.msg
   VehicleState.msg
   PathArray.msg
   OdometryArray.msg
+  #  ControlPlan.msg
 )
 
 add_service_files(
   DIRECTORY
     srv
   FILES
+    SetDriveMode.srv
     ResetMesh.srv
+    Replay.srv
     EnableTerrainPlanning.srv
     EnableContinuousPlanning.srv
 )
@@ -53,6 +57,7 @@ add_action_files(
   FILES 
     ApplyVelocities.action
     SetState.action
+    GetState.action
     UpdateState.action 
 #    GetGravityCompensation.action 
 #    GetFrictionCompensation.action 

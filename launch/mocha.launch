@@ -1,10 +1,12 @@
 <launch>
 
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
+  <!-- <arg name="params_file" default="/home/mike/code/mochapc/learning_params.csv"/> -->
   <arg name="params_file" default="/home/mike/code/mochapc/husky_params.csv"/>
+  <!-- <arg name="params_file" default="/home/mike/code/mochapc/ninjacar_params.csv"/> -->
   <arg name="mode" default="0"/>
-  <!-- <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/labLoop.ply"/> -->
-  <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/disk-ascii.ply"/>
+  <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/labLoop.ply"/>
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/disk-ascii.ply"/> -->
   <arg name="car_mesh_file" default="/home/mike/code/mochapc/herbie/herbie.blend"/>
   <arg name="wheel_mesh_file" default="/home/mike/code/mochapc/herbie/wheel.blend"/>
 

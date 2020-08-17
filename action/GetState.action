@@ -1,0 +1,11 @@
+# Use input command to determine updated state and return it
+
+# Goal definition
+int8 world_id
+
+---
+# Result definition
+carplanner_msgs/VehicleState state_out
+
+---
+# Feedback definition

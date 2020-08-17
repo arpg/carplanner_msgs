@@ -13,9 +13,10 @@
 
   <include file="$(find carplanner_msgs)/launch/mocha.launch">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
-    <arg name="params_file" value="/home/mike/code/mochapc/learning_params.csv"/>
+    <arg name="params_file" value="/home/mike/code/mochapc/husky_params.csv"/>
     <arg name="mode" value="0"/>
-    <arg name="terrain_mesh_file" value="/home/mike/code/mochapc/labLoop.ply"/>
+    <!-- <arg name="terrain_mesh_file" value="/home/mike/code/mochapc/labLoop.ply"/> -->
+    <arg name="terrain_mesh_file" value="/home/mike/code/mochapc/disk-ascii.ply"/>
     <arg name="car_mesh_file" value="/home/mike/code/mochapc/herbie/herbie.blend"/>
     <arg name="wheel_mesh_file" value="/home/mike/code/mochapc/herbie/wheel.blend"/>
   </include>
