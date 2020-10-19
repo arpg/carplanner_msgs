@@ -102,7 +102,7 @@ inline void convertPathArrayMsg2LineStripArrayMsg(carplanner_msgs::PathArray& pa
     (*markarr_msg_out) = markarr_msg;
 }
 
-inline void convertSomePath2PathArrayMsg(std::list<std::vector<VehicleState> *>& path, carplanner_msgs::PathArray* patharr_msg_out, std::string frame_id="world")
+inline void convertSomePath2PathArrayMsg(std::list<std::vector<VehicleState> *>& path, carplanner_msgs::PathArray* patharr_msg_out, std::string frame_id="map")
 {
     carplanner_msgs::PathArray patharr_msg;
     patharr_msg.header.frame_id = frame_id;
@@ -133,7 +133,7 @@ inline void convertSomePath2PathArrayMsg(std::list<std::vector<VehicleState> *>&
     (*patharr_msg_out) = patharr_msg;
 }
 
-inline void convertSomePath2PathMsg(std::list<std::vector<VehicleState> *>& path, nav_msgs::Path* path_msg_out, std::string frame_id="world")
+inline void convertSomePath2PathMsg(std::list<std::vector<VehicleState> *>& path, nav_msgs::Path* path_msg_out, std::string frame_id="map")
 {
     carplanner_msgs::PathArray patharr_msg;
     convertSomePath2PathArrayMsg(path, &patharr_msg, frame_id);
@@ -142,7 +142,7 @@ inline void convertSomePath2PathMsg(std::list<std::vector<VehicleState> *>& path
     (*path_msg_out) = path_msg;
 }
 
-inline void convertSomePath2PathMsg(Eigen::Vector3dAlignedVec& path, nav_msgs::Path* path_msg_out, std::string frame_id="world")
+inline void convertSomePath2PathMsg(Eigen::Vector3dAlignedVec& path, nav_msgs::Path* path_msg_out, std::string frame_id="map")
 {   
     nav_msgs::Path path_msg;
     path_msg.header.frame_id = frame_id;
@@ -167,7 +167,30 @@ inline void convertSomePath2PathMsg(Eigen::Vector3dAlignedVec& path, nav_msgs::P
     (*path_msg_out) = path_msg;
 }
 
-inline void convertSomePath2PathArrayMsg(std::vector<MotionSample>& path, carplanner_msgs::PathArray* patharr_msg_out, std::string frame_id="world")
+inline void convertSomePath2PathMsg(MotionSample& sample, nav_msgs::Path* path_msg_out, std::string frame_id="map")
+{
+    path_msg_out->poses.clear();
+    path_msg_out->header.frame_id = frame_id;
+    path_msg_out->header.stamp = ros::Time::now();
+    for(uint i_state=0; i_state < sample.m_vStates.size(); i_state++)
+    {
+        carplanner_msgs::VehicleState state_msg = sample.m_vStates[i_state].toROS();
+        geometry_msgs::PoseStamped pose_msg;
+        pose_msg.header.frame_id = frame_id;
+        pose_msg.header.stamp = ros::Time::now();
+        pose_msg.pose.position.x =      state_msg.pose.transform.translation.x;
+        pose_msg.pose.position.y =      state_msg.pose.transform.translation.y;
+        pose_msg.pose.position.z =      state_msg.pose.transform.translation.z;
+        pose_msg.pose.orientation.x =   state_msg.pose.transform.rotation.x;
+        pose_msg.pose.orientation.y =   state_msg.pose.transform.rotation.y;
+        pose_msg.pose.orientation.z =   state_msg.pose.transform.rotation.z;
+        pose_msg.pose.orientation.w =   state_msg.pose.transform.rotation.w;
+
+        path_msg_out->poses.push_back(pose_msg);
+    }
+}
+
+inline void convertSomePath2PathArrayMsg(std::vector<MotionSample>& path, carplanner_msgs::PathArray* patharr_msg_out, std::string frame_id="map")
 {   
     carplanner_msgs::PathArray patharr_msg;
     patharr_msg.header.frame_id = frame_id;
@@ -198,13 +221,20 @@ inline void convertSomePath2PathArrayMsg(std::vector<MotionSample>& path, carpla
     (*patharr_msg_out) = patharr_msg;
 }
 
-inline void convertSomePath2PathMsg(std::vector<MotionSample>& path, nav_msgs::Path* path_msg_out, std::string frame_id="world")
+inline void convertSomePath2PathMsg(std::vector<MotionSample>& path, nav_msgs::Path* path_msg_out, std::string frame_id="map")
 {   
     carplanner_msgs::PathArray patharr_msg;
     convertSomePath2PathArrayMsg(path, &patharr_msg, frame_id);
     nav_msgs::Path path_msg;
     convertPathArrayMsg2PathMsg(patharr_msg, &path_msg);
     (*path_msg_out) = path_msg;
+}
+
+inline void convertSomePath2LineStripArrayMsg(std::vector<MotionSample>& path, visualization_msgs::MarkerArray* markarr_msg_out, std::string frame_id="map", const carplanner_msgs::MarkerArrayConfig& config = carplanner_msgs::MarkerArrayConfig())
+{
+    carplanner_msgs::PathArray patharr_msg;
+    convertSomePath2PathArrayMsg(path, &patharr_msg, frame_id);
+    convertPathArrayMsg2LineStripArrayMsg(patharr_msg, markarr_msg_out, config);
 }
 
 // } // namespace carplanner_msgs

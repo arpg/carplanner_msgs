@@ -1,6 +1,8 @@
 <launch>
 
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
+  <arg name="map_frame" default="map"/>
+  <arg name="base_frame" default="base_link"/>
   <!-- <arg name="params_file" default="/home/mike/code/mochapc/learning_params.csv"/> -->
   <arg name="params_file" default="/home/mike/code/mochapc/husky_params.csv"/>
   <!-- <arg name="params_file" default="/home/mike/code/mochapc/ninjacar_params.csv"/> -->
@@ -11,18 +13,27 @@
   <arg name="wheel_mesh_file" default="/home/mike/code/mochapc/herbie/wheel.blend"/>
 
   <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager" output="screen" respawn="true"/>
+
   <include file="$(find carplanner_msgs)/launch/mochavehicle.launch">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
+    <!-- <arg name="map_frame" value="$(arg map_frame)"/> -->
+    <!-- <arg name="base_frame" value="$(arg base_frame)"/> -->
     <arg name="params_file" value="$(arg params_file)"/>
     <arg name="mode" value="$(arg mode)"/>
     <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
     <arg name="car_mesh_file" value="$(arg car_mesh_file)"/>
     <arg name="wheel_mesh_file" value="$(arg wheel_mesh_file)"/>
   </include>
+
   <include file="$(find carplanner_msgs)/launch/mochaplanner.launch">
+    <arg name="map_frame" value="$(arg map_frame)"/>
+    <arg name="base_frame" value="$(arg base_frame)"/>
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
     <arg name="params_file" value="$(arg params_file)"/>
     <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
   </include>
+
+  <!-- <include file="$(find carplanner_msgs)/launch/mochacontroller.launch">
+  </include> -->
 
 </launch>

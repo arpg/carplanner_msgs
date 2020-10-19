@@ -25,6 +25,8 @@ add_definitions(${EIGEN_DEFINITIONS})
 
 generate_dynamic_reconfigure_options(
   cfg/MochaPlannerConfig.cfg
+  # cfg/MochaControllerConfig.cfg
+  # cfg/MochaConfig.cfg
 )
 
 add_message_files(
@@ -38,6 +40,7 @@ add_message_files(
   PathArray.msg
   OdometryArray.msg
   #  ControlPlan.msg
+  MotionPlan.msg
 )
 
 add_service_files(
@@ -55,15 +58,16 @@ add_action_files(
   DIRECTORY 
     action
   FILES 
+    ApplyAllVelocities.action
     ApplyVelocities.action
     SetState.action
     GetState.action
     UpdateState.action 
 #    GetGravityCompensation.action 
 #    GetFrictionCompensation.action 
-    GetControlDelay.action 
-    GetInertiaTensor.action
-    SetNoDelay.action
+    # GetControlDelay.action 
+    # GetInertiaTensor.action
+    # SetNoDelay.action
     Raycast.action
 )
 
@@ -106,6 +110,13 @@ add_executable( vehiclestate2pose
   src/vehiclestate2pose.cpp
 )
 target_link_libraries( vehiclestate2pose
+  ${catkin_LIBRARIES}
+)
+
+add_executable( motionsample2path
+  src/motionsample2path.cpp
+)
+target_link_libraries( motionsample2path
   ${catkin_LIBRARIES}
 )
 

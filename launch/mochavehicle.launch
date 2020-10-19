@@ -8,7 +8,7 @@
   <arg name="wheel_mesh_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/herbie/wheel.blend"/>
 
   <!-- <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager"/> -->
-  <node pkg="nodelet" type="nodelet" name="mocha_vehicle" args="load mochapc/MochaVehicleNodelet mocha_manager" respawn="true">
+  <node pkg="nodelet" type="nodelet" name="mocha_vehicle" args="load mochapc/MochaVehicleNodelet mocha_manager" output="screen" respawn="true">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
     <param name="params_file" value="$(arg params_file)"/>
     <param name="mode" value="$(arg mode)"/>

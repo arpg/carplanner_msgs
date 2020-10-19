@@ -3,6 +3,7 @@
 # Goal definition
 int8 world_id
 carplanner_msgs/VehicleState state_in
+bool raycast
 
 ---
 # Result definition

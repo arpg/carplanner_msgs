@@ -1,12 +1,16 @@
 <launch>
 
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
+  <arg name="map_frame" default="map"/>
+  <arg name="base_frame" default="base_link"/>
   <arg name="params_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
   <arg name="terrain_mesh_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/labLoop.ply"/>
 
   <!-- <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager"/> -->
-  <node pkg="nodelet" type="nodelet" name="mocha_planner" args="load mochapc/MochaPlannerNodelet mocha_manager" respawn="true" launch-prefix="bash -c 'sleep 1.0; $0 $@' ">
+  <node pkg="nodelet" type="nodelet" name="mocha_planner" args="load mochapc/MochaPlannerNodelet mocha_manager" output="screen" respawn="true" launch-prefix="bash -c 'sleep 1.0; $0 $@' ">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
+    <param name="map_frame" value="$(arg map_frame)"/>
+    <param name="base_frame" value="$(arg base_frame)"/>
     <param name="params_file" value="$(arg params_file)"/>
     <param name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
   </node>
