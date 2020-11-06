@@ -1,9 +1,9 @@
 <launch>
 
   <arg name="plan_topic" default="planner/plan"/>
-  <arg name="state_topic" default="vehicle/0/state"/>
+  <arg name="state_topic" default="vehicle/9/state"/>
 
-  <arg name="command_topic" default="vehicle/0/command"/>
+  <arg name="command_topic" default="vehicle/9/command"/>
 
   <!-- <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager"/> -->
   <!-- <node pkg="nodelet" type="nodelet" name="mocha_controller" args="load mochapc/MochaControllerNodelet mocha_manager" respawn="true">

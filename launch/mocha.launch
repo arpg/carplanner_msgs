@@ -1,20 +1,32 @@
 <launch>
 
+  <arg name="enable_debug" default="false"/>
+  <arg name="launch_prefix" default="gdb -ex run --args" if="$(arg enable_debug)"/>
+  <arg name="launch_prefix" default="" unless="$(arg enable_debug)"/>
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
   <arg name="map_frame" default="map"/>
   <arg name="base_frame" default="base_link"/>
   <!-- <arg name="params_file" default="/home/mike/code/mochapc/learning_params.csv"/> -->
-  <arg name="params_file" default="/home/mike/code/mochapc/husky_params.csv"/>
-  <!-- <arg name="params_file" default="/home/mike/code/mochapc/ninjacar_params.csv"/> -->
+  <!-- <arg name="params_file" default="/home/mike/code/mochapc/husky_params.csv"/> -->
+  <!-- <arg name="params_file" default="/home/mike/code/mochapc/working_params.csv"/> -->
+  <arg name="params_file" default="/home/mike/code/mochapc/ninjacar_params.csv"/>
   <arg name="mode" default="0"/>
-  <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/labLoop.ply"/>
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/labLoop.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/disk-ascii.ply"/> -->
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/smooth_v_hump_mesh2.ply"/> -->
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/pvc_borders_w_bumps_mesh.ply"/> -->
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/block_track.ply"/> -->
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/block_track_w_bumps.ply"/> -->
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/block_track_w_constrainpassage.ply"/> -->
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/dirt_track_blender/test_track.ply"/> -->
+  <arg name="terrain_mesh_file" default="/home/mike/dirt_track_blender/small_test_track.ply"/>
   <arg name="car_mesh_file" default="/home/mike/code/mochapc/herbie/herbie.blend"/>
   <arg name="wheel_mesh_file" default="/home/mike/code/mochapc/herbie/wheel.blend"/>
 
-  <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager" output="screen" respawn="true"/>
+  <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"/>
 
   <include file="$(find carplanner_msgs)/launch/mochavehicle.launch">
+    <!-- <arg name="enable_debug" value="$(arg enable_debug)"/> -->
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
     <!-- <arg name="map_frame" value="$(arg map_frame)"/> -->
     <!-- <arg name="base_frame" value="$(arg base_frame)"/> -->
@@ -26,6 +38,7 @@
   </include>
 
   <include file="$(find carplanner_msgs)/launch/mochaplanner.launch">
+    <!-- <arg name="enable_debug" value="$(arg enable_debug)"/> -->
     <arg name="map_frame" value="$(arg map_frame)"/>
     <arg name="base_frame" value="$(arg base_frame)"/>
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
