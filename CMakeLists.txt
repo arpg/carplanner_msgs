@@ -58,7 +58,7 @@ add_action_files(
   DIRECTORY 
     action
   FILES 
-    ApplyAllVelocities.action
+  #ApplyAllVelocities.action
     ApplyVelocities.action
     SetState.action
     GetState.action
@@ -128,7 +128,7 @@ target_link_libraries( patharrayparser
 )
 
 add_executable( waypoint_generator
-  src/waypoint_generator.cpp
+ 	src/waypoint_generator.cpp
 )
 target_link_libraries( waypoint_generator
   ${catkin_LIBRARIES}
