@@ -1,44 +1,35 @@
 <launch>
 
-  <arg name="launch_sim" default="false"/>
-  <arg name="robot_name" default="COSTAR_HUSKY"/>
-
-  <!-- <include file="$(find subt_ign)/launch/tunnel_circuit_practice.ign" if="$(arg launch_sim)">
-    <arg name="worldName" value="tunnel_circuit_practice_01"/>
-    <arg name="robotName1" value="$(arg robot_name)"/>
-    <arg name="robotConfig1" value="$(arg robot_name)_SENSOR_CONFIG_1"/>
-    <arg name="enableGroundTruth" value="true"/> 
-    <arg name="localModel" value="true"/>
-  </include> -->
-
-  <include file="$(find carplanner_msgs)/launch/mocha.launch">
-    <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
-    <arg name="params_file" value="/home/mike/code/mochapc/husky_params.csv"/>
-    <arg name="mode" value="0"/>
-    <!-- <arg name="terrain_mesh_file" value="/home/mike/code/mochapc/labLoop.ply"/> -->
-    <arg name="terrain_mesh_file" value="/home/mike/code/mochapc/disk-ascii.ply"/>
-    <arg name="car_mesh_file" value="/home/mike/code/mochapc/herbie/herbie.blend"/>
-    <arg name="wheel_mesh_file" value="/home/mike/code/mochapc/herbie/wheel.blend"/>
+  <include file="$(find carplanner_msgs)/launch/subt_sim.launch">
   </include>
 
-  <!-- <include file="$(find infinitam)/launch/sim_demo.launch">
-    <arg name="robot_name" value="$(arg robot_name)"/>
+  <!-- <arg name="basepath" value="/home/marble/TAPlanner/mochapc"/>
+  <include file="$(find carplanner_msgs)/launch/mocha.launch">
+    <arg name="params_file" value="$(arg basepath)/husky_params.csv"/>
+    <arg name="mode" value="0"/>
+    <arg name="terrain_mesh_file" value="$(arg basepath)/disk-ascii.ply"/>
+    <arg name="car_mesh_file" value="$(arg basepath)/herbie/herbie.blend"/>
+    <arg name="wheel_mesh_file" value="$(arg basepath)/herbie/wheel.blend"/>
+  </include> -->
+
+  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_camdown_optical" args="0 0 0 -1.57 0 -1.57 X1/base_link/camera_down X1/base_link/camera_down_optical"/> -->
+  <!-- <include file="$(find infinitam)/launch/subt_sim_demo.launch">
   </include> -->
 
   <node pkg="carplanner_msgs" type="waypoint_generator" name="local_goal2local_waypoints" output="screen">
-    <param name="goal_topic" value="/plan_car/goal"/> 
-    <param name="waypoints_topic" value="/plan_car/input_waypoints"/> 
-    <param name="map_frame_id" value="map"/> 
-    <param name="base_frame_id" value="$(arg robot_name)/base_link"/> 
+    <param name="goal_topic" value="/planner/goal"/>
+    <param name="waypoints_topic" value="/planner/input_waypoints"/>
+    <param name="map_frame_id" value="$(arg robot_name)/map"/>
+    <param name="base_frame_id" value="$(arg robot_name)/base_link"/>
   </node>
 
-  <node pkg="topic_tools" type="relay" name="goal_relay" args="/move_base_simple/goal /plan_car/goal"/>
+  <node pkg="topic_tools" type="relay" name="goal_relay" args="/move_base_simple/goal /planner/goal"/>
   <!-- <node pkg="topic_tools" type="relay" name="goal_relay" args="/move_base_simple/goal /global_path/goal"/> -->
 
   <node pkg="carplanner_msgs" type="goal_generator" name="global_path2local_goal" output="screen">
-    <param name="path_topic" value="/plan_car/global_path"/> 
-    <param name="goal_topic" value="/plan_car/goal"/> 
-    <param name="path_intercept_length" value="2.0"/> 
+    <param name="path_topic" value="/planner/global_path"/>
+    <param name="goal_topic" value="/planner/goal"/>
+    <param name="path_intercept_length" value="2.0"/>
   </node>
 
   <!-- <include file="$(find marble_guidance)/launch/guidance.launch">
@@ -55,13 +46,13 @@
     <arg name="lookahead_vec_topic"   value="/lookahead_vec"/>
   </include> -->
 
-  <node pkg="marble_common" type="robot_tf2odom" name="tf2odom">
-    <param name="parent_frame" value="map"/>
+  <!-- <node pkg="marble_common" type="robot_tf2odom" name="tf2odom">
+    <param name="parent_frame" value="$(arg robot_name)/map"/>
     <param name="child_frame" value="$(arg robot_name)/base_link"/>
     <param name="odom_topic" value="$(arg robot_name)/odometry"/>
-  </node>
+  </node> -->
 
-  <node pkg="tf2_ros" type="static_transform_publisher" name="T_world_map" args="0 0 0 0 0 0 world map"/>
+  <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_world_map" args="0 0 0 0 0 0 world map"/> -->
   <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_infinitam_nwu" args="0 0 0 0 0 0 map infinitam_nwu"/> -->
 
 </launch>

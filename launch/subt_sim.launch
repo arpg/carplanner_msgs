@@ -1,0 +1,44 @@
+<launch>
+
+  <include file="$(find marble_common)/launch/sim/subt.launch">
+    <arg name="config" value="solo"/>
+    <arg name="sensors" value="lite"/>
+    <arg name="groundtruth" value="true"/>
+  </include>
+
+  <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
+    <arg name="time"   value="10"/>
+    <arg name="pkg"    value="marble_common"/>
+    <arg name="file"   value="Base.launch"/>
+    <arg name="value"  value="agents:='Base X1' potentialNeighbors:='X1' enable_rviz:=false"/>
+    <arg name="node_name" value="Base_timed_roslaunch"/>
+  </include>
+
+  <!-- <include file="$(find marble_common)/launch/sim/Base.launch">
+      <arg name="agents"              value="Base X1"/>
+      <arg name="potentialNeighbors"  value="X1"/>
+      <arg name="enable_rviz"         value="false"/>
+  </include> -->
+
+  <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
+    <arg name="time"   value="10"/>
+    <arg name="pkg"    value="marble_common"/>
+    <arg name="file"   value="X1.launch"/>
+    <arg name="value"  value="enable_localization:=true enable_mapping:=true enable_multi_agent:=true enable_planning:=true enable_control:=false enable_artifacts:=false enable_rviz:=false motion_on_startup:=false"/>
+    <arg name="node_name" value="X1_timed_roslaunch"/>
+  </include>
+
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="Toptical" args="0 0 0 -1.57 0 -1.57 X1/base_link/camera_down X1/base_link/camera_down_optical"/> -->
+
+  <!-- <include file="$(find marble_common)/launch/sim/X1.launch">
+      <arg name="enable_localization" value="true"/>
+      <arg name="enable_mapping"      value="true"/>
+      <arg name="enable_multi_agent"  value="true"/>
+      <arg name="enable_planning"     value="true"/>
+      <arg name="enable_control"      value="false"/>
+      <arg name="enable_artifacts"    value="false"/>
+      <arg name="enable_rviz"         value="false"/>
+      <arg name="motion_on_startup" value="false"/>
+  </include> -->
+
+</launch>
