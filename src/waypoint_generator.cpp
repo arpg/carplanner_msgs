@@ -1,11 +1,10 @@
 #include <ros/ros.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <carplanner_msgs/OdometryArray.h>
-#include <tf2_ros/transform_listener.h>
+#include <tf/transform_listener.h>
 
 ros::Publisher pub;
 std::string goal_topic, waypoints_topic, map_frame, base_frame;
-tf2_ros::Buffer tf_buffer;
 
 void cb(const geometry_msgs::PoseStamped::ConstPtr msg)
 {
@@ -22,38 +21,40 @@ void cb(const geometry_msgs::PoseStamped::ConstPtr msg)
   carplanner_msgs::OdometryArray odom_arr;
 
   {
-    geometry_msgs::TransformStamped tform;
+    static tf::TransformListener tflistener;
+    static tf::StampedTransform Twc;  
     try
     {
-      tform = tf_buffer.lookupTransform(map_frame, base_frame, ros::Time::now());
-    }
-    catch(tf2::TransformException &ex)
+        tflistener.waitForTransform(map_frame, base_frame, ros::Time::now(), ros::Duration(0.5));
+        tflistener.lookupTransform(map_frame, base_frame, ros::Time(0), Twc);
+    } 
+    catch (tf::TransformException ex)
     {
-      ROS_WARN("%s", ex.what());
-      return;
+        ROS_ERROR("%s",ex.what());
+        return;
     }
 
     ROS_INFO("Looked up start: %f %f %f %f %f %f %f",
-      tform.transform.translation.x,
-      tform.transform.translation.y,
-      tform.transform.translation.z, 
-      tform.transform.rotation.x,
-      tform.transform.rotation.y,
-      tform.transform.rotation.z,
-      tform.transform.rotation.w
+      Twc.getOrigin().getX(),
+      Twc.getOrigin().getY(),
+      Twc.getOrigin().getZ(), 
+      Twc.getRotation().getX(),
+      Twc.getRotation().getY(),
+      Twc.getRotation().getZ(),
+      Twc.getRotation().getW()
     );
 
     nav_msgs::Odometry odom;
     odom.header.frame_id = map_frame;
-    odom.header.stamp = tform.header.stamp;
+    odom.header.stamp = Twc.stamp_;
     odom.child_frame_id = "start";
-    odom.pose.pose.position.x =    tform.transform.translation.x;
-    odom.pose.pose.position.y =    tform.transform.translation.y;
-    odom.pose.pose.position.z =    tform.transform.translation.z;
-    odom.pose.pose.orientation.x = tform.transform.rotation.x;
-    odom.pose.pose.orientation.y = tform.transform.rotation.y;
-    odom.pose.pose.orientation.z = tform.transform.rotation.z;
-    odom.pose.pose.orientation.w = tform.transform.rotation.w;
+    odom.pose.pose.position.x =    Twc.getOrigin().getX();
+    odom.pose.pose.position.y =    Twc.getOrigin().getY();
+    odom.pose.pose.position.z =    Twc.getOrigin().getZ();
+    odom.pose.pose.orientation.x = Twc.getRotation().getX();
+    odom.pose.pose.orientation.y = Twc.getRotation().getY();
+    odom.pose.pose.orientation.z = Twc.getRotation().getZ();
+    odom.pose.pose.orientation.w = Twc.getRotation().getW();
     odom.twist.twist.linear.x =  1;
     odom.twist.twist.linear.y =  0;
     odom.twist.twist.linear.z =  0;
@@ -96,12 +97,13 @@ int main( int argc, char* argv[] )
     ros::init(argc, argv, "waypoint_generator");
 
     ros::NodeHandle nh, pnh("~");
-    tf2_ros::TransformListener tf_listener(tf_buffer);
 
     pnh.param("goal_topic", goal_topic, std::string("goal"));
     pnh.param("waypoints_topic", waypoints_topic, std::string("waypoints"));
     pnh.param("map_frame_id", map_frame, std::string("map"));
     pnh.param("base_frame_id", base_frame, std::string("base_link"));
+
+    ROS_INFO("Params:\n goal=%s\n waypoints=%s\n map_frame=%s\n base_link_frame=%s",std::string(goal_topic).c_str(),std::string(waypoints_topic).c_str(),std::string(map_frame).c_str(),std::string(base_frame).c_str());
 
     ros::Subscriber sub = nh.subscribe<geometry_msgs::PoseStamped>(goal_topic, 5, cb);
     pub = nh.advertise<carplanner_msgs::OdometryArray>(waypoints_topic, 5);

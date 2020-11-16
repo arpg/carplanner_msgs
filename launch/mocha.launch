@@ -5,7 +5,7 @@
   <arg name="launch_prefix" default="" unless="$(arg enable_debug)"/>
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
   <arg name="map_frame" default="map"/>
-  <arg name="base_frame" default="base_link"/>
+  <arg name="base_link_frame" default="base_link"/>
   <!-- <arg name="params_file" default="/home/mike/code/mochapc/learning_params.csv"/> -->
   <!-- <arg name="params_file" default="/home/mike/code/mochapc/husky_params.csv"/> -->
   <!-- <arg name="params_file" default="/home/mike/code/mochapc/working_params.csv"/> -->
@@ -35,16 +35,26 @@
     <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
     <arg name="car_mesh_file" value="$(arg car_mesh_file)"/>
     <arg name="wheel_mesh_file" value="$(arg wheel_mesh_file)"/>
+    <arg name="map_frame" value="$(arg map_frame)"/>
+    <arg name="base_link_frame" value="$(arg base_link_frame)"/>
   </include>
 
-  <include file="$(find carplanner_msgs)/launch/mochaplanner.launch">
-    <!-- <arg name="enable_debug" value="$(arg enable_debug)"/> -->
+  <!-- <include file="$(find carplanner_msgs)/launch/mochaplanner.launch">
     <arg name="map_frame" value="$(arg map_frame)"/>
-    <arg name="base_frame" value="$(arg base_frame)"/>
-    <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
+    <arg name="base_link_frame" value="$(arg base_link_frame)"/>
     <arg name="params_file" value="$(arg params_file)"/>
     <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
-  </include>
+  </include> -->
+  <!-- <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
+    <arg name="time"   value="2"/>
+    <arg name="pkg"    value="carplanner_msgs"/>
+    <arg name="file"   value="mochaplanner.launch"/>
+    <arg name="value"  value="map_frame:=$(arg map_frame) 
+      base_link_frame:=$(arg base_link_frame) 
+      params_file:=$(arg params_file) 
+      terrain_mesh_file:=$(arg terrain_mesh_file)"/>
+    <arg name="node_name" value="timed_mochaplanner"/>
+  </include> -->
 
   <!-- <include file="$(find carplanner_msgs)/launch/mochacontroller.launch">
   </include> -->

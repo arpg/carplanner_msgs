@@ -1,34 +1,49 @@
 <launch>
 
-  <include file="$(find carplanner_msgs)/launch/subt_sim.launch">
+  <arg name="launch_sim" default="true"/>
+  <arg name="launch_rviz" default="true"/>
+  <arg name="launch_infinitam" default="true"/>
+  <arg name="enable_priori_from_tf_tree" default="true"/>
+
+  <include file="$(find carplanner_msgs)/launch/subt_sim.launch" if="$(arg launch_sim)">
   </include>
 
-  <!-- <arg name="basepath" value="/home/marble/TAPlanner/mochapc"/>
-  <include file="$(find carplanner_msgs)/launch/mocha.launch">
+  <!-- <arg name="basepath" value="$(env HOME)/TAPlanner/mochapc"/> -->
+  <arg name="basepath" value="$(find mochapc)"/>
+  <include file="$(find carplanner_msgs)/launch/demo.launch">
     <arg name="params_file" value="$(arg basepath)/husky_params.csv"/>
-    <arg name="mode" value="0"/>
     <arg name="terrain_mesh_file" value="$(arg basepath)/disk-ascii.ply"/>
     <arg name="car_mesh_file" value="$(arg basepath)/herbie/herbie.blend"/>
     <arg name="wheel_mesh_file" value="$(arg basepath)/herbie/wheel.blend"/>
-  </include> -->
+    <arg name="map_frame" value="X1/map"/>
+    <arg name="base_link_frame" value="X1/base_link"/>
+
+    <arg name="launch_infinitam" default="false"/>
+  </include>
 
   <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_camdown_optical" args="0 0 0 -1.57 0 -1.57 X1/base_link/camera_down X1/base_link/camera_down_optical"/> -->
   <!-- <include file="$(find infinitam)/launch/subt_sim_demo.launch">
   </include> -->
 
+  <include file="$(find infinitam)/launch/subt_sim_demo.launch" if="$(arg launch_infinitam)">
+    <arg name="launch_sim" value="false"/>
+    <arg name="launch_rviz" value="false"/>
+    <arg name="enable_priori_from_tf_tree" value="$(arg enable_priori_from_tf_tree)"/>
+  </include>
+
   <node pkg="carplanner_msgs" type="waypoint_generator" name="local_goal2local_waypoints" output="screen">
-    <param name="goal_topic" value="/planner/goal"/>
-    <param name="waypoints_topic" value="/planner/input_waypoints"/>
-    <param name="map_frame_id" value="$(arg robot_name)/map"/>
-    <param name="base_frame_id" value="$(arg robot_name)/base_link"/>
+    <param name="goal_topic" value="planner/goal"/>
+    <param name="waypoints_topic" value="planner/input_waypoints"/>
+    <param name="map_frame_id" value="X1/map"/>
+    <param name="base_frame_id" value="X1/base_link"/>
   </node>
 
-  <node pkg="topic_tools" type="relay" name="goal_relay" args="/move_base_simple/goal /planner/goal"/>
+  <node pkg="topic_tools" type="relay" name="goal_relay" args="/rviz/nav_goal_2d /planner/goal"/>
   <!-- <node pkg="topic_tools" type="relay" name="goal_relay" args="/move_base_simple/goal /global_path/goal"/> -->
 
   <node pkg="carplanner_msgs" type="goal_generator" name="global_path2local_goal" output="screen">
-    <param name="path_topic" value="/planner/global_path"/>
-    <param name="goal_topic" value="/planner/goal"/>
+    <param name="path_topic" value="planner/global_path"/>
+    <param name="goal_topic" value="planner/goal"/>
     <param name="path_intercept_length" value="2.0"/>
   </node>
 
@@ -54,5 +69,8 @@
 
   <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_world_map" args="0 0 0 0 0 0 world map"/> -->
   <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_infinitam_nwu" args="0 0 0 0 0 0 map infinitam_nwu"/> -->
+
+  <node pkg="rviz" type="rviz" name="subt_sim_demo_rviz" if="$(arg launch_rviz)"
+    args="-d $(env HOME)/.rviz/subt_sim.rviz"/>
 
 </launch>

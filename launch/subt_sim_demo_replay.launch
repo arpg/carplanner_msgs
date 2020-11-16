@@ -1,0 +1,23 @@
+<launch>
+
+  <param name="use_sim_time" value="true"/>
+
+  <arg name="launch_rviz" default="true"/>
+  <arg name="enable_priori_from_tf_tree" default="true"/>
+  <arg name="play_rosbag" default="true"/>
+  <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup2.bag"/>
+
+  <include file="$(find infinitam)/launch/subt_sim_demo_replay.launch">
+    <arg name="launch_rviz" value="false"/>
+    <arg name="enable_priori_from_tf_tree" value="$(arg enable_priori_from_tf_tree)"/>
+    <arg name="play_rosbag" value="$(arg play_rosbag)"/>
+    <arg name="rosbag_file" value="$(arg rosbag_file)"/>
+  </include>
+
+  <include file="$(find carplanner_msgs)/launch/subt_sim_demo.launch">
+    <arg name="launch_sim" value="false"/>
+    <arg name="launch_rviz" value="$(arg launch_rviz)"/>
+    <arg name="launch_infinitam" value="false"/>
+  </include>
+
+</launch>
