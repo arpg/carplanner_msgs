@@ -4,7 +4,9 @@
 #include <tf/transform_listener.h>
 
 ros::Publisher pub;
+ros::Timer loop;
 std::string goal_topic, waypoints_topic, map_frame, base_frame;
+geometry_msgs::PoseStamped goal;
 
 void cb(const geometry_msgs::PoseStamped::ConstPtr msg)
 {
@@ -18,78 +20,156 @@ void cb(const geometry_msgs::PoseStamped::ConstPtr msg)
     msg->pose.orientation.w
   );
 
-  carplanner_msgs::OdometryArray odom_arr;
+  goal = *msg;
 
-  {
-    static tf::TransformListener tflistener;
-    static tf::StampedTransform Twc;  
-    try
+  // carplanner_msgs::OdometryArray odom_arr;
+
+  // {
+  //   static tf::TransformListener tflistener;
+  //   static tf::StampedTransform Twc;  
+  //   try
+  //   {
+  //       tflistener.waitForTransform(map_frame, base_frame, ros::Time::now(), ros::Duration(0.5));
+  //       tflistener.lookupTransform(map_frame, base_frame, ros::Time(0), Twc);
+  //   } 
+  //   catch (tf::TransformException ex)
+  //   {
+  //       ROS_ERROR("%s",ex.what());
+  //       return;
+  //   }
+
+  //   ROS_INFO("Looked up start: %f %f %f %f %f %f %f",
+  //     Twc.getOrigin().getX(),
+  //     Twc.getOrigin().getY(),
+  //     Twc.getOrigin().getZ(), 
+  //     Twc.getRotation().getX(),
+  //     Twc.getRotation().getY(),
+  //     Twc.getRotation().getZ(),
+  //     Twc.getRotation().getW()
+  //   );
+
+  //   nav_msgs::Odometry odom;
+  //   odom.header.frame_id = map_frame;
+  //   odom.header.stamp = Twc.stamp_;
+  //   odom.child_frame_id = "start";
+  //   odom.pose.pose.position.x =    Twc.getOrigin().getX();
+  //   odom.pose.pose.position.y =    Twc.getOrigin().getY();
+  //   odom.pose.pose.position.z =    Twc.getOrigin().getZ();
+  //   odom.pose.pose.orientation.x = Twc.getRotation().getX();
+  //   odom.pose.pose.orientation.y = Twc.getRotation().getY();
+  //   odom.pose.pose.orientation.z = Twc.getRotation().getZ();
+  //   odom.pose.pose.orientation.w = Twc.getRotation().getW();
+  //   odom.twist.twist.linear.x =  1;
+  //   odom.twist.twist.linear.y =  0;
+  //   odom.twist.twist.linear.z =  0;
+  //   odom.twist.twist.angular.x = 0;
+  //   odom.twist.twist.angular.y = 0;
+  //   odom.twist.twist.angular.z = 0;
+
+  //   odom_arr.odoms.push_back(odom);
+  // }
+
+  // {
+  //   nav_msgs::Odometry odom;
+  //   odom.header.frame_id = map_frame;
+  //   odom.header.stamp = ros::Time::now();
+  //   odom.child_frame_id = "goal";
+  //   odom.pose.pose.position.x =    msg->pose.position.x;
+  //   odom.pose.pose.position.y =    msg->pose.position.y;
+  //   odom.pose.pose.position.z =    msg->pose.position.z;
+  //   odom.pose.pose.orientation.x = msg->pose.orientation.x;
+  //   odom.pose.pose.orientation.y = msg->pose.orientation.y;
+  //   odom.pose.pose.orientation.z = msg->pose.orientation.z;
+  //   odom.pose.pose.orientation.w = msg->pose.orientation.w;
+  //   odom.twist.twist.linear.x =  1;
+  //   odom.twist.twist.linear.y =  0;
+  //   odom.twist.twist.linear.z =  0;
+  //   odom.twist.twist.angular.x = 0;
+  //   odom.twist.twist.angular.y = 0;
+  //   odom.twist.twist.angular.z = 0;
+
+  //   odom_arr.odoms.push_back(odom);
+  // }
+
+  // ROS_INFO("Publishing...");
+  // pub.publish(odom_arr);
+  // ros::spinOnce();
+}
+
+void loopFunc(const ros::TimerEvent& event)
+{
+    carplanner_msgs::OdometryArray odom_arr;
+
     {
-        tflistener.waitForTransform(map_frame, base_frame, ros::Time::now(), ros::Duration(0.5));
-        tflistener.lookupTransform(map_frame, base_frame, ros::Time(0), Twc);
-    } 
-    catch (tf::TransformException ex)
-    {
-        ROS_ERROR("%s",ex.what());
-        return;
+      static tf::TransformListener tflistener;
+      static tf::StampedTransform Twc;  
+      try
+      {
+          tflistener.waitForTransform(map_frame, base_frame, ros::Time::now(), ros::Duration(0.5));
+          tflistener.lookupTransform(map_frame, base_frame, ros::Time(0), Twc);
+      } 
+      catch (tf::TransformException ex)
+      {
+          ROS_ERROR("%s",ex.what());
+          return;
+      }
+
+      ROS_INFO("Looked up start: %f %f %f %f %f %f %f",
+        Twc.getOrigin().getX(),
+        Twc.getOrigin().getY(),
+        Twc.getOrigin().getZ(), 
+        Twc.getRotation().getX(),
+        Twc.getRotation().getY(),
+        Twc.getRotation().getZ(),
+        Twc.getRotation().getW()
+      );
+
+      nav_msgs::Odometry odom;
+      odom.header.frame_id = map_frame;
+      odom.header.stamp = Twc.stamp_;
+      odom.child_frame_id = "start";
+      odom.pose.pose.position.x =    Twc.getOrigin().getX();
+      odom.pose.pose.position.y =    Twc.getOrigin().getY();
+      odom.pose.pose.position.z =    Twc.getOrigin().getZ();
+      odom.pose.pose.orientation.x = Twc.getRotation().getX();
+      odom.pose.pose.orientation.y = Twc.getRotation().getY();
+      odom.pose.pose.orientation.z = Twc.getRotation().getZ();
+      odom.pose.pose.orientation.w = Twc.getRotation().getW();
+      odom.twist.twist.linear.x =  1;
+      odom.twist.twist.linear.y =  0;
+      odom.twist.twist.linear.z =  0;
+      odom.twist.twist.angular.x = 0;
+      odom.twist.twist.angular.y = 0;
+      odom.twist.twist.angular.z = 0;
+
+      odom_arr.odoms.push_back(odom);
     }
 
-    ROS_INFO("Looked up start: %f %f %f %f %f %f %f",
-      Twc.getOrigin().getX(),
-      Twc.getOrigin().getY(),
-      Twc.getOrigin().getZ(), 
-      Twc.getRotation().getX(),
-      Twc.getRotation().getY(),
-      Twc.getRotation().getZ(),
-      Twc.getRotation().getW()
-    );
+    {
+      nav_msgs::Odometry odom;
+      odom.header.frame_id = map_frame;
+      odom.header.stamp = ros::Time::now();
+      odom.child_frame_id = "goal";
+      odom.pose.pose.position.x =    goal.pose.position.x;
+      odom.pose.pose.position.y =    goal.pose.position.y;
+      odom.pose.pose.position.z =    goal.pose.position.z;
+      odom.pose.pose.orientation.x = goal.pose.orientation.x;
+      odom.pose.pose.orientation.y = goal.pose.orientation.y;
+      odom.pose.pose.orientation.z = goal.pose.orientation.z;
+      odom.pose.pose.orientation.w = goal.pose.orientation.w;
+      odom.twist.twist.linear.x =  1;
+      odom.twist.twist.linear.y =  0;
+      odom.twist.twist.linear.z =  0;
+      odom.twist.twist.angular.x = 0;
+      odom.twist.twist.angular.y = 0;
+      odom.twist.twist.angular.z = 0;
 
-    nav_msgs::Odometry odom;
-    odom.header.frame_id = map_frame;
-    odom.header.stamp = Twc.stamp_;
-    odom.child_frame_id = "start";
-    odom.pose.pose.position.x =    Twc.getOrigin().getX();
-    odom.pose.pose.position.y =    Twc.getOrigin().getY();
-    odom.pose.pose.position.z =    Twc.getOrigin().getZ();
-    odom.pose.pose.orientation.x = Twc.getRotation().getX();
-    odom.pose.pose.orientation.y = Twc.getRotation().getY();
-    odom.pose.pose.orientation.z = Twc.getRotation().getZ();
-    odom.pose.pose.orientation.w = Twc.getRotation().getW();
-    odom.twist.twist.linear.x =  1;
-    odom.twist.twist.linear.y =  0;
-    odom.twist.twist.linear.z =  0;
-    odom.twist.twist.angular.x = 0;
-    odom.twist.twist.angular.y = 0;
-    odom.twist.twist.angular.z = 0;
+      odom_arr.odoms.push_back(odom);
+    }
 
-    odom_arr.odoms.push_back(odom);
-  }
-
-  {
-    nav_msgs::Odometry odom;
-    odom.header.frame_id = map_frame;
-    odom.header.stamp = ros::Time::now();
-    odom.child_frame_id = "goal";
-    odom.pose.pose.position.x =    msg->pose.position.x;
-    odom.pose.pose.position.y =    msg->pose.position.y;
-    odom.pose.pose.position.z =    msg->pose.position.z;
-    odom.pose.pose.orientation.x = msg->pose.orientation.x;
-    odom.pose.pose.orientation.y = msg->pose.orientation.y;
-    odom.pose.pose.orientation.z = msg->pose.orientation.z;
-    odom.pose.pose.orientation.w = msg->pose.orientation.w;
-    odom.twist.twist.linear.x =  1;
-    odom.twist.twist.linear.y =  0;
-    odom.twist.twist.linear.z =  0;
-    odom.twist.twist.angular.x = 0;
-    odom.twist.twist.angular.y = 0;
-    odom.twist.twist.angular.z = 0;
-
-    odom_arr.odoms.push_back(odom);
-  }
-
-  ROS_INFO("Publishing...");
-  pub.publish(odom_arr);
-  ros::spinOnce();
+    ROS_INFO("Publishing...");
+    pub.publish(odom_arr);
+    ros::spinOnce();
 }
 
 int main( int argc, char* argv[] )
@@ -107,6 +187,7 @@ int main( int argc, char* argv[] )
 
     ros::Subscriber sub = nh.subscribe<geometry_msgs::PoseStamped>(goal_topic, 5, cb);
     pub = nh.advertise<carplanner_msgs::OdometryArray>(waypoints_topic, 5);
+    loop = nh.createTimer(ros::Duration(0.5), loopFunc);
 
     ROS_INFO("Initialized.");
 
