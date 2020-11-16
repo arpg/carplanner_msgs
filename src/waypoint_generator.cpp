@@ -98,6 +98,7 @@ void cb(const geometry_msgs::PoseStamped::ConstPtr msg)
 
 void loopFunc(const ros::TimerEvent& event)
 {
+    if (goal.header.seq==0) return;
     carplanner_msgs::OdometryArray odom_arr;
 
     {
