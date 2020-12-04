@@ -140,3 +140,10 @@ add_executable( goal_generator
 target_link_libraries( goal_generator
   ${catkin_LIBRARIES}
 )
+
+add_executable( tf2odom
+  src/tf2odom.cpp
+)
+target_link_libraries( tf2odom
+  ${catkin_LIBRARIES}
+)

@@ -1,5 +1,10 @@
 <launch>
 
+  <arg name="manager"     default="mocha_planner"/>
+  <arg name="enable_debug" default="false"/>
+  <arg name="launch_prefix" default="gdb -ex run --args" if="$(arg enable_debug)"/>
+  <arg name="launch_prefix" default="" unless="$(arg enable_debug)"/>
+
   <!-- INFINITAM -->
   <arg name="launch_infinitam" default="true"/>
   <arg name="convert_metric" default="false"/>
@@ -26,20 +31,39 @@
   <arg name="map_frame" default="map"/>
   <arg name="base_link_frame" default="base_link"/>
 
+  <!-- <node pkg="nodelet" type="nodelet" name="$(arg manager)"  args="manager" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"/> -->
+
   <include file="$(find carplanner_msgs)/launch/mocha.launch">
-    <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
-    <arg name="params_file" value="$(arg params_file)"/>
-    <arg name="mode" value="0"/>
-    <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
-    <arg name="car_mesh_file" value="$(arg car_mesh_file)"/>
-    <arg name="wheel_mesh_file" value="$(arg wheel_mesh_file)"/>
-    <arg name="map_frame" value="$(arg map_frame)"/>
-    <arg name="base_link_frame" value="$(arg base_link_frame)"/>
+    <arg name="manager"             value="$(arg manager)"/>
+    <arg name="params_file"         value="$(arg params_file)"/>
+    <arg name="mode"                value="0"/>
+    <arg name="terrain_mesh_file"   value="$(arg terrain_mesh_file)"/>
+    <arg name="car_mesh_file"       value="$(arg car_mesh_file)"/>
+    <arg name="wheel_mesh_file"     value="$(arg wheel_mesh_file)"/>
+    <arg name="map_frame"           value="$(arg map_frame)"/>
+    <arg name="base_link_frame"     value="$(arg base_link_frame)"/>
+    <arg name="enable_debug"        value="$(arg enable_debug)"/>
   </include>
+  <!-- <include file="$(find timed_roslaunch)/timed_roslaunch.launch">
+    <arg name="time"   value="5"/>
+    <arg name="pkg"    value="carplanner_msgs"/>
+    <arg name="file"   value="mocha.launch"/>
+    <arg name="value"  value="manager:=$(arg manager)
+      params_file:=$(arg params_file)
+      mode:=0
+      terrain_mesh_file:=$(arg terrain_mesh_file)
+      car_mesh_file:=$(arg car_mesh_file)
+      wheel_mesh_file:=$(arg wheel_mesh_file)
+      map_frame:=$(arg map_frame)
+      base_link_frame:=$(arg base_link_frame)
+      enable_debug:=$(arg enable_debug)"/>
+    <arg name="node_name" value="timed_mochaplanner"/>
+  </include> -->
 
   <include file="$(find infinitam)/launch/demo.launch" if="$(arg launch_infinitam)">
-    <arg name="convert_metric" value="$(arg convert_metric)"/>
-    <arg name="publish_vertices" value="$(arg publish_vertices)"/>
+    <!-- <arg name="manager" value="$(arg manager)"/> -->
+    <arg name="convert_metric"      value="$(arg convert_metric)"/>
+    <arg name="publish_vertices"    value="$(arg publish_vertices)"/>
     <arg name="world_frame_id"      value="$(arg world_frame_id)"/>
     <arg name="camera_frame_id"     value="$(arg camera_frame_id)"/>
     <arg name="mesh_topic"          value="$(arg mesh_topic)"/>

@@ -2,22 +2,38 @@
 
   <param name="use_sim_time" value="true"/>
 
+  <arg name="manager"     default="local_planner"/>
   <arg name="launch_rviz" default="true"/>
   <arg name="enable_priori_from_tf_tree" default="true"/>
   <arg name="play_rosbag" default="true"/>
-  <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup2.bag"/>
+  <!-- <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup2.bag"/> -->
+  <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup3_w_traj.bag"/>
+  
+  <arg name="enable_debug" default="false"/>
+  <arg name="launch_prefix" default="gdb -ex run --args" if="$(arg enable_debug)"/>
+  <arg name="launch_prefix" default="" unless="$(arg enable_debug)"/>
+
+  <node pkg="nodelet" type="nodelet" name="$(arg manager)"  args="manager" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"/>
 
   <include file="$(find infinitam)/launch/subt_sim_demo_replay.launch">
+    <arg name="manager" value="$(arg manager)"/>
     <arg name="launch_rviz" value="false"/>
     <arg name="enable_priori_from_tf_tree" value="$(arg enable_priori_from_tf_tree)"/>
-    <arg name="play_rosbag" value="$(arg play_rosbag)"/>
-    <arg name="rosbag_file" value="$(arg rosbag_file)"/>
+    <arg name="play_rosbag" value="false"/>
   </include>
 
   <include file="$(find carplanner_msgs)/launch/subt_sim_demo.launch">
+    <arg name="manager" value="$(arg manager)"/>
     <arg name="launch_sim" value="false"/>
     <arg name="launch_rviz" value="$(arg launch_rviz)"/>
     <arg name="launch_infinitam" value="false"/>
+    <arg name="enable_debug" value="$(arg enable_debug)"/>
   </include>
+
+  <node pkg="rosbag" type="play" name="subt_sim_demo_bag" 
+    args="-k $(arg rosbag_file)" 
+    launch-prefix="bash -c 'sleep 5.0; $0 $@' "
+    if="$(arg play_rosbag)"/>
+
 
 </launch>

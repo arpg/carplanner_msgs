@@ -1,8 +1,10 @@
 <launch>
 
+  <arg name="manager"     default="mocha_planner"/>
   <arg name="enable_debug" default="false"/>
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(arg enable_debug)"/>
-  <arg name="launch_prefix" default="" unless="$(arg enable_debug)"/>
+  <arg name="launch_delay" default="0"/>
+  <arg name="launch_prefix" default="bash -c 'sleep $(arg launch_delay); $0 $@' " unless="$(arg enable_debug)"/>
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
   <arg name="map_frame" default="$(arg map_frame)"/>
   <arg name="base_link_frame" default="$(arg base_link_frame)"/>
@@ -13,7 +15,7 @@
   <arg name="wheel_mesh_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/herbie/wheel.blend"/>
 
   <!-- <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager"/> -->
-  <node pkg="nodelet" type="nodelet" name="mocha_vehicle" args="load mochapc/MochaVehicleNodelet mocha_manager" output="screen" respawn="true"  launch-prefix="$(arg launch_prefix)">
+  <node pkg="nodelet" type="nodelet" name="mocha_vehicle" args="load mochapc/MochaVehicleNodelet $(arg manager)" output="screen" respawn="true"  launch-prefix="$(arg launch_prefix)">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
     <param name="params_file" value="$(arg params_file)"/>
     <param name="mode" value="$(arg mode)"/>

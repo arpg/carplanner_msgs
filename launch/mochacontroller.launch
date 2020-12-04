@@ -1,5 +1,6 @@
 <launch>
 
+  <!-- <arg name="manager"     default="mocha_planner"/> -->
   <arg name="plan_topic" default="planner/plan"/>
   <arg name="state_topic" default="vehicle/9/state"/>
 
