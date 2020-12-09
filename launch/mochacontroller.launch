@@ -1,16 +1,21 @@
 <launch>
 
+  <!-- <arg name="launch_manager"     default="true"/> -->
   <!-- <arg name="manager"     default="mocha_planner"/> -->
+  <arg name="launch_delay" default="0"/>
+
   <arg name="plan_topic" default="planner/plan"/>
   <arg name="state_topic" default="vehicle/9/state"/>
 
   <arg name="command_topic" default="vehicle/9/command"/>
 
-  <!-- <node pkg="nodelet" type="nodelet" name="mocha_manager"  args="manager"/> -->
+  <!-- <node pkg="nodelet" type="nodelet" name="$(arg manager)" output="screen" launch-prefix="$(arg launch_prefix)"
+    args="manager" if="$(arg launch_manager)"/> -->
+
   <!-- <node pkg="nodelet" type="nodelet" name="mocha_controller" args="load mochapc/MochaControllerNodelet mocha_manager" respawn="true">
   </node> -->
 
-  <node pkg="nodelet" type="nodelet" name="mocha_controller" args="standalone mochapc/MochaControllerNodelet" output="screen" respawn="true">
+  <node pkg="nodelet" type="nodelet" name="mocha_controller" args="standalone mochapc/MochaControllerNodelet" output="screen" respawn="true" launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'">
     <remap from="planner/plan"        to="$(arg plan_topic)"/>
     <remap from="controller/state"    to="$(arg state_topic)"/>
     <remap from="controller/command"  to="$(arg command_topic)"/>
