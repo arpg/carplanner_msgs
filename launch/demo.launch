@@ -35,8 +35,7 @@
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="" unless="$(eval arg('enable_debug') and arg('launch_manager'))"/>
 
-
-  <node pkg="nodelet" type="nodelet" name="$(arg manager)" output="screen" launch-prefix="$(arg launch_prefix)"
+  <node pkg="nodelet" type="nodelet" name="$(arg manager)" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"
     args="manager" if="$(arg launch_manager)"/>
 
   <include file="$(find carplanner_msgs)/launch/mocha.launch">
@@ -50,6 +49,7 @@
     <arg name="map_frame"           value="$(arg map_frame)"/>
     <arg name="base_link_frame"     value="$(arg base_link_frame)"/>
     <arg name="enable_debug"        value="$(arg enable_debug)"/>
+    <arg name="launch_delay"        value="$(arg launch_delay)"/>
   </include>
   <!-- <include file="$(find timed_roslaunch)/timed_roslaunch.launch">
     <arg name="time"   value="5"/>
@@ -79,19 +79,21 @@
     <arg name="rgb_info_topic"      value="$(arg rgb_info_topic)"/>
     <arg name="rgb_topic"           value="$(arg rgb_topic)"/>
     <arg name="enable_priori_from_tf_tree" value="$(arg enable_priori_from_tf_tree)"/>
+    <arg name="enable_debug"        value="$(arg enable_debug)"/>
+    <arg name="launch_delay"        value="$(arg launch_delay)"/>
   </include>
 
   <!-- <node pkg="carplanner_msgs" type="waypoint_generator" name="waypoint_generator" output="screen">
-    <param name="goal_topic" value="/move_base_simple/goal"/> 
-    <param name="waypoints_topic" value="/plan_car/input_waypoints"/> 
-    <param name="map_frame_id" value="map"/> 
-    <param name="base_frame_id" value="base_link"/> 
+    <param name="goal_topic" value="/move_base_simple/goal"/>
+    <param name="waypoints_topic" value="/plan_car/input_waypoints"/>
+    <param name="map_frame_id" value="map"/>
+    <param name="base_frame_id" value="base_link"/>
   </node>
 
   <node pkg="carplanner_msgs" type="goal_generator" name="goal_generator" output="screen">
-    <param name="path_topic" value="/plan_car/global_path"/> 
-    <param name="goal_topic" value="/move_base_simple/goal"/> 
-    <param name="path_intercept_length" value="2.0"/> 
+    <param name="path_topic" value="/plan_car/global_path"/>
+    <param name="goal_topic" value="/move_base_simple/goal"/>
+    <param name="path_intercept_length" value="2.0"/>
   </node>
 
   <include file="$(find marble_guidance)/launch/guidance.launch">

@@ -9,13 +9,13 @@
   <arg name="play_rosbag" default="true"/>
   <!-- <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup2.bag"/> -->
   <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup3.bag"/>
-  
+
   <arg name="enable_debug" default="false"/>
 
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="" unless="$(eval arg('enable_debug') and arg('launch_manager'))"/>
 
-  <node pkg="nodelet" type="nodelet" name="$(arg manager)" output="screen" launch-prefix="$(arg launch_prefix)"
+  <node pkg="nodelet" type="nodelet" name="$(arg manager)" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"
       args="manager" if="$(arg launch_manager)"/>
 
   <include file="$(find infinitam)/launch/subt_sim_demo_replay.launch">
@@ -38,8 +38,8 @@
     <arg name="launch_delay"        value="0"/>
   </include>
 
-  <node pkg="rosbag" type="play" name="subt_sim_demo_bag" 
-    args="-k $(arg rosbag_file)" 
+  <node pkg="rosbag" type="play" name="subt_sim_demo_bag"
+    args="-k $(arg rosbag_file)"
     launch-prefix="bash -c 'sleep 10.0; $0 $@' "
     if="$(arg play_rosbag)"/>
 

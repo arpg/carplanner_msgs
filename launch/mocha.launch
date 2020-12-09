@@ -32,12 +32,12 @@
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="" unless="$(eval arg('enable_debug') and arg('launch_manager'))"/>
 
-  <node pkg="nodelet" type="nodelet" name="$(arg manager)" output="screen" launch-prefix="$(arg launch_prefix)"
+  <node pkg="nodelet" type="nodelet" name="$(arg manager)" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"
     args="manager" if="$(arg launch_manager)"/>
 
   <include file="$(find carplanner_msgs)/launch/mochavehicle.launch">
     <arg name="enable_debug"        value="$(arg enable_debug)"/>
-    <arg name="launch_delay" value="$(arg launch_delay)"/>
+    <arg name="launch_delay" value="$(eval launch_delay+0)"/>
     <arg name="launch_manager" value="false"/>
     <arg name="manager" value="$(arg manager)"/>
     <arg name="params_file" value="$(arg params_file)"/>
