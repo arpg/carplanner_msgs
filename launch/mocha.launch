@@ -1,12 +1,5 @@
 <launch>
 
-  <arg name="enable_debug" default="false"/>
-  <arg name="launch_delay" default="0"/>
-
-  <arg name="launch_rviz" default="false"/>
-
-  <arg name="launch_manager"     default="true"/>
-  <arg name="manager"     default="local_planner"/>
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
   <arg name="map_frame" default="map"/>
   <arg name="base_link_frame" default="base_link"/>
@@ -29,6 +22,14 @@
   <arg name="car_mesh_file" default="/home/mike/code/mochapc/herbie/herbie.blend"/>
   <arg name="wheel_mesh_file" default="/home/mike/code/mochapc/herbie/wheel.blend"/>
 
+  <arg name="launch_rviz" default="false"/>
+
+  <arg name="launch_delay" default="0"/>
+
+  <arg name="enable_debug" default="false"/>
+  <arg name="launch_manager"     default="true"/>
+  <arg name="manager"     default="mocha_planner"/>
+
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="" unless="$(eval arg('enable_debug') and arg('launch_manager'))"/>
 
@@ -36,28 +37,28 @@
     args="manager" if="$(arg launch_manager)"/>
 
   <include file="$(find carplanner_msgs)/launch/mochavehicle.launch">
+    <arg name="launch_delay"        value="$(eval launch_delay+0)"/>
     <arg name="enable_debug"        value="$(arg enable_debug)"/>
-    <arg name="launch_delay" value="$(eval launch_delay+0)"/>
-    <arg name="launch_manager" value="false"/>
-    <arg name="manager" value="$(arg manager)"/>
-    <arg name="params_file" value="$(arg params_file)"/>
-    <arg name="mode" value="$(arg mode)"/>
-    <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
-    <arg name="car_mesh_file" value="$(arg car_mesh_file)"/>
-    <arg name="wheel_mesh_file" value="$(arg wheel_mesh_file)"/>
-    <arg name="map_frame" value="$(arg map_frame)"/>
-    <arg name="base_link_frame" value="$(arg base_link_frame)"/>
+    <arg name="launch_manager"      value="false"/>
+    <arg name="manager"             value="$(arg manager)"/>
+    <arg name="params_file"         value="$(arg params_file)"/>
+    <arg name="mode"                value="$(arg mode)"/>
+    <arg name="terrain_mesh_file"   value="$(arg terrain_mesh_file)"/>
+    <arg name="car_mesh_file"       value="$(arg car_mesh_file)"/>
+    <arg name="wheel_mesh_file"     value="$(arg wheel_mesh_file)"/>
+    <arg name="map_frame"           value="$(arg map_frame)"/>
+    <arg name="base_link_frame"     value="$(arg base_link_frame)"/>
   </include>
 
   <include file="$(find carplanner_msgs)/launch/mochaplanner.launch">
+    <arg name="launch_delay"        value="$(eval launch_delay+3)"/>
     <arg name="enable_debug"        value="$(arg enable_debug)"/>
-    <arg name="launch_delay" value="$(eval launch_delay+3)"/>
-    <arg name="launch_manager" value="false"/>
-    <arg name="manager" value="$(arg manager)"/>
-    <arg name="map_frame" value="$(arg map_frame)"/>
-    <arg name="base_link_frame" value="$(arg base_link_frame)"/>
-    <arg name="params_file" value="$(arg params_file)"/>
-    <arg name="terrain_mesh_file" value="$(arg terrain_mesh_file)"/>
+    <arg name="launch_manager"      value="false"/>
+    <arg name="manager"             value="$(arg manager)"/>
+    <arg name="map_frame"           value="$(arg map_frame)"/>
+    <arg name="base_link_frame"     value="$(arg base_link_frame)"/>
+    <arg name="params_file"         value="$(arg params_file)"/>
+    <arg name="terrain_mesh_file"   value="$(arg terrain_mesh_file)"/>
   </include>
 
   <!-- <include file="$(find carplanner_msgs)/launch/mochacontroller.launch">

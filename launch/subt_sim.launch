@@ -1,13 +1,22 @@
 <launch>
 
-  <include file="$(find marble_common)/launch/sim/subt.launch">
+  <arg name="launch_delay"  default="0"/>
+
+  <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
+    <arg name="time"   value="$(eval launch_delay+0)"/>
+    <arg name="pkg"    value="marble_common"/>
+    <arg name="file"   value="subt.launch"/>
+    <arg name="value"  value="config:=solo sensors:=lite groundtruth:=true"/>
+    <arg name="node_name" value="Sim_timed_roslaunch"/>
+  </include>
+  <!-- <include file="$(find marble_common)/launch/sim/subt.launch">
     <arg name="config" value="solo"/>
     <arg name="sensors" value="lite"/>
     <arg name="groundtruth" value="true"/>
-  </include>
+  </include> -->
 
   <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
-    <arg name="time"   value="10"/>
+    <arg name="time"   value="$(eval launch_delay+10)"/>
     <arg name="pkg"    value="marble_common"/>
     <arg name="file"   value="Base.launch"/>
     <arg name="value"  value="agents:='Base X1' potentialNeighbors:='X1' enable_rviz:=false"/>
@@ -21,7 +30,7 @@
   </include> -->
 
   <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
-    <arg name="time"   value="10"/>
+    <arg name="time"   value="$(eval launch_delay+10)"/>
     <arg name="pkg"    value="marble_common"/>
     <arg name="file"   value="X1.launch"/>
     <arg name="value"  value="enable_localization:=true enable_mapping:=true enable_multi_agent:=true enable_planning:=true enable_control:=false enable_artifacts:=false enable_rviz:=false motion_on_startup:=false"/>

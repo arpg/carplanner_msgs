@@ -1,8 +1,5 @@
 <launch>
 
-  <arg name="launch_manager"     default="true"/>
-  <arg name="manager"     default="mocha_planner"/>
-
   <!-- INFINITAM -->
   <arg name="launch_infinitam" default="true"/>
   <arg name="convert_metric" default="false"/>
@@ -29,8 +26,11 @@
   <arg name="map_frame" default="map"/>
   <arg name="base_link_frame" default="base_link"/>
 
-  <arg name="enable_debug" default="false"/>
   <arg name="launch_delay" default="0"/>
+
+  <arg name="enable_debug" default="false"/>
+  <arg name="launch_manager"     default="true"/>
+  <arg name="manager"     default="mocha_planner"/>
 
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="" unless="$(eval arg('enable_debug') and arg('launch_manager'))"/>
@@ -39,7 +39,9 @@
     args="manager" if="$(arg launch_manager)"/>
 
   <include file="$(find carplanner_msgs)/launch/mocha.launch">
-    <arg name="launch_manager" value="false"/>
+    <arg name="launch_delay"        value="$(eval launch_delay+0)"/>
+    <arg name="enable_debug"        value="$(arg enable_debug)"/>
+    <arg name="launch_manager"      value="false"/>
     <arg name="manager"             value="$(arg manager)"/>
     <arg name="params_file"         value="$(arg params_file)"/>
     <arg name="mode"                value="0"/>
@@ -48,8 +50,6 @@
     <arg name="wheel_mesh_file"     value="$(arg wheel_mesh_file)"/>
     <arg name="map_frame"           value="$(arg map_frame)"/>
     <arg name="base_link_frame"     value="$(arg base_link_frame)"/>
-    <arg name="enable_debug"        value="$(arg enable_debug)"/>
-    <arg name="launch_delay"        value="$(arg launch_delay)"/>
   </include>
   <!-- <include file="$(find timed_roslaunch)/timed_roslaunch.launch">
     <arg name="time"   value="5"/>
@@ -68,7 +68,8 @@
   </include> -->
 
   <include file="$(find infinitam)/launch/demo.launch" if="$(arg launch_infinitam)">
-    <!-- <arg name="manager" value="$(arg manager)"/> -->
+    <arg name="launch_delay"        value="$(eval launch_delay+5)"/>
+    <arg name="enable_debug"        value="$(arg enable_debug)"/>
     <arg name="convert_metric"      value="$(arg convert_metric)"/>
     <arg name="publish_vertices"    value="$(arg publish_vertices)"/>
     <arg name="world_frame_id"      value="$(arg world_frame_id)"/>
@@ -79,8 +80,6 @@
     <arg name="rgb_info_topic"      value="$(arg rgb_info_topic)"/>
     <arg name="rgb_topic"           value="$(arg rgb_topic)"/>
     <arg name="enable_priori_from_tf_tree" value="$(arg enable_priori_from_tf_tree)"/>
-    <arg name="enable_debug"        value="$(arg enable_debug)"/>
-    <arg name="launch_delay"        value="$(arg launch_delay)"/>
   </include>
 
   <!-- <node pkg="carplanner_msgs" type="waypoint_generator" name="waypoint_generator" output="screen">

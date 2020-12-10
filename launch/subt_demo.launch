@@ -1,15 +1,16 @@
 <launch>
 
-  <arg name="launch_manager"     default="true"/>
-  <arg name="manager" default="local_planner"/>
   <arg name="launch_robot" default="true"/>
   <arg name="launch_rviz" default="true"/>
   <arg name="launch_infinitam" default="true"/>
   <arg name="launch_planner" default="true"/>
   <arg name="enable_priori_from_tf_tree" default="true"/>
 
-  <arg name="enable_debug" default="false"/>
   <arg name="launch_delay" default="0"/>
+
+  <arg name="enable_debug" default="false"/>
+  <arg name="launch_manager"     default="true"/>
+  <arg name="manager" default="local_planner"/>
 
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="" unless="$(eval arg('enable_debug') and arg('launch_manager'))"/>
@@ -19,8 +20,6 @@
 
   <arg name="basepath" value="$(find mochapc)"/>
   <include file="$(find carplanner_msgs)/launch/demo.launch" if="$(arg launch_planner)">
-    <arg name="launch_manager" value="false"/>
-    <arg name="manager" value="$(arg manager)"/>
     <arg name="params_file" value="$(arg basepath)/husky_params.csv"/>
     <arg name="terrain_mesh_file" value="$(arg basepath)/disk-ascii.ply"/>
     <arg name="car_mesh_file" value="$(arg basepath)/herbie/herbie.blend"/>
@@ -29,8 +28,10 @@
     <arg name="base_link_frame" value="H01/base_link"/>
 
     <arg name="launch_infinitam" default="false"/>
+    <arg name="launch_delay" value="$(eval launch_delay+0)"/>
     <arg name="enable_debug" value="$(arg enable_debug)"/>
-    <arg name="launch_delay" value="5"/>
+    <arg name="launch_manager" value="false"/>
+    <arg name="manager" value="$(arg manager)"/>
   </include>
 
   <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_camdown_optical" args="0 0 0 -1.57 0 -1.57 X1/base_link/camera_down X1/base_link/camera_down_optical"/> -->
@@ -38,17 +39,18 @@
   </include> -->
 
   <include file="$(find infinitam)/launch/subt_demo.launch" if="$(arg launch_infinitam)">
-    <arg name="launch_manager" value="false"/>
-    <arg name="manager" value="$(arg manager)"/>
     <arg name="launch_robot" value="false"/>
     <arg name="launch_rviz" value="false"/>
     <arg name="enable_priori_from_tf_tree" value="$(arg enable_priori_from_tf_tree)"/>
 
+    <arg name="launch_delay" value="$(eval launch_delay+10)"/>
     <arg name="enable_debug" value="$(arg enable_debug)"/>
-    <arg name="launch_delay"        value="10"/>
+    <arg name="launch_manager" value="false"/>
+    <arg name="manager" value="$(arg manager)"/>
   </include>
 
-  <node pkg="carplanner_msgs" type="waypoint_generator" name="local_goal2local_waypoints" output="log">
+  <arg name="wg_delay" default="$(eval launch_delay+0)"/>
+  <node pkg="carplanner_msgs" type="waypoint_generator" name="local_goal2local_waypoints" output="log" launch-prefix="bash -c 'sleep $(arg wg_delay); $0 $@'">
     <param name="odom_topic" value="H01/odometry"/>
     <param name="goal_topic" value="planner/goal"/>
     <param name="waypoints_topic" value="planner/input_waypoints"/>
@@ -62,14 +64,16 @@
   <!-- <node pkg="topic_tools" type="relay" name="global_path_relay" args="/H01/ma_goal_path planner/global_path"/> -->
   <node pkg="topic_tools" type="relay" name="local_path_relay" args="planner/actual_traj /X1/local_path"/>
 
- <!-- <node pkg="carplanner_msgs" type="tf2odom" name="tf2odom" output="log">
+ <arg name="og_delay" default="$(eval launch_delay+0)"/>
+ <node pkg="carplanner_msgs" type="tf2odom" name="tf2odom" output="log" launch-prefix="bash -c 'sleep $(arg og_delay); $0 $@'">
     <param name="parent_frame" value="H01/map"/>
     <param name="child_frame" value="H01/base_link"/>
     <param name="odom_topic" value="H01/odom"/>
     <param name="rate" value="100"/>
-  </node> -->
+  </node> 
 
-  <node pkg="carplanner_msgs" type="goal_generator" name="global_path2local_goal" output="log">
+  <arg name="gg_delay" default="$(eval launch_delay+0)"/>
+  <node pkg="carplanner_msgs" type="goal_generator" name="global_path2local_goal" output="log" launch-prefix="bash -c 'sleep $(arg gg_delay); $0 $@'">
     <param name="path_topic" value="planner/global_path"/>
     <param name="goal_topic" value="planner/goal"/>
     <param name="odom_topic" value="/H01/odometry"/>
