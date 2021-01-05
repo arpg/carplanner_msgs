@@ -11,7 +11,7 @@
   </include>
   <!-- <include file="$(find marble_common)/launch/sim/subt.launch">
     <arg name="config" value="solo"/>
-    <arg name="sensors" value="lite"/>
+    <arg name="sensors" value="camera"/>
     <arg name="groundtruth" value="true"/>
   </include> -->
 
