@@ -2,8 +2,12 @@
 
   <param name="use_sim_time" value="true"/>
 
+  <arg name="enable_guess_from_tf_tree" default="true"/>
+  <arg name="enable_lc" default="true"/>
+  <arg name="reset_map_on_drift_dist" default="0.3"/>
+  <arg name="max_pub_radius" default="5"/>
+
   <arg name="launch_rviz" default="true"/>
-  <arg name="enable_priori_from_tf_tree" default="true"/>
   <arg name="play_rosbag" default="true"/>
   <!-- <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup2.bag"/> -->
   <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup3_w_traj.bag"/>
@@ -19,10 +23,13 @@
       args="manager" if="$(arg launch_manager)"/>
 
   <include file="$(find infinitam)/launch/subt_sim_demo_replay.launch">
+    <arg name="enable_guess_from_tf_tree" value="$(arg enable_guess_from_tf_tree)"/>
+    <arg name="enable_lc" value="$(arg enable_lc)"/>
+    <arg name="reset_map_on_drift_dist" value="$(arg reset_map_on_drift_dist)"/>
+    <arg name="max_pub_radius" value="$(arg max_pub_radius)"/>
     <arg name="launch_manager" value="false"/>
     <arg name="manager" value="$(arg manager)"/>
     <arg name="launch_rviz" value="false"/>
-    <arg name="enable_priori_from_tf_tree" value="$(arg enable_priori_from_tf_tree)"/>
     <arg name="play_rosbag" value="false"/>
     <arg name="enable_debug"        value="$(arg enable_debug)"/>
     <arg name="launch_delay"        value="10"/>

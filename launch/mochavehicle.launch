@@ -21,7 +21,7 @@
   <node pkg="nodelet" type="nodelet" name="$(arg manager)" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"
     args="manager" if="$(arg launch_manager)"/>
 
-  <node pkg="nodelet" type="nodelet" name="mocha_vehicle" args="load mochapc/MochaVehicleNodelet $(arg manager)" output="screen" respawn="true"  launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'">
+  <node pkg="nodelet" type="nodelet" name="mocha_vehicle" args="load mochapc/MochaVehicleNodelet $(arg manager)" output="log" respawn="true"  launch-prefix="bash -c 'sleep $(arg launch_delay); $0 $@'">
     <!-- <remap from="input_mesh" to="$(arg input_mesh)"/> -->
     <param name="params_file" value="$(arg params_file)"/>
     <param name="mode" value="$(arg mode)"/>

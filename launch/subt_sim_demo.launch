@@ -3,7 +3,7 @@
   <arg name="launch_sim" default="true"/>
   <arg name="launch_rviz" default="true"/>
   <arg name="launch_infinitam" default="true"/>
-  <arg name="enable_priori_from_tf_tree" default="true"/>
+  <arg name="enable_guess_from_tf_tree" default="true"/>
 
   <arg name="launch_delay" default="0"/>
 
@@ -109,7 +109,7 @@
   <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_infinitam_nwu" args="0 0 0 0 0 0 map infinitam_nwu"/> -->
 
   <arg name="bag_delay" default="$(eval launch_delay+0)"/>
-  <node pkg="rviz" type="rviz" name="subt_sim_demo_rviz" if="$(arg launch_rviz)" launch-prefix="bash -c 'sleep $(arg bag_delay); $0 $@'"
+  <node pkg="rviz" type="rviz" name="subt_sim_demo_rviz" if="$(arg launch_rviz)" output="log" launch-prefix="bash -c 'sleep $(arg bag_delay); $0 $@'"
     args="-d $(env HOME)/.rviz/subt_sim.rviz"/>
 
 </launch>

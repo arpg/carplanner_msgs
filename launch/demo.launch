@@ -11,7 +11,7 @@
   <arg name="depth_topic" default="depth"/>
   <arg name="rgb_info_topic" default="color/camera_info"/>
   <arg name="rgb_topic" default="color"/>
-  <arg name="enable_priori_from_tf_tree" default="true"/>
+  <arg name="enable_guess_from_tf_tree" default="true"/>
 
   <!-- MOCHA -->
   <arg name="params_file" default="$(find mochapc)/learning_params.csv"/>
@@ -79,7 +79,7 @@
     <arg name="depth_topic"         value="$(arg depth_topic)"/>
     <arg name="rgb_info_topic"      value="$(arg rgb_info_topic)"/>
     <arg name="rgb_topic"           value="$(arg rgb_topic)"/>
-    <arg name="enable_priori_from_tf_tree" value="$(arg enable_priori_from_tf_tree)"/>
+    <arg name="enable_guess_from_tf_tree" value="$(arg enable_guess_from_tf_tree)"/>
   </include>
 
   <!-- <node pkg="carplanner_msgs" type="waypoint_generator" name="waypoint_generator" output="screen">

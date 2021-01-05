@@ -4,7 +4,7 @@
   <arg name="launch_rviz" default="true"/>
   <arg name="launch_infinitam" default="true"/>
   <arg name="launch_planner" default="true"/>
-  <arg name="enable_priori_from_tf_tree" default="true"/>
+  <arg name="enable_guess_from_tf_tree" default="true"/>
 
   <arg name="launch_delay" default="0"/>
 
@@ -41,7 +41,7 @@
   <include file="$(find infinitam)/launch/subt_demo.launch" if="$(arg launch_infinitam)">
     <arg name="launch_robot" value="false"/>
     <arg name="launch_rviz" value="false"/>
-    <arg name="enable_priori_from_tf_tree" value="$(arg enable_priori_from_tf_tree)"/>
+    <arg name="enable_guess_from_tf_tree" value="$(arg enable_guess_from_tf_tree)"/>
 
     <arg name="launch_delay" value="$(eval launch_delay+10)"/>
     <arg name="enable_debug" value="$(arg enable_debug)"/>

@@ -15,30 +15,30 @@ float rate;
 
 void goal_cb(const geometry_msgs::PoseStamped::ConstPtr msg)
 {
-  ROS_INFO("Got goal: %f %f %f %f %f %f %f",
-    msg->pose.position.x,
-    msg->pose.position.y,
-    msg->pose.position.z, 
-    msg->pose.orientation.x,
-    msg->pose.orientation.y,
-    msg->pose.orientation.z,
-    msg->pose.orientation.w
-  );
+  // ROS_INFO("Got goal: %f %f %f %f %f %f %f",
+  //   msg->pose.position.x,
+  //   msg->pose.position.y,
+  //   msg->pose.position.z, 
+  //   msg->pose.orientation.x,
+  //   msg->pose.orientation.y,
+  //   msg->pose.orientation.z,
+  //   msg->pose.orientation.w
+  // );
 
   goal = *msg;
 }
 
 void odom_cb(const nav_msgs::Odometry::ConstPtr msg)
 {
-  ROS_INFO("Got goal: %f %f %f %f %f %f %f",
-    msg->pose.pose.position.x,
-    msg->pose.pose.position.y,
-    msg->pose.pose.position.z, 
-    msg->pose.pose.orientation.x,
-    msg->pose.pose.orientation.y,
-    msg->pose.pose.orientation.z,
-    msg->pose.pose.orientation.w
-  );
+  // ROS_INFO("Got odom: %f %f %f %f %f %f %f",
+  //   msg->pose.pose.position.x,
+  //   msg->pose.pose.position.y,
+  //   msg->pose.pose.position.z, 
+  //   msg->pose.pose.orientation.x,
+  //   msg->pose.pose.orientation.y,
+  //   msg->pose.pose.orientation.z,
+  //   msg->pose.pose.orientation.w
+  // );
 
   odom = *msg;
 }
@@ -125,7 +125,7 @@ void loopFunc(const ros::TimerEvent& event)
       odom_arr.odoms.push_back(odom_msg);
     }
 
-    ROS_INFO("Publishing...");
+    // ROS_INFO("Publishing...");
     pub.publish(odom_arr);
     ros::spinOnce();
 }

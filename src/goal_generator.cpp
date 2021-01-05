@@ -95,7 +95,7 @@ int main( int argc, char* argv[] )
                 start_idx = i;
             }
         }
-        ROS_INFO("Closest point on path is pose #%d/%d x:%.1f y:%.1f z:%.1f at %fm away.",start_idx,path_msg.poses[start_idx].pose.position.x,path_msg.poses.size(),path_msg.poses[start_idx].pose.position.y,path_msg.poses[start_idx].pose.position.z,shortest_dist);
+        // ROS_INFO("Closest point on path is pose #%d/%d x:%.1f y:%.1f z:%.1f at %fm away.",start_idx,path_msg.poses[start_idx].pose.position.x,path_msg.poses.size(),path_msg.poses[start_idx].pose.position.y,path_msg.poses[start_idx].pose.position.z,shortest_dist);
         double sum=0, new_sum=0;
         goal_msg.header.seq = -1;
         for (uint i=start_idx; i<path_msg.poses.size()-1; i++)
@@ -107,7 +107,7 @@ int main( int argc, char* argv[] )
 
             if (new_sum > path_intercept_length)
             {
-              ROS_INFO("Reached path intercept length at pose #%d/%d. Setting goal.",i,path_msg.poses.size());
+              // ROS_INFO("Reached path intercept length at pose #%d/%d. Setting goal.",i,path_msg.poses.size());
               double delta_fraction = (path_intercept_length - sum)/delta.norm();
               delta *= delta_fraction;
 
@@ -129,7 +129,7 @@ int main( int argc, char* argv[] )
         if (goal_msg.header.seq==-1)
         {
           // plan shorter than path intercept length, set goal to end of the path
-          ROS_INFO("Plan shorter than path intercept length, setting goal to end of path.");
+          // ROS_INFO("Plan shorter than path intercept length, setting goal to end of path.");
           goal_msg.header = path_msg.header;
           goal_msg.pose.position.x = path_msg.poses[path_msg.poses.size()-1].pose.position.x + delta[0];
           goal_msg.pose.position.y = path_msg.poses[path_msg.poses.size()-1].pose.position.y + delta[1];
@@ -141,7 +141,7 @@ int main( int argc, char* argv[] )
         }
       // } // if calc_goal
 
-      ROS_INFO("Publishing goal x:%f y:%f z:%f.", goal_msg.pose.position.x, goal_msg.pose.position.y, goal_msg.pose.position.z);
+      // ROS_INFO("Publishing goal x:%f y:%f z:%f.", goal_msg.pose.position.x, goal_msg.pose.position.y, goal_msg.pose.position.z);
       goal_pub.publish(goal_msg);
     }
 }
