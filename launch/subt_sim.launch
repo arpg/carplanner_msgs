@@ -1,16 +1,19 @@
 <launch>
-  <arg name="config"              default="solo"/>
+  <arg name="config"               default="solo"/>
   <arg name="sensors"              default="lite"/>
 
   <arg name="launch_delay"         default="0"/>
+
   <arg name="enable_localization"  default="true"/>
+  <arg name="localization_type"    default="0"/>
   <arg name="enable_mapping"       default="true"/>
+  <arg name="enable_rough_mapping" default="false"/>
   <arg name="enable_multi_agent"   default="true"/>
   <arg name="enable_planning"      default="true"/>
-  <arg name="enable_control"       default="false"/>
+  <arg name="enable_control"       default="true"/>
   <arg name="enable_artifacts"     default="false"/>
-  <arg name="enable_rviz"          default="false"/>
-  <arg name="motion_on_startup"    default="false"/>
+  <arg name="enable_rviz"          default="true"/>
+  <arg name="motion_on_startup"    default="true"/>
 
   <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch">
     <arg name="time"   value="$(eval launch_delay+0)"/>
@@ -45,7 +48,9 @@
     <arg name="file"   value="X1.launch"/>
     <arg name="value"  value="
       enable_localization:=$(arg enable_localization)
+      localization_type:=$(arg localization_type)
       enable_mapping:=$(arg enable_mapping)
+      enable_rough_mapping:=$(arg enable_rough_mapping)
       enable_multi_agent:=$(arg enable_multi_agent)
       enable_planning:=$(arg enable_planning)
       enable_control:=$(arg enable_control)
@@ -70,12 +75,14 @@
   </include> -->
 
     <include file="$(find timed_roslaunch)/launch/timed_roslaunch.launch" if="$(eval config=='team')">
-      <arg name="time"   value="$(eval launch_delay+12)"/>
+      <arg name="time"   value="$(eval launch_delay+20)"/>
       <arg name="pkg"    value="marble_common"/>
       <arg name="file"   value="X2.launch"/>
       <arg name="value"  value="
         enable_localization:=$(arg enable_localization)
+        localization_type:=$(arg localization_type)
         enable_mapping:=$(arg enable_mapping)
+        enable_rough_mapping:=$(arg enable_rough_mapping)
         enable_multi_agent:=$(arg enable_multi_agent)
         enable_planning:=$(arg enable_planning)
         enable_control:=$(arg enable_control)
