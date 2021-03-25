@@ -21,8 +21,6 @@
     <arg name="launch_delay"        value="$(eval launch_delay+0)"/>
   </include>
 
-  <node pkg="nodelet" type="nodelet" name="$(arg manager)"  args="manager" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"/>
-
   <!-- <arg name="basepath" value="$(env HOME)/TAPlanner/mochapc"/> -->
   <arg name="basepath" value="$(find mochapc)"/>
   <include file="$(find carplanner_msgs)/launch/demo.launch">
@@ -64,12 +62,8 @@
     <param name="rate" value="100"/>
   </node>
 
-<<<<<<< Updated upstream
   <node pkg="topic_tools" type="relay" name="local_goal_relay3" args="/move_base_simple/goal planner/goal"/>
   <node pkg="topic_tools" type="relay" name="local_goal_relay2" args="/goal planner/goal"/>
-=======
-  <node pkg="topic_tools" type="relay" name="local_goal_relay2" args="/move_base_simple/goal planner/goal"/>
->>>>>>> Stashed changes
   <node pkg="topic_tools" type="relay" name="local_goal_relay" args="/rviz/nav_goal_2d planner/goal"/>
   <node pkg="topic_tools" type="relay" name="global_path_relay" args="/X1/trajectory planner/global_path"/>
   <node pkg="topic_tools" type="relay" name="local_path_relay" args="planner/actual_traj /X1/local_path"/>

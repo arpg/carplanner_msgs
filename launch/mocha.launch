@@ -3,13 +3,13 @@
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
   <arg name="map_frame" default="map"/>
   <arg name="base_link_frame" default="base_link"/>
-  <!-- <arg name="params_file" default="/home/mike/code/mochapc/learning_params.csv"/> -->
-  <arg name="params_file" default="/home/mike/code/mochapc/husky_params.csv"/>
-  <!-- <arg name="params_file" default="/home/mike/code/mochapc/working_params.csv"/> -->
-  <!-- <arg name="params_file" default="/home/mike/code/mochapc/ninjacar_params.csv"/> -->
+  <!-- <arg name="params_file" default="$(find mochapc)/learning_params.csv"/> -->
+  <arg name="params_file" default="$(find mochapc)/husky_params.csv"/>
+  <!-- <arg name="params_file" default="$(find mochapc)/working_params.csv"/> -->
+  <!-- <arg name="params_file" default="$(find mochapc)/ninjacar_params.csv"/> -->
   <arg name="mode" default="0"/>
-  <!-- <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/labLoop.ply"/> -->
-  <!-- <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/disk-ascii.ply"/> -->
+  <arg name="terrain_mesh_file" default="$(find mochapc)/labLoop.ply"/>
+  <!-- <arg name="terrain_mesh_file" default="$(find mochapc)/disk-ascii.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/smooth_v_hump_mesh2.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/pvc_borders_w_bumps_mesh.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/block_track.ply"/> -->
@@ -18,9 +18,9 @@
   <!-- <arg name="terrain_mesh_file" default="/home/mike/dirt_track_blender/test_track.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/dirt_track_blender/small_test_track.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/virtual_cave.ply"/> -->
-  <arg name="terrain_mesh_file" default="/home/mike/virtual_cave2.ply"/>
-  <arg name="car_mesh_file" default="/home/mike/code/mochapc/herbie/herbie.blend"/>
-  <arg name="wheel_mesh_file" default="/home/mike/code/mochapc/herbie/wheel.blend"/>
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/virtual_cave2.ply"/> -->
+  <arg name="car_mesh_file" default="$(find mochapc)/herbie/herbie.blend"/>
+  <arg name="wheel_mesh_file" default="$(find mochapc)/herbie/wheel.blend"/>
 
   <arg name="launch_rviz" default="false"/>
 

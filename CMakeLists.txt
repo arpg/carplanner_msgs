@@ -41,6 +41,7 @@ add_message_files(
   OdometryArray.msg
   #  ControlPlan.msg
   MotionPlan.msg
+  TriangleMeshStamped.msg
 )
 
 add_service_files(
