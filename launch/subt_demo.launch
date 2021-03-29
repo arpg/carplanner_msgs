@@ -9,8 +9,8 @@
   <arg name="launch_delay" default="0"/>
 
   <arg name="enable_debug" default="false"/>
-  <arg name="launch_manager"     default="true"/>
-  <arg name="manager" default="local_planner"/>
+  <!--<arg name="launch_manager"     default="true"/>
+  <arg name="manager" default="local_planner"/>-->
 
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="" unless="$(eval arg('enable_debug') and arg('launch_manager'))"/>

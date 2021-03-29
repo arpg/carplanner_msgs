@@ -1,3 +1,3 @@
 Header header
 uint32[] triangleIndices
-float64[] triangleVertices
+float32[] triangleVertices
