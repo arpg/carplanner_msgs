@@ -16,8 +16,8 @@ int main(int argc, char** argv){
   pnode.param("parent_frame", parent_frame, std::string("world"));
   pnode.param("child_frame", child_frame, std::string("base_link"));
   pnode.param("odom_topic", odom_topic, std::string("odometry"));
-  float rate_;
-  pnode.param("rate", rate_, (float)rate_);
+  double rate_;
+  pnode.param("rate", rate_, (double)50);
 
   ros::Publisher robot_odom_pub =
     node.advertise<nav_msgs::Odometry>(odom_topic, 10);
