@@ -1,0 +1,6 @@
+uint16 SIMULATION=0
+uint16 EXPERIMENT=1
+
+int16 world_id
+uint16 mode
+---

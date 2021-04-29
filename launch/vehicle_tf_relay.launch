@@ -1,0 +1,11 @@
+<launch>
+
+  <arg name="world_id"              default="0"/>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_tfrelay"          args="0 0 0 0 0 0 1 X1/base_link                X1/base_link/$(arg world_id)"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="front_right_wheel_tfrelay"  args="0 0 0 0 0 0 1 X1/front_right_wheel_link   front_right_wheel_link/$(arg world_id)"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="rear_right_wheel_tfrelay"   args="0 0 0 0 0 0 1 X1/rear_right_wheel_link    rear_right_wheel_link/$(arg world_id)"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="front_left_wheel_tfrelay"   args="0 0 0 0 0 0 1 X1/front_left_wheel_link    front_left_wheel_link/$(arg world_id)"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="rear_left_wheel_tfrelay"    args="0 0 0 0 0 0 1 X1/rear_left_wheel_link     rear_left_wheel_link/$(arg world_id)"/>
+
+</launch>

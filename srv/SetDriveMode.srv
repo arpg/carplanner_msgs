@@ -1,6 +1,7 @@
 uint16 DIFF=0
 uint16 ACKERMANN=1
 uint16 DUAL_ACKERMANN=2
+uint16 REAR_ACKERMANN=3
 
 int16 world_id
 uint16 mode
