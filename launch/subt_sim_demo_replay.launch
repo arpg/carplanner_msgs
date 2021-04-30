@@ -7,10 +7,10 @@
   <arg name="reset_map_on_drift_dist"     default="0.3"/>
   <arg name="max_pub_radius"              default="INFINITY"/>
 
-  <arg name="launch_rviz" default="true"/>
-  <arg name="play_rosbag" default="true"/>
+  <arg name="launch_rviz" default="false"/>
+  <arg name="play_rosbag" default="false"/>
   <!-- <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup2.bag"/> -->
-  <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup3_w_traj.bag"/>
+  <arg name="rosbag_file" default="$(env HOME)/data/bags/subt_sim_startup3_w_traj.bag"/>
 
   <arg name="enable_debug"      default="false"/>
   <arg name="enable_valgrind"   default="false"/>

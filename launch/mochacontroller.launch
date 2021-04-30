@@ -5,6 +5,7 @@
   <arg name="state_topic"       default="vehicle/9/state"/>
   <arg name="command_topic"     default="vehicle/9/command"/>
   <arg name="map_frame"         default="map"/>
+  <arg name="lookahead_time"    default="5.0"/>
 
   <arg name="launch_delay"      default="0"/>
   <arg name="enable_debug"      default="false"/>
@@ -22,6 +23,7 @@
     <remap from="controller/state"    to="$(arg state_topic)"/>
     <remap from="controller/command"  to="$(arg command_topic)"/>
     <param name="map_frame"           value="$(arg map_frame)"/>
+    <param name="lookahead_time"      value="$(arg lookahead_time)"/>
   </node>
 
 </launch>
