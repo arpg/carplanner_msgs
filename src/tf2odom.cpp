@@ -16,8 +16,8 @@ int main(int argc, char** argv){
   pnode.param("parent_frame", parent_frame, std::string("world"));
   pnode.param("child_frame", child_frame, std::string("base_link"));
   pnode.param("odom_topic", odom_topic, std::string("odometry"));
-  float rate_;
-  pnode.param("rate", rate_, (float)rate_);
+  double rate_;
+  pnode.param("rate", rate_, (double)50);
 
   ros::Publisher robot_odom_pub =
     node.advertise<nav_msgs::Odometry>(odom_topic, 10);
@@ -47,8 +47,8 @@ int main(int argc, char** argv){
       robot_odom_pub.publish(odom_msg);
     }
     catch (tf::TransformException ex){
-      //ROS_ERROR("%s",ex.what());
-      ros::Duration(0.1).sleep();
+      ROS_ERROR("%s",ex.what());
+      // ros::Duration(0.1).sleep();
     }
 /*
     point_msg.header.stamp = ros::Time::now();

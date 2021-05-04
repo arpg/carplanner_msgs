@@ -1,15 +1,16 @@
 <launch>
 
-  <arg name="launch_sim" default="true"/>
-  <arg name="launch_rviz" default="true"/>
-  <arg name="launch_infinitam" default="true"/>
+  <arg name="launch_mochapc"            default="true"/>
+  <arg name="launch_sim"                default="true"/>
+  <arg name="launch_rviz"               default="true"/>
+  <arg name="launch_infinitam"          default="true"/>
   <arg name="enable_guess_from_tf_tree" default="true"/>
 
   <arg name="launch_delay" default="0"/>
 
-  <arg name="enable_debug" default="false"/>
-  <arg name="launch_manager"     default="true"/>
-  <arg name="manager" default="local_planner"/>
+  <arg name="enable_debug"      default="false"/>
+  <arg name="launch_manager"    default="true"/>
+  <arg name="manager"           default="local_planner"/>
 
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="" unless="$(eval arg('enable_debug') and arg('launch_manager'))"/>
@@ -22,20 +23,20 @@
   </include>
 
   <!-- <arg name="basepath" value="$(env HOME)/TAPlanner/mochapc"/> -->
-  <arg name="basepath" value="$(find mochapc)"/>
-  <include file="$(find carplanner_msgs)/launch/demo.launch">
-    <arg name="params_file" value="$(arg basepath)/husky_params.csv"/>
-    <arg name="terrain_mesh_file" value="$(arg basepath)/disk-ascii.ply"/>
-    <arg name="car_mesh_file" value="$(arg basepath)/herbie/herbie.blend"/>
-    <arg name="wheel_mesh_file" value="$(arg basepath)/herbie/wheel.blend"/>
-    <arg name="map_frame" value="X1/map"/>
-    <arg name="base_link_frame" value="X1/base_link"/>
+  <!-- <arg name="basepath" value="$(find mochapc)"/> -->
+  <include file="$(find carplanner_msgs)/launch/demo.launch" if="$(arg launch_mochapc)">
+    <arg name="params_file"         value="$(find mochapc)/husky_params.csv"/>
+    <arg name="terrain_mesh_file"   value="$(find mochapc)/disk-ascii.ply"/>
+    <arg name="car_mesh_file"       value="$(find mochapc)/herbie/herbie.blend"/>
+    <arg name="wheel_mesh_file"     value="$(find mochapc)/herbie/wheel.blend"/>
+    <arg name="map_frame"           value="X1/map"/>
+    <arg name="base_link_frame"     value="X1/base_link"/>
 
-    <arg name="launch_infinitam" value="false"/>
+    <arg name="launch_infinitam"    value="false"/>
     <arg name="launch_delay"        value="$(eval launch_delay+4)"/>
-    <arg name="enable_debug" value="$(arg enable_debug)"/>
-    <arg name="launch_manager" value="false"/>
-    <arg name="manager" value="$(arg manager)"/>
+    <arg name="enable_debug"        value="$(arg enable_debug)"/>
+    <arg name="launch_manager"      value="false"/>
+    <arg name="manager"             value="$(arg manager)"/>
   </include>
 
   <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="T_camdown_optical" args="0 0 0 -1.57 0 -1.57 X1/base_link/camera_down X1/base_link/camera_down_optical"/> -->

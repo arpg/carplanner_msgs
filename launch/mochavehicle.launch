@@ -1,19 +1,25 @@
 <launch>
 
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
+<<<<<<< HEAD
   <arg name="map_frame" default="$(arg map_frame)"/>
   <arg name="base_link_frame" default="$(arg base_link_frame)"/>
   <arg name="params_file" default="$(find mochapc)/learning_params.csv"/>
+=======
+  <arg name="map_frame"       default="map"/>
+  <arg name="base_link_frame" default="base_link"/>
+  <arg name="wheel_link_frame" default="wheel_link"/>
+  <arg name="params_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
+>>>>>>> master
   <arg name="mode" default="0"/>
   <arg name="terrain_mesh_file" default="$(find mochapc)/labLoop.ply"/>
   <arg name="car_mesh_file" default="$(find mochapc)/herbie/herbie.blend"/>
   <arg name="wheel_mesh_file" default="$(find mochapc)/herbie/wheel.blend"/>
 
   <arg name="launch_delay" default="0"/>
-
   <arg name="enable_debug" default="false"/>
   <arg name="launch_manager"     default="true"/>
-  <arg name="manager"     default="mocha_planner"/>
+  <arg name="manager"     default="mocha_vehicle_manager"/>
 
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="" unless="$(eval arg('enable_debug') and arg('launch_manager'))"/>
@@ -30,6 +36,7 @@
     <param name="wheel_mesh_file" value="$(arg wheel_mesh_file)"/>
     <param name="map_frame" value="$(arg map_frame)"/>
     <param name="base_link_frame" value="$(arg base_link_frame)"/>
+    <param name="wheel_link_frame" value="$(arg wheel_link_frame)"/>
   </node>
 
 </launch>

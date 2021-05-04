@@ -49,6 +49,7 @@ add_service_files(
     srv
   FILES
     SetDriveMode.srv
+    SetSimMode.srv
     ResetMesh.srv
     Replay.srv
     EnableTerrainPlanning.srv
