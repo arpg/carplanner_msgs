@@ -1,14 +1,14 @@
 <launch>
 
-  <param name="use_sim_time" value="true"/>
+  <param name="/use_sim_time" value="true"/>
 
   <arg name="enable_guess_from_tf_tree"   default="true"/>
   <arg name="enable_lc"                   default="false"/>
   <arg name="reset_map_on_drift_dist"     default="0.3"/>
   <arg name="max_pub_radius"              default="INFINITY"/>
 
-  <arg name="launch_rviz" default="false"/>
-  <arg name="play_rosbag" default="false"/>
+  <arg name="launch_rviz" default="true"/>
+  <arg name="play_rosbag" default="true"/>
   <!-- <arg name="rosbag_file" default="$(env HOME)/subt_sim_startup2.bag"/> -->
   <arg name="rosbag_file" default="$(env HOME)/data/bags/subt_sim_startup3_w_traj.bag"/>
 
@@ -50,7 +50,7 @@
 
   <node pkg="rosbag" type="play" name="subt_sim_demo_bag"
     args="-k $(arg rosbag_file)"
-    launch-prefix="bash -c 'sleep 10.0; $0 $@' "
+    launch-prefix="bash -c 'sleep 0.0; $0 $@' "
     if="$(arg play_rosbag)"/>
 
   <!-- <include file="$(find carplanner_msgs)/launch/vehicle_tf_relay.launch">

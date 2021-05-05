@@ -18,7 +18,7 @@
   <node pkg="nodelet" type="nodelet" name="$(arg manager)" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"
     args="manager" if="$(arg launch_manager)"/>
 
-  <node pkg="nodelet" type="nodelet" name="mocha_controller" args="standalone mochapc/MochaControllerNodelet" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)">
+  <node pkg="nodelet" type="nodelet" name="mocha_controller" args="load mochapc/MochaControllerNodelet $(arg manager)" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)">
     <remap from="planner/plan"        to="$(arg plan_topic)"/>
     <remap from="controller/state"    to="$(arg state_topic)"/>
     <remap from="controller/command"  to="$(arg command_topic)"/>
