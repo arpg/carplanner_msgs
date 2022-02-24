@@ -149,3 +149,10 @@ add_executable( tf2odom
 target_link_libraries( tf2odom
   ${catkin_LIBRARIES}
 )
+
+add_executable( pose2setstate
+  src/pose2setstate.cpp
+)
+target_link_libraries( pose2setstate
+  ${catkin_LIBRARIES}
+)

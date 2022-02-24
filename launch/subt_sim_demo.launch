@@ -111,6 +111,6 @@
 
   <arg name="bag_delay" default="$(eval launch_delay+0)"/>
   <node pkg="rviz" type="rviz" name="subt_sim_demo_rviz" if="$(arg launch_rviz)" output="log" launch-prefix="bash -c 'sleep $(arg bag_delay); $0 $@'"
-    args="-d $(env HOME)/.rviz/subt_sim.rviz"/>
+    args="-d $(find mochapc)/rviz/subt_sim.rviz"/>
 
 </launch>
