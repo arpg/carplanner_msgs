@@ -7,7 +7,7 @@
 #include <geometry_msgs/TransformStamped.h>
 
 int main(int argc, char** argv){
-  ros::init(argc, argv, "robot_odom_publisher");
+  ros::init(argc, argv, "tf2odom");
 
   ros::NodeHandle node;
   ros::NodeHandle pnode("~");
@@ -18,9 +18,12 @@ int main(int argc, char** argv){
   pnode.param("odom_topic", odom_topic, std::string("odometry"));
   double rate_;
   pnode.param("rate", rate_, (double)50);
+  double cache_len_;
+  pnode.param("cache_len", cache_len_, (double)0.1);
 
-  ros::Publisher robot_odom_pub =
-    node.advertise<nav_msgs::Odometry>(odom_topic, 10);
+  ros::Publisher robot_odom_pub = node.advertise<nav_msgs::Odometry>(odom_topic, 10);
+
+  ROS_INFO("Initialized.");
 
   tf::TransformListener listener;
   nav_msgs::Odometry odom_msg;
@@ -29,7 +32,10 @@ int main(int argc, char** argv){
 
   geometry_msgs::PointStamped point_msg;
 
+  std::vector<nav_msgs::Odometry> odom_msg_cache;
+
   odom_msg.header.frame_id = parent_frame;
+  odom_msg.child_frame_id = child_frame;
   ros::Rate rate(rate_);
   while (node.ok()){
     rate.sleep();
@@ -39,17 +45,62 @@ int main(int argc, char** argv){
     try{
       listener.lookupTransform(parent_frame.c_str(), child_frame.c_str(),
                                ros::Time(0), transform);
-      odom_msg.header.stamp = ros::Time::now();
+      odom_msg.header.stamp = transform.stamp_;
       odom_msg.pose.pose.position.x = transform.getOrigin().x();
       odom_msg.pose.pose.position.y = transform.getOrigin().y();
       odom_msg.pose.pose.position.z = transform.getOrigin().z();
       tf::quaternionTFToMsg(transform.getRotation().normalize(), odom_msg.pose.pose.orientation);
-      robot_odom_pub.publish(odom_msg);
     }
     catch (tf::TransformException ex){
-      ROS_ERROR("%s",ex.what());
+      ROS_WARN("%s",ex.what());
       // ros::Duration(0.1).sleep();
+      continue;
     }
+
+    if (odom_msg_cache.size()<=0)
+    {
+      odom_msg_cache.push_back(odom_msg);
+      continue;
+    }
+
+    double dt = (odom_msg.header.stamp-odom_msg_cache[odom_msg_cache.size()-1].header.stamp).toSec();
+    if (dt <= 0.f)
+      continue;
+
+    // if (odom_msg_cache.size() > 0)
+    {
+      odom_msg.twist.twist.linear.x = (odom_msg.pose.pose.position.x - odom_msg_cache[odom_msg_cache.size()-1].pose.pose.position.x)/dt;
+      odom_msg.twist.twist.linear.y = (odom_msg.pose.pose.position.y - odom_msg_cache[odom_msg_cache.size()-1].pose.pose.position.y)/dt;
+      odom_msg.twist.twist.linear.z = (odom_msg.pose.pose.position.z - odom_msg_cache[odom_msg_cache.size()-1].pose.pose.position.z)/dt;
+    }
+
+    odom_msg_cache.push_back(odom_msg);
+
+    geometry_msgs::Vector3 avg_vel;
+    for (auto cache_ptr = odom_msg_cache.begin(); cache_ptr != odom_msg_cache.end(); cache_ptr++)
+    {
+      if ((odom_msg.header.stamp-cache_ptr->header.stamp).toSec() > cache_len_)
+      {
+        odom_msg_cache.erase(cache_ptr--);
+        continue;
+      }
+      avg_vel.x += cache_ptr->twist.twist.linear.x;
+      avg_vel.y += cache_ptr->twist.twist.linear.y;
+      avg_vel.z += cache_ptr->twist.twist.linear.z;
+    }
+    if (odom_msg_cache.size()>0)
+    {
+      avg_vel.x /= odom_msg_cache.size();
+      avg_vel.y /= odom_msg_cache.size();
+      avg_vel.z /= odom_msg_cache.size();
+    } else {
+      ROS_WARN_THROTTLE(5.f, "odom_msg_cache of size 0 detected");
+    }
+    odom_msg.twist.twist.linear = avg_vel;
+    
+    robot_odom_pub.publish(odom_msg);
+
+
 /*
     point_msg.header.stamp = ros::Time::now();
     point_msg.point.x = odom_msg.pose.pose.position.x;

@@ -26,6 +26,8 @@
 
   <arg name="launch_delay" default="0"/>
 
+  <arg name="launch_rviz" default="true"/>
+
   <arg name="enable_debug"      default="false"/>
   <arg name="enable_valgrind"   default="false"/>
   <arg name="launch_manager"    default="true"/>
@@ -50,6 +52,7 @@
     <arg name="wheel_mesh_file"     value="$(arg wheel_mesh_file)"/>
     <arg name="map_frame"           value="$(arg map_frame)"/>
     <arg name="base_link_frame"     value="$(arg base_link_frame)"/>
+    <arg name="launch_rviz"         value="false"/>
   </include>
   <!-- <include file="$(find timed_roslaunch)/timed_roslaunch.launch">
     <arg name="time"   value="5"/>
@@ -105,7 +108,7 @@
     <param name="rate" value="100"/>
   </node>
 
- <node pkg="carplanner_msgs" type="pose2setstate" name="pose2setstate" output="screen">
+ <node pkg="carplanner_msgs" type="pose2setstate" name="pose2setstate" output="log">
     <param name="pose_topic" value="vehicle/initial_pose"/>
     <param name="set_state_service" value="vehicle/set_state"/>
   </node>
@@ -117,5 +120,7 @@
     <param name="path_intercept_length" value="3.0"/>
     <param name="rate" value="100"/>
   </node> -->
+
+  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find carplanner_msgs)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
 
 </launch>

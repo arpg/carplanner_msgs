@@ -80,6 +80,6 @@
     <arg name="lookahead_time"      value="5.0"/>
   </include>
 
-  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(env HOME)/.rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
+  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find carplanner_msgs)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
 
 </launch>

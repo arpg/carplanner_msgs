@@ -156,3 +156,17 @@ add_executable( pose2setstate
 target_link_libraries( pose2setstate
   ${catkin_LIBRARIES}
 )
+
+add_executable( pose2odom
+  src/pose2odom.cpp
+)
+target_link_libraries( pose2odom
+  ${catkin_LIBRARIES}
+)
+
+add_executable( odom_reframer
+  src/odom_reframer.cpp
+)
+target_link_libraries( odom_reframer
+  ${catkin_LIBRARIES}
+)
