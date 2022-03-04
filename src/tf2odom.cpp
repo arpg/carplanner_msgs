@@ -52,7 +52,7 @@ int main(int argc, char** argv){
       tf::quaternionTFToMsg(transform.getRotation().normalize(), odom_msg.pose.pose.orientation);
     }
     catch (tf::TransformException ex){
-      ROS_WARN("%s",ex.what());
+      ROS_WARN_THROTTLE(1.0,"%s",ex.what());
       // ros::Duration(0.1).sleep();
       continue;
     }
