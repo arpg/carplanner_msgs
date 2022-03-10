@@ -25,7 +25,7 @@ bool lookup_transform(Tform& tform_out, std::string current_frame, std::string n
   }
   catch (tf2::TransformException ex)
   {
-    ROS_ERROR("%s",ex.what());
+    ROS_ERROR_THROTTLE(1.0,"%s",ex.what());
     return false;
   }
 

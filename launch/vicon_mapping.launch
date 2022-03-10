@@ -1,0 +1,59 @@
+<launch>
+
+  <arg name="launch_vicon"       default="true"/>
+  <arg name="launch_rviz"        default="true"/>
+  <arg name="vehicle_name"       default="N01"/>
+  <arg name="filters"            default=""/>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_world2mocap" args="0 0 0 1.5 0 1.5 map mocap"/>
+
+  <include file="$(find vrpn_client_ros)/launch/sample.launch" if="$(arg launch_vicon)">
+    <arg name="server"    value="tracker"/>
+    <arg name="frame_id"  value="mocap"/>
+  </include>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_mocapfake" args="0 0 0 0 0 0 mocap $(arg vehicle_name)" unless="$(arg launch_vicon)"/>
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_vehicle2base_link" args="0 0 0 -1.5 -1.5 0 $(arg vehicle_name) N01/base_link"/>
+
+  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find mochapc)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
+
+  <!-- <node pkg="carplanner_msgs" type="pose2odom" name="pose2odom" output="screen">
+    <param name="pose_topic" value="/vrpn_client_node/$(arg vehicle_name)/pose"/>
+    <param name="odom_topic" value="/vrpn_client_node/$(arg vehicle_name)/odom"/>
+    <param name="twist_topic" value="/vrpn_client_node/$(arg vehicle_name)/twist"/>
+    <param name="child_frame_id" value="$(arg vehicle_name)"/>
+    <param name="avg_window_length" value="1.0"/>
+  </node> -->
+
+  <node pkg="carplanner_msgs" type="tf2odom" name="tf2odom" output="log">
+    <param name="parent_frame" value="map"/>
+    <param name="child_frame" value="/N01/base_link"/>
+    <param name="odom_topic" value="/N01/odom"/>
+    <param name="rate" value="100"/>
+    <param name="vel_avg_len" value="0.1"/>
+  </node>
+
+  <node pkg="carplanner_msgs" type="odom_reframer" name="odom_reframer" output="log">
+    <param name="odom_in_topic" value="/N01/odom"/>
+    <param name="odom_out_topic" value="/N01/odom_chassis"/>
+  </node>
+
+  <include file="$(find carplanner_msgs)/launch/sensors.launch">
+    <arg name="filters" value="$(arg filters)"/>
+  </include>
+
+    <include file="$(find infinitam)/launch/demo.launch">
+    <arg name="launch_delay"                value="5"/>
+    <arg name="convert_metric"              value="false"/>
+    <arg name="publish_vertices"            value="false"/>
+    <arg name="world_frame_id"              value="map"/>
+    <arg name="camera_frame_id"             value="camera_depth_optical_frame"/>
+    <arg name="mesh_topic"                  value="mesh"/>
+    <arg name="depth_info_topic"            value="/camera/depth/camera_info"/>
+    <arg name="depth_topic"                 value="/camera/depth/image_rect_raw"/>
+    <arg name="rgb_info_topic"              value="/camera/aligned_depth_to_color/camera_info"/>
+    <arg name="rgb_topic"                   value="/camera/aligned_depth_to_color/image_rect_raw"/>
+    <arg name="enable_guess_from_tf_tree"   value="true"/>
+  </include>
+
+</launch>

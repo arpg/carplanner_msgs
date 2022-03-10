@@ -1,111 +1,31 @@
 <?xml version="1.0"?>
 <robot name="ninjacar" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <material name="aluminum">
+  <!-- <material name="aluminum">
 	  <color rgba="0.5 0.5 0.5 1"/>
-    </material>
+    </material> -->
 
-  <link name="imu_link"/>
+  <!-- <link name="imu_link"/>
   <link name="body_aligned_imu_link"/>
 
   <joint name="aligned_imu" type="fixed">
   <parent link="body_aligned_imu_link" />
     <child link="imu_link" />
     <origin xyz="0 0 0" rpy="0 0 -1.570796325" />
-  </joint>
-
-  <link name="xavier"/> <!-- centroid of heat sink projected to footprint -->
-
-  <!-- <joint name="xavier_ouster" type="fixed">
-    <parent link="xavier" />
-    <child link="os1_sensor" />
-    <origin xyz="0.1157614 0 0.0329911" rpy="0 0 -1.570796325" />
-  </joint>
-  <link name="os1_sensor"/> -->
-
-  <!-- <xacro:include filename="$(find ouster_ros)/OS1-64.urdf.xacro"/>
-  <OS1-64 parent="xavier">
-    <origin xyz="0.1157614 0 0.0329911" rpy="0 0 -1.570796325" />
-  </OS1-64> -->
-
-  <!-- <joint name="ouster" type="fixed">
-    <parent link="os1_sensor" />
-    <child link="os1_lidar" />
-    <origin xyz="0 0 0.03816" rpy="0 0 -3.14159265" />
   </joint> -->
 
-  <!-- <link name="os1_sensor"/> -->
+  <link name="N01/base_link"/>
 
-
-
-  <joint name="xavier_imu" type="fixed">
+  <!-- <joint name="cpu_imu" type="fixed">
     <parent link="body_aligned_imu_link" />
-    <child link="xavier" />
+    <child link="cpu" />
     <origin xyz="-0.1154054 0 0.0077934 " rpy="0 0 0" />
-  </joint>
-
-
-  <!-- <joint name="ouster_imu" type="fixed">
-    <parent link="xavier" />
-    <child link="camera" />
-    <origin xyz="0.1971268 0 -0.0007798" rpy="0 0 0" />
   </joint> -->
 
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
 
-  <!-- <link name="camera_fwd"/>
-  <joint name="camera_fwd" type="fixed">
-    <parent link="xavier" />
-    <child link="camera_fwd" />
-    <origin xyz="0.2219971 0 0.0130257" rpy="0 0 0" />
-  </joint>
-  <sensor_d435 parent="camera_fwd">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-  </sensor_d435>
-  <link name="camera_low"/>
-  <joint name="camera_low" type="fixed">
-    <parent link="camera_fwd" />
-    <child link="camera_low" />
-    <origin xyz="-0.0136486 0 -0.0366877" rpy="0 0.523599 0" />
-  </joint>
-  <sensor_d435 parent="camera_low">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-  </sensor_d435> -->
-
-  <sensor_d435 parent="xavier" name="camera_fwd">
+  <sensor_d435 parent="N01/base_link" name="camera">
     <origin xyz="0.2219971 0 0.0130257" rpy="0 0 0" />
   </sensor_d435>
-  <sensor_d435 parent="camera_fwd_bottom_screw_frame" name="camera_low">
-    <origin xyz="-0.0136486 0 -0.0366877" rpy="0 0.523599 0" />
-  </sensor_d435>
-
-<!-- OUSTER -->
-  <joint name="mount_joint" type="fixed">
-    <parent link="xavier"/>
-    <child link="os1_sensor"/>
-    <origin xyz="0.1971268 0 -0.0007798" rpy="0 0 0" />
-  </joint>
-
-  <link name="os1_sensor">
-    <visual name="base_visual">
-       <origin xyz="0 0 0.0" rpy="0 0 1.5707" />
-       <geometry>
-         <!-- <mesh filename="package://ouster_description/meshes/os1_64.dae" /> -->
-         <cylinder length="0.073" radius="0.04" />
-       </geometry>
-    </visual>
-  </link>
-  <link name="os1_imu" />
-  <link name="os1_lidar" />
-  <joint name="imu_link_joint" type="fixed">
-    <parent link="os1_sensor" />
-    <child link="os1_imu" />
-    <origin xyz="0.006253 -0.011775 0.007645" rpy="0 0 0" />
-  </joint>
-  <joint name="lidar_link_joint" type="fixed">
-    <parent link="os1_sensor" />
-    <child link="os1_lidar" />
-    <origin xyz="0.0 0.0 0.03618" rpy="0 0 3.14159265" />
-  </joint>
 
 </robot>
