@@ -33,6 +33,7 @@ add_message_files(
   DIRECTORY
   msg
   FILES
+  ApplyVelocitiesData.msg
   MotionSample.msg
   Command.msg
   #  CommandList.msg
@@ -61,6 +62,7 @@ add_action_files(
     action
   FILES 
   #ApplyAllVelocities.action
+    BatchApplyVelocities.action
     ApplyVelocities.action
     SetState.action
     GetState.action

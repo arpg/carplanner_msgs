@@ -121,6 +121,6 @@
     <param name="rate" value="100"/>
   </node> -->
 
-  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find carplanner_msgs)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
+  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find mochapc)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
 
 </launch>
