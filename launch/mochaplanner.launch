@@ -3,8 +3,8 @@
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
   <arg name="map_frame" default="map"/>
   <arg name="base_link_frame" default="base_link"/>
-  <arg name="params_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
-  <arg name="terrain_mesh_file" default="/home/ubuntu/mikem_local_planning_ws/src/mochapc/labLoop.ply"/>
+  <arg name="params_file" default="$(find mochapc)/learning_params.csv"/>
+  <arg name="terrain_mesh_file" default="$(find mochapc)/labLoop.ply"/>
 
   <arg name="launch_delay" default="0"/>
   <arg name="enable_debug" default="false"/>

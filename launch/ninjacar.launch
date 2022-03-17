@@ -1,0 +1,10 @@
+<launch>
+
+  <!-- <machine name="rock64" address="rock64" user="rock64" password="rock64" env-loader="/opt/ros/melodic/env.sh" default="true"/> -->
+  <!-- <node pkg="drive_control" type="drive_control" name="drive_control" machine="rock64" output="screen">
+  </node> -->
+
+  <include file="$(find drive_control)/launch/remote_control.launch">
+  </include>
+
+</launch>

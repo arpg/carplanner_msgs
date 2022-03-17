@@ -33,6 +33,7 @@ add_message_files(
   DIRECTORY
   msg
   FILES
+  ApplyVelocitiesData.msg
   MotionSample.msg
   Command.msg
   #  CommandList.msg
@@ -41,6 +42,7 @@ add_message_files(
   OdometryArray.msg
   #  ControlPlan.msg
   MotionPlan.msg
+  TriangleMeshStamped.msg
 )
 
 add_service_files(
@@ -60,6 +62,7 @@ add_action_files(
     action
   FILES 
   #ApplyAllVelocities.action
+    BatchApplyVelocities.action
     ApplyVelocities.action
     SetState.action
     GetState.action
@@ -146,5 +149,26 @@ add_executable( tf2odom
   src/tf2odom.cpp
 )
 target_link_libraries( tf2odom
+  ${catkin_LIBRARIES}
+)
+
+add_executable( pose2setstate
+  src/pose2setstate.cpp
+)
+target_link_libraries( pose2setstate
+  ${catkin_LIBRARIES}
+)
+
+add_executable( pose2odom
+  src/pose2odom.cpp
+)
+target_link_libraries( pose2odom
+  ${catkin_LIBRARIES}
+)
+
+add_executable( odom_reframer
+  src/odom_reframer.cpp
+)
+target_link_libraries( odom_reframer
   ${catkin_LIBRARIES}
 )

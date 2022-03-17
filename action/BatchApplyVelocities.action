@@ -1,0 +1,11 @@
+# Use input command to determine updated state and return it
+
+# Goal definition
+ApplyVelocitiesData[] data
+
+---
+# Result definition
+carplanner_msgs/MotionSample[] motion_samples
+
+---
+# Feedback definition

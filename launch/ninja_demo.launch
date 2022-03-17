@@ -1,0 +1,15 @@
+<launch>
+
+  <include file="$(find carplanner_msgs)/launch/vicon_mapping.launch">
+    <!-- <arg name="launch_rviz"       value="false"/> -->
+  </include>
+
+  <!-- <include file="$(find carplanner_msgs)/launch/demo.launch">
+    <arg name="launch_infinitam"  value="$(arg launch_infinitam)"/>
+    <arg name="launch_rviz"       value="false"/>
+  </include> -->
+
+  <include file="$(find drive_control)/launch/remote_control.launch">
+  </include>
+
+</launch>

@@ -1,7 +1,5 @@
 <launch>
 
-  <arg name="launch_carplanner" default="false"/>
-  <arg name="launch_infinitam"  default="false"/>
   <arg name="launch_rviz"       default="true"/>
 
   <arg name="vehicle_name"       default="N01"/>
@@ -14,11 +12,6 @@
   </include>
 
   <node pkg="tf2_ros" type="static_transform_publisher" name="tf_vehicle2base_link" args="0 0 0 -1.5 -1.5 0 $(arg vehicle_name) N01/base_link"/>
-
-  <include file="$(find carplanner_msgs)/launch/demo.launch" if="$(arg launch_carplanner)">
-    <arg name="launch_infinitam"  value="$(arg launch_infinitam)"/>
-    <arg name="launch_rviz"       value="false"/>
-  </include>
 
   <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find mochapc)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
 

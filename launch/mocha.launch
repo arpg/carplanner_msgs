@@ -3,13 +3,13 @@
   <!-- <arg name="input_mesh" default="/infinitam/mesh"/> -->
   <arg name="map_frame" default="map"/>
   <arg name="base_link_frame" default="base_link"/>
-  <!-- <arg name="params_file" default="/home/mike/code/mochapc/learning_params.csv"/> -->
-  <arg name="params_file" default="/home/mike/code/mochapc/husky_params.csv"/>
-  <!-- <arg name="params_file" default="/home/mike/code/mochapc/working_params.csv"/> -->
-  <!-- <arg name="params_file" default="/home/mike/code/mochapc/ninjacar_params.csv"/> -->
+  <!-- <arg name="params_file" default="$(find mochapc)/learning_params.csv"/> -->
+  <arg name="params_file" default="$(find mochapc)/husky_params.csv"/>
+  <!-- <arg name="params_file" default="$(find mochapc)/working_params.csv"/> -->
+  <!-- <arg name="params_file" default="$(find mochapc)/ninjacar_params.csv"/> -->
   <arg name="mode" default="0"/>
-  <!-- <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/labLoop.ply"/> -->
-  <!-- <arg name="terrain_mesh_file" default="/home/mike/code/mochapc/disk-ascii.ply"/> -->
+  <arg name="terrain_mesh_file" default="$(find mochapc)/labLoop.ply"/>
+  <!-- <arg name="terrain_mesh_file" default="$(find mochapc)/disk-ascii.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/smooth_v_hump_mesh2.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/pvc_borders_w_bumps_mesh.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/block_track.ply"/> -->
@@ -18,9 +18,9 @@
   <!-- <arg name="terrain_mesh_file" default="/home/mike/dirt_track_blender/test_track.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/dirt_track_blender/small_test_track.ply"/> -->
   <!-- <arg name="terrain_mesh_file" default="/home/mike/virtual_cave.ply"/> -->
-  <arg name="terrain_mesh_file" default="/home/mike/virtual_cave2.ply"/>
-  <arg name="car_mesh_file" default="/home/mike/code/mochapc/herbie/herbie.blend"/>
-  <arg name="wheel_mesh_file" default="/home/mike/code/mochapc/herbie/wheel.blend"/>
+  <!-- <arg name="terrain_mesh_file" default="/home/mike/virtual_cave2.ply"/> -->
+  <arg name="car_mesh_file" default="$(find mochapc)/herbie/herbie.blend"/>
+  <arg name="wheel_mesh_file" default="$(find mochapc)/herbie/wheel.blend"/>
 
   <arg name="launch_rviz" default="false"/>
 
@@ -68,7 +68,7 @@
   <!-- <include file="$(find carplanner_msgs)/launch/mochacontroller.launch">
     <arg name="manager" value="$(arg manager)"/>
   </include> -->
-  <!-- <include file="$(find carplanner_msgs)/launch/mochacontroller.launch">
+  <include file="$(find carplanner_msgs)/launch/mochacontroller.launch">
     <arg name="launch_delay"        value="$(eval launch_delay+10)"/>
     <arg name="enable_debug"        value="$(arg enable_debug)"/>
     <arg name="launch_manager"      value="false"/>
@@ -77,8 +77,9 @@
     <arg name="state_topic"         value="vehicle/9/state"/>
     <arg name="command_topic"       value="vehicle/9/command"/>
     <arg name="map_frame"           value="$(arg map_frame)"/>
-  </include> -->
+    <arg name="lookahead_time"      value="5.0"/>
+  </include>
 
-  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(env HOME)/.rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
+  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find carplanner_msgs)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
 
 </launch>

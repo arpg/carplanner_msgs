@@ -15,18 +15,18 @@
 
   <!-- MOCHA -->
   <arg name="params_file" default="$(find mochapc)/learning_params.csv"/>
-  <arg name="terrain_mesh_file" default="$(find mochapc)/mochagui/labLoop.ply"/>
+  <!-- <arg name="params_file" default="$(find mochapc)/working_params.csv"/> -->
+  <!-- <arg name="params_file" default="$(find mochapc)/ninjacar_params.csv"/> -->
+  <arg name="terrain_mesh_file" default="$(find mochapc)/labLoop.ply"/>
   <arg name="car_mesh_file" default="$(find mochapc)/herbie/herbie.blend"/>
   <arg name="wheel_mesh_file" default="$(find mochapc)/herbie/wheel.blend"/>
-  <!-- <arg name="params_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/learning_params.csv"/>
-  <arg name="terrain_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/labLoop.ply"/>
-  <arg name="car_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/herbie/herbie.blend"/>
-  <arg name="wheel_mesh_file" default="/home/marble/mikem_local_planning_ws/src/mochapc/herbie/wheel.blend"/> -->
 
   <arg name="map_frame" default="map"/>
   <arg name="base_link_frame" default="base_link"/>
 
   <arg name="launch_delay" default="0"/>
+
+  <arg name="launch_rviz" default="true"/>
 
   <arg name="enable_debug"      default="false"/>
   <arg name="enable_valgrind"   default="false"/>
@@ -52,6 +52,7 @@
     <arg name="wheel_mesh_file"     value="$(arg wheel_mesh_file)"/>
     <arg name="map_frame"           value="$(arg map_frame)"/>
     <arg name="base_link_frame"     value="$(arg base_link_frame)"/>
+    <arg name="launch_rviz"         value="false"/>
   </include>
   <!-- <include file="$(find timed_roslaunch)/timed_roslaunch.launch">
     <arg name="time"   value="5"/>
@@ -84,41 +85,42 @@
     <arg name="enable_guess_from_tf_tree" value="$(arg enable_guess_from_tf_tree)"/>
   </include>
 
-  <!-- <node pkg="carplanner_msgs" type="waypoint_generator" name="waypoint_generator" output="screen">
-    <param name="goal_topic" value="/move_base_simple/goal"/>
-    <param name="waypoints_topic" value="/plan_car/input_waypoints"/>
-    <param name="map_frame_id" value="map"/>
-    <param name="base_frame_id" value="base_link"/>
+  <node pkg="carplanner_msgs" type="waypoint_generator" name="local_goal2local_waypoints" output="log">
+    <param name="odom_topic" value="odom"/>
+    <param name="goal_topic" value="planner/goal"/>
+    <param name="waypoints_topic" value="planner/input_waypoints"/>
+    <!-- <param name="map_frame_id" value="X1/map"/>
+    <param name="base_frame_id" value="X1/base_link"/> -->
+    <param name="rate" value="100"/>
   </node>
 
-  <node pkg="carplanner_msgs" type="goal_generator" name="goal_generator" output="screen">
-    <param name="path_topic" value="/plan_car/global_path"/>
-    <param name="goal_topic" value="/move_base_simple/goal"/>
-    <param name="path_intercept_length" value="2.0"/>
+  <node pkg="topic_tools" type="relay" name="local_goal_relay3" args="/goal planner/goal"/>
+  <node pkg="topic_tools" type="relay" name="local_goal_relay2" args="/move_base_simple/goal planner/goal"/>
+  <node pkg="topic_tools" type="relay" name="local_goal_relay" args="/rviz/nav_goal_2d planner/goal"/>
+  <!-- <node pkg="topic_tools" type="relay" name="global_path_relay" args="/H01/ma_goal_path planner/global_path"/> -->
+  <!-- <node pkg="topic_tools" type="relay" name="local_path_relay" args="planner/actual_traj /X1/local_path"/> -->
+  <node pkg="topic_tools" type="relay" name="local_pose_relay" args="/initialpose vehicle/initial_pose"/>
+
+ <node pkg="carplanner_msgs" type="tf2odom" name="tf2odom" output="log">
+    <param name="parent_frame" value="$(arg map_frame)"/>
+    <param name="child_frame" value="$(arg base_link_frame)/9"/>
+    <param name="odom_topic" value="odom"/>
+    <param name="rate" value="100"/>
   </node>
 
-  <include file="$(find marble_guidance)/launch/guidance.launch">
-    <arg name="vehicle_type" type="string" default="ground" />
-    <arg name="fixed_frame" type="string"  default="map" />
-    <arg name="speed"                      default="1.0" />
-    <arg name="Tstar"                      default="1.0" />
-    <arg name="reverse"                    default="false" />
-    <arg name="odometry_topic"             default="odometry" />
-    <arg name="path_topic"                 default="plan_car/actual_traj"/>
-    <arg name="goal_pose_topic"            default="goal"/>
-    <arg name="cmd_vel_topic"              default="cmd_vel"/>
-    <arg name="lookahead_point_topic"      default="lookahead_point"/>
-    <arg name="lookahead_vec_topic"        default="lookahead_vec"/>
-    <arg name="world_frame_id"      value="$(arg world_frame_id)"/>
-    <arg name="map_frame_id"        value="$(arg map_frame_id)"/>
-    <arg name="camera_frame_id"     value="$(arg camera_frame_id)"/>
-    <arg name="map_lookup_timeout"  value="$(arg map_lookup_timeout)"/>
-    <arg name="mesh_topic"          value="$(arg mesh_topic)"/>
-    <arg name="depth_info_topic"    value="$(arg depth_info_topic)"/>
-    <arg name="depth_topic"         value="$(arg depth_topic)"        unless="$(arg convert_metric)"/>
-    <arg name="depth_topic"         value="$(arg depth_topic)_metric" if="$(arg convert_metric)"/>
-    <arg name="rgb_info_topic"      value="$(arg rgb_info_topic)"/>
-    <arg name="rgb_topic"           value="$(arg rgb_topic)"/>
-  </include> -->
+ <node pkg="carplanner_msgs" type="pose2setstate" name="pose2setstate" output="log">
+    <param name="pose_topic" value="vehicle/initial_pose"/>
+    <param name="set_state_service" value="vehicle/set_state"/>
+  </node>
+
+  <!-- <node pkg="carplanner_msgs" type="goal_generator" name="global_path2local_goal" output="log">
+    <param name="path_topic" value="planner/global_path"/>
+    <param name="goal_topic" value="planner/goal"/>
+    <param name="odom_topic" value="odom"/>
+    <param name="path_intercept_length" value="3.0"/>
+    <param name="rate" value="100"/>
+  </node> -->
+
+  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find mochapc)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
 
 </launch>

@@ -1,0 +1,5 @@
+carplanner_msgs/VehicleState initial_state
+carplanner_msgs/MotionSample initial_motion_sample
+int8 world_id
+bool no_compensation
+bool no_delay
