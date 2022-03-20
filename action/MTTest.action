@@ -2,6 +2,7 @@
 
 # Goal definition
 uint8 thread_id
+float64 delay
 
 ---
 # Result definition
