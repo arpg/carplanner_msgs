@@ -73,6 +73,7 @@ add_action_files(
     # GetInertiaTensor.action
     # SetNoDelay.action
     Raycast.action
+    MTTest.action
 )
 
 generate_messages(

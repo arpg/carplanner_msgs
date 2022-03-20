@@ -1,0 +1,11 @@
+# Use input command to determine updated state and return it
+
+# Goal definition
+uint8 thread_id
+
+---
+# Result definition
+uint8 thread_id
+
+---
+# Feedback definition
