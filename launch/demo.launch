@@ -1,7 +1,7 @@
 <launch>
 
   <!-- INFINITAM -->
-  <arg name="launch_infinitam" default="true"/>
+  <arg name="launch_infinitam" default="false"/>
   <arg name="convert_metric" default="false"/>
   <arg name="publish_vertices" default="false"/>
   <arg name="world_frame_id" default="map"/>
@@ -12,6 +12,8 @@
   <arg name="rgb_info_topic" default="color/camera_info"/>
   <arg name="rgb_topic" default="color"/>
   <arg name="enable_guess_from_tf_tree" default="true"/>
+  <arg name="publish_default_waypoints" default="true"/>
+  <arg name="enable_terrain_planning" default="true"/>
 
   <!-- MOCHA -->
   <arg name="params_file" default="$(find mochapc)/learning_params.csv"/>
@@ -31,7 +33,7 @@
   <arg name="enable_debug"      default="false"/>
   <arg name="enable_valgrind"   default="false"/>
   <arg name="launch_manager"    default="true"/>
-  <arg name="manager"           default="local_planner"/>
+  <arg name="manager"           default="mocha_manager"/>
 
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and not arg('enable_valgrind') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="valgrind "          if="$(eval arg('enable_valgrind') and not arg('enable_debug') and arg('launch_manager'))"/>
@@ -122,5 +124,9 @@
   </node> -->
 
   <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find mochapc)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
+
+  <!-- <node pkg="rostopic" type="rostopic" name="default_waypoints_publisher" args="pub /planner/input_waypoints carplanner_msgs/OdometryArray latch file=$(find mochapc)/launch/default_waypoints.odometry_array" output="screen" if="$(arg publish_default_waypoints)"/> -->
+  <node pkg="rostopic" type="rostopic" name="default_initial_pose_publisher" args="pub /vehicle/initial_pose geometry_msgs/PoseWithCovarianceStamped --latch --file=$(find mochapc)/launch/default_initial_pose.pose_with_covariance_stamped"  output="screen" if="$(arg publish_default_waypoints)"/>
+  <node pkg="rostopic" type="rostopic" name="default_goal_publisher" args="pub /planner/goal geometry_msgs/PoseStamped --latch --file=$(find mochapc)/launch/default_goal.pose_stamped"  output="screen" if="$(arg publish_default_waypoints)"/>
 
 </launch>

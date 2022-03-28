@@ -29,7 +29,7 @@
   <arg name="enable_debug"      default="false"/>
   <arg name="enable_valgrind"   default="false"/>
   <arg name="launch_manager"    default="true"/>
-  <arg name="manager"           default="local_planner"/>
+  <arg name="manager"           default="mocha_manager"/>
 
   <arg name="launch_prefix" default="gdb -ex run --args" if="$(eval arg('enable_debug') and not arg('enable_valgrind') and arg('launch_manager'))"/>
   <arg name="launch_prefix" default="valgrind "          if="$(eval arg('enable_valgrind') and not arg('enable_debug') and arg('launch_manager'))"/>
@@ -68,7 +68,7 @@
   <!-- <include file="$(find carplanner_msgs)/launch/mochacontroller.launch">
     <arg name="manager" value="$(arg manager)"/>
   </include> -->
-  <include file="$(find carplanner_msgs)/launch/mochacontroller.launch">
+  <!-- <include file="$(find carplanner_msgs)/launch/mochacontroller.launch">
     <arg name="launch_delay"        value="$(eval launch_delay+10)"/>
     <arg name="enable_debug"        value="$(arg enable_debug)"/>
     <arg name="launch_manager"      value="false"/>
@@ -78,7 +78,7 @@
     <arg name="command_topic"       value="vehicle/9/command"/>
     <arg name="map_frame"           value="$(arg map_frame)"/>
     <arg name="lookahead_time"      value="5.0"/>
-  </include>
+  </include> -->
 
   <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find carplanner_msgs)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
 
