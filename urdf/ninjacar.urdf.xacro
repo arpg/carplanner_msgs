@@ -14,7 +14,8 @@
     <origin xyz="0 0 0" rpy="0 0 -1.570796325" />
   </joint> -->
 
-  <link name="N01/base_link"/>
+  <link name="base_link"/>
+  <link name="royale_camera_link"/>
 
   <!-- <joint name="cpu_imu" type="fixed">
     <parent link="body_aligned_imu_link" />
@@ -24,8 +25,14 @@
 
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
 
-  <sensor_d435 parent="N01/base_link" name="camera">
+  <sensor_d435 parent="base_link" name="rs_camera">
     <origin xyz="0.2219971 0 0.0130257" rpy="0 0 0" />
   </sensor_d435>
+
+  <joint name="royale_cam_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="royale_camera_link" />
+    <origin xyz="0.2219971 0 0.0130257" rpy="0 0 0" />
+  </joint>
 
 </robot>

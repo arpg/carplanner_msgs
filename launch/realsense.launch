@@ -1,13 +1,8 @@
 <launch>
 
-  <arg name="use_royale"  default="true"/> <!-- true: royale, false: realsense -->
-
-  <arg name="royale_enable_processing" default="true"/>  
-  <arg name="royale_node_name"         default="royale_camera"/>
-
   <!-- <arg name="rs" default="832112071706"/> -->
   <!-- <arg name="rs_low" default="838212073252"/> -->
-  <arg name="rs_filters" default="temporal,spatial,hole_filling"/>
+  <arg name="filters" default="temporal,spatial,hole_filling"/>
 
   <include file="$(find carplanner_msgs)/launch/robot_state_publisher.launch">
     <arg name="urdf_path" value="$(find carplanner_msgs)/urdf/ninjacar.urdf.xacro"/>
@@ -15,16 +10,11 @@
 
   <!-- <include file="$(find microstrain_driver)/launch/3dm_gx5_15.launch"/> -->
 
-  <include file="$(find royale_in_ros)/launch/camera_driver.launch" if="$(arg use_royale)">
-    <arg name="enable_processing" value="$(arg royale_enable_processing)"/>  
-    <arg name="node_name"         value="$(arg royale_node_name)"/>
-  </include>
-
-  <include file="$(find realsense2_camera)/launch/rs_camera.launch" unless="$(arg use_royale)">
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
     <!-- <arg name="serial_no"         value="$(arg rs)"/> -->
     <!-- <arg name="camera"            value="camera_fwd"/> -->
     <arg name="align_depth"       value="true"/>
-    <arg name="filters"           value="$(arg rs_filters)"/>
+    <arg name="filters"           value="$(arg filters)"/>
     <arg name="initial_reset"     value="true"/>
     <!-- <arg name="enable_pointcloud" value="true"/> -->
   </include>

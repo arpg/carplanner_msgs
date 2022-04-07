@@ -1,0 +1,15 @@
+<launch>
+
+  <arg name="enable_processing" default="true"/>  
+  <arg name="node_name"         default="royale_camera"/>
+
+  <include file="$(find carplanner_msgs)/launch/robot_state_publisher.launch">
+    <arg name="urdf_path" value="$(find carplanner_msgs)/urdf/ninjacar.urdf.xacro"/>
+  </include>
+
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="enable_processing" value="$(arg enable_processing)"/>  
+    <arg name="node_name"         value="$(arg node_name)"/>
+  </include>
+
+</launch>
