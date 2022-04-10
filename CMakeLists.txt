@@ -19,6 +19,7 @@ find_package( catkin REQUIRED
     visualization_msgs
     dynamic_reconfigure
     actionlib_msgs
+    drive_control
 )
 
 add_definitions(${EIGEN_DEFINITIONS})
@@ -171,5 +172,12 @@ add_executable( odom_reframer
   src/odom_reframer.cpp
 )
 target_link_libraries( odom_reframer
+  ${catkin_LIBRARIES}
+)
+
+add_executable( controlcommand2drivecommand
+  src/controlcommand2drivecommand.cpp
+)
+target_link_libraries( controlcommand2drivecommand
   ${catkin_LIBRARIES}
 )
