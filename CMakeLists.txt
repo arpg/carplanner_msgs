@@ -89,7 +89,7 @@ generate_messages(
 )
 
 catkin_package(
-  INCLUDE_DIRS include
+  # INCLUDE_DIRS include
   CATKIN_DEPENDS message_runtime actionlib_msgs nav_msgs
   #LIBRARIES 
   )
@@ -99,85 +99,85 @@ include_directories(
 	#${carplanner_INCLUDE_DIRS}
 	${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
-  include
+  # include
 	)
 
-install(DIRECTORY include/${PROJECT_NAME}/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
+# install(DIRECTORY include/${PROJECT_NAME}/
+#         DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
-add_executable( command2cmdvel
-  src/command2cmdvel.cpp
-)
-target_link_libraries( command2cmdvel
-  ${catkin_LIBRARIES}
-)
+# add_executable( command2cmdvel
+#   src/command2cmdvel.cpp
+# )
+# target_link_libraries( command2cmdvel
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( vehiclestate2pose
-  src/vehiclestate2pose.cpp
-)
-target_link_libraries( vehiclestate2pose
-  ${catkin_LIBRARIES}
-)
+# add_executable( vehiclestate2pose
+#   src/vehiclestate2pose.cpp
+# )
+# target_link_libraries( vehiclestate2pose
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( motionsample2path
-  src/motionsample2path.cpp
-)
-target_link_libraries( motionsample2path
-  ${catkin_LIBRARIES}
-)
+# add_executable( motionsample2path
+#   src/motionsample2path.cpp
+# )
+# target_link_libraries( motionsample2path
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( patharrayparser
-  src/patharrayparser.cpp
-)
-target_link_libraries( patharrayparser
-  ${catkin_LIBRARIES}
-)
+# add_executable( patharrayparser
+#   src/patharrayparser.cpp
+# )
+# target_link_libraries( patharrayparser
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( waypoint_generator
- 	src/waypoint_generator.cpp
-)
-target_link_libraries( waypoint_generator
-  ${catkin_LIBRARIES}
-)
+# add_executable( waypoint_generator
+#  	src/waypoint_generator.cpp
+# )
+# target_link_libraries( waypoint_generator
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( goal_generator
-  src/goal_generator.cpp
-)
-target_link_libraries( goal_generator
-  ${catkin_LIBRARIES}
-)
+# add_executable( goal_generator
+#   src/goal_generator.cpp
+# )
+# target_link_libraries( goal_generator
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( tf2odom
-  src/tf2odom.cpp
-)
-target_link_libraries( tf2odom
-  ${catkin_LIBRARIES}
-)
+# add_executable( tf2odom
+#   src/tf2odom.cpp
+# )
+# target_link_libraries( tf2odom
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( pose2setstate
-  src/pose2setstate.cpp
-)
-target_link_libraries( pose2setstate
-  ${catkin_LIBRARIES}
-)
+# add_executable( pose2setstate
+#   src/pose2setstate.cpp
+# )
+# target_link_libraries( pose2setstate
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( pose2odom
-  src/pose2odom.cpp
-)
-target_link_libraries( pose2odom
-  ${catkin_LIBRARIES}
-)
+# add_executable( pose2odom
+#   src/pose2odom.cpp
+# )
+# target_link_libraries( pose2odom
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( odom_reframer
-  src/odom_reframer.cpp
-)
-target_link_libraries( odom_reframer
-  ${catkin_LIBRARIES}
-)
+# add_executable( odom_reframer
+#   src/odom_reframer.cpp
+# )
+# target_link_libraries( odom_reframer
+#   ${catkin_LIBRARIES}
+# )
 
-add_executable( controlcommand2drivecommand
-  src/controlcommand2drivecommand.cpp
-)
-target_link_libraries( controlcommand2drivecommand
-  ${catkin_LIBRARIES}
-)
+# add_executable( controlcommand2drivecommand
+#   src/controlcommand2drivecommand.cpp
+# )
+# target_link_libraries( controlcommand2drivecommand
+#   ${catkin_LIBRARIES}
+# )

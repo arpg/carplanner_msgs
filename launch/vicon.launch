@@ -1,21 +1,24 @@
 <launch>
+  <!-- world(NWU)->mocap(WUN)->N02(WUN)->N02/base_link(NWU)->CPPose(NED) -->
 
-  <arg name="launch_rviz"       default="true"/>
+  <arg name="launch_rviz"          default="false"/>
+  <arg name="vehicle_name"         default="N01"/>
+  <arg name="vehicle_topic_prefix" default="/"/>
+  <arg name="vehicle_tf_prefix"    default=""/>
+  <arg name="fixed_frame"          default="map"/>
 
-  <arg name="vehicle_name"       default="N01"/>
-
-  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_world2mocap" args="0 0 0 1.5 0 1.5 world mocap"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_fixed2mocap" args="0 0 0 1.57 0 1.57 $(arg fixed_frame) mocap"/>
 
   <include file="$(find vrpn_client_ros)/launch/sample.launch">
     <arg name="server"    value="tracker"/>
     <arg name="frame_id"  value="mocap"/>
   </include>
 
-  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_vehicle2base_link" args="0 0 0 -1.5 -1.5 0 $(arg vehicle_name) $(arg vehicle_name)/base_link"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_vehicle2base_link" args="0 0 0 -1.57 -1.57 0 $(arg vehicle_name) $(arg vehicle_tf_prefix)base_link"/>
 
   <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find mochapc)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
 
-  <!-- <node pkg="carplanner_msgs" type="pose2odom" name="pose2odom" output="screen">
+  <!-- <node pkg="carplanner_tools" type="pose2odom" name="pose2odom" output="screen">
     <param name="pose_topic" value="/vrpn_client_node/$(arg vehicle_name)/pose"/>
     <param name="odom_topic" value="/vrpn_client_node/$(arg vehicle_name)/odom"/>
     <param name="twist_topic" value="/vrpn_client_node/$(arg vehicle_name)/twist"/>
@@ -23,17 +26,17 @@
     <param name="avg_window_length" value="1.0"/>
   </node> -->
 
-  <node pkg="carplanner_msgs" type="tf2odom" name="tf2odom" output="screen">
-    <param name="parent_frame" value="world"/>
-    <param name="child_frame" value="$(arg vehicle_name)/base_link"/>
-    <param name="odom_topic" value="$(arg vehicle_name)/odom"/>
+  <node pkg="carplanner_tools" type="tf2odom" name="tf2odom" output="log">
+    <param name="parent_frame" value="$(arg fixed_frame)"/>
+    <param name="child_frame" value="$(arg vehicle_tf_prefix)base_link"/>
+    <param name="odom_topic" value="$(arg vehicle_topic_prefix)odom"/>
     <param name="rate" value="100"/>
     <param name="vel_avg_len" value="0.1"/>
   </node>
 
-  <node pkg="carplanner_msgs" type="odom_reframer" name="odom_reframer" output="screen">
-    <param name="odom_in_topic" value="$(arg vehicle_name)/odom"/>
-    <param name="odom_out_topic" value="$(arg vehicle_name)/odom_chassis"/>
+  <node pkg="carplanner_tools" type="odom_reframer" name="odom_reframer" output="log">
+    <param name="odom_in_topic" value="$(arg vehicle_topic_prefix)odom"/>
+    <param name="odom_out_topic" value="$(arg vehicle_topic_prefix)odom_chassis"/>
   </node>
 
 </launch>
