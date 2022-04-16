@@ -23,6 +23,11 @@
   <include file="$(find drive_control)/launch/remote_control.launch">
   </include>
 
+  <node pkg="carplanner_tools" type="controlcommand2drivecommand" name="control2drive">
+    <remap from="control_command" to="/command"/>
+    <!-- <remap from="drive_command"   to="/drive/command"/> -->
+  </node>
+
   <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find mochapc)/rviz/vicon.rviz" if="$(arg launch_rviz)"/>
 
   <!-- <node pkg="rostopic" type="rostopic" name="default_waypoints_publisher" args="pub /planner/input_waypoints carplanner_msgs/OdometryArray latch file=$(find mochapc)/launch/default_waypoints.odometry_array" output="screen" if="$(arg publish_default_waypoints)"/> -->
