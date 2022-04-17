@@ -1,0 +1,29 @@
+<launch>
+
+  <arg name="launch_planner" default="false"/>
+  <arg name="launch_car"     default="true"/>
+  <arg name="launch_vicon"   default="true"/>
+  <arg name="launch_rviz"    default="false"/>
+
+  <arg name="enable_debug"    default="false"/>
+  <arg name="enable_valgrind" default="false"/>
+  <arg name="launch_prefix"   default="gdb -ex run --args" if="$(eval arg('enable_debug') and not arg('enable_valgrind') and arg('launch_manager'))"/>
+  <arg name="launch_prefix"   default="valgrind "          if="$(eval arg('enable_valgrind') and not arg('enable_debug') and arg('launch_manager'))"/>
+  <arg name="launch_prefix"   default=""                   if="$(eval not arg('enable_debug') and not arg('enable_valgrind'))"/>
+
+  <node pkg="CarPlanner" type="run_mochagui.sh" name="mochagui" output="screen" if="$(arg launch_planner)"/>
+
+  <include file="$(find drive_control)/launch/remote_control.launch" if="$(arg launch_car)">
+  </include>
+
+  <node pkg="carplanner_tools" type="controlcommand2drivecommand" name="control2drive" if="$(arg launch_car)">
+    <remap from="control_command" to="/command"/>
+    <!-- <remap from="drive_command"   to="/drive/command"/> -->
+  </node>
+
+  <include file="$(find vicon_tools)/launch/vicon_demo.launch" if="$(arg launch_vicon)">
+  </include>
+
+  <node pkg="rviz" type="rviz" name="mochagui_exp_rviz" args="-d $(find carplanner_msgs)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
+
+</launch>
