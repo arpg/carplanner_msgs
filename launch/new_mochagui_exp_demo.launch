@@ -14,14 +14,24 @@
   <node pkg="CarPlanner" type="run_mochagui.sh" name="mochagui" output="screen" if="$(arg launch_planner)"/>
 
   <include file="$(find drive_control)/launch/remote_control.launch" if="$(arg launch_car)">
+    <arg name="control_mode"  value="1"/>
+    <arg name="control_scale" value="10.0"/>
   </include>
 
   <node pkg="carplanner_tools" type="controlcommand2drivecommand" name="control2drive" if="$(arg launch_car)">
     <remap from="control_command" to="/command"/>
-    <!-- <remap from="drive_command"   to="/drive/command"/> -->
+    <!-- <remap from="drive_command"   to="/planner_command"/> -->
   </node>
 
   <include file="$(find vicon_tools)/launch/vicon_demo.launch" if="$(arg launch_vicon)">
+    <arg name="launch_vicon"         value="true"/>
+    <arg name="launch_odom_tools"    value="true"/>
+    <arg name="launch_rviz"          value="false"/>
+    <arg name="fixed_frame"          value="map"/>
+    <arg name="mocap_frame"          value="mocap"/>
+    <arg name="vehicle_name"         value="N02"/>
+    <arg name="vehicle_tf_prefix"    value=""/>
+    <arg name="vehicle_topic_prefix" value="/"/>
   </include>
 
   <node pkg="rviz" type="rviz" name="mochagui_exp_rviz" args="-d $(find carplanner_msgs)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
