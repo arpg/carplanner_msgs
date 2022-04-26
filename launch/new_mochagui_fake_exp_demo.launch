@@ -4,6 +4,7 @@
   <arg name="launch_car"     default="true"/>
   <arg name="launch_vicon"   default="true"/>
   <arg name="launch_rviz"    default="false"/>
+  <arg name="publish_default_waypoints" default="false"/>
 
   <arg name="enable_debug"    default="false"/>
   <arg name="enable_valgrind" default="false"/>
@@ -33,6 +34,8 @@
     <arg name="radius"               value="1.0"/>
     <arg name="speed"                value="1.0"/>
   </include>
+
+  <node pkg="rostopic" type="rostopic" name="default_initial_waypoint_publisher" args="pub /waypoints carplanner_msgs/Waypoints --latch --file=$(find carplanner_msgs)/launch/ccw_circle_at_origin.waypoints"  output="screen" if="$(arg publish_default_waypoints)"/>
 
   <node pkg="rviz" type="rviz" name="mochagui_fake_exp_rviz" args="-d $(find carplanner_msgs)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>
 

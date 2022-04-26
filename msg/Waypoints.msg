@@ -1,0 +1,2 @@
+carplanner_msgs/OdometryArray path
+bool loop
