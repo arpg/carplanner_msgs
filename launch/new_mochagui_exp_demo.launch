@@ -20,7 +20,7 @@
 
   <node pkg="carplanner_tools" type="controlcommand2drivecommand" name="control2drive" if="$(arg launch_car)">
     <remap from="control_command" to="/command"/>
-    <!-- <remap from="drive_command"   to="/planner_command"/> -->
+    <remap from="drive_command"   to="/planner_command"/>
   </node>
 
   <include file="$(find vicon_tools)/launch/vicon_demo.launch" if="$(arg launch_vicon)">
