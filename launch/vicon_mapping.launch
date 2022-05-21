@@ -1,60 +1,42 @@
 <launch>
 
   <arg name="launch_vicon"       default="true"/>
+  <arg name="launch_sensors"     default="true"/>
+  <arg name="launch_infinitam"   default="true"/>
   <arg name="launch_rviz"        default="true"/>
-  <arg name="launch_infinitam"   default="false"/>
-  <arg name="vehicle_name"       default="N01"/>
   <arg name="use_royale"         default="true"/> <!-- true: royale, false: rs -->
 
-  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_world2mocap" args="0 0 0 1.5 0 1.5 map mocap"/>
-
-  <include file="$(find vrpn_client_ros)/launch/sample.launch" if="$(arg launch_vicon)">
-    <arg name="server"    value="tracker"/>
-    <arg name="frame_id"  value="mocap"/>
+  <include file="$(find vicon_tools)/launch/vicon_demo.launch" if="$(arg launch_vicon)">
+    <arg name="launch_vicon"         value="true"/>
+    <arg name="launch_odom_tools"    value="true"/>
+    <arg name="launch_rviz"          value="$(arg launch_rviz)"/>
+    <arg name="fixed_frame"          value="map"/>
+    <arg name="mocap_frame"          value="mocap"/>
+    <arg name="base_link_frame"      value="base_link"/>
+    <arg name="odom_topic"           value="odom"/>
   </include>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_mocapfake" args="0 0 0 0 0 0 mocap $(arg vehicle_name)" unless="$(arg launch_vicon)"/>
 
-  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_vehicle2base_link" args="0 0 0 -1.5 -1.5 0 $(arg vehicle_name) base_link"/>
-
-  <node pkg="rviz" type="rviz" name="mocha_rviz" args="-d $(find mochapc)/rviz/vicon.rviz" if="$(arg launch_rviz)"/>
-
-  <!-- <node pkg="carplanner_msgs" type="pose2odom" name="pose2odom" output="screen">
-    <param name="pose_topic" value="/vrpn_client_node/$(arg vehicle_name)/pose"/>
-    <param name="odom_topic" value="/vrpn_client_node/$(arg vehicle_name)/odom"/>
-    <param name="twist_topic" value="/vrpn_client_node/$(arg vehicle_name)/twist"/>
-    <param name="child_frame_id" value="$(arg vehicle_name)"/>
-    <param name="avg_window_length" value="1.0"/>
-  </node> -->
-
-  <node pkg="carplanner_msgs" type="tf2odom" name="tf2odom" output="log">
-    <param name="parent_frame" value="map"/>
-    <param name="child_frame" value="base_link"/>
-    <param name="odom_topic" value="/N01/odom"/>
-    <param name="rate" value="100"/>
-    <param name="vel_avg_len" value="0.1"/>
-  </node>
-
-  <node pkg="carplanner_msgs" type="odom_reframer" name="odom_reframer" output="log">
-    <param name="odom_in_topic" value="/N01/odom"/>
-    <param name="odom_out_topic" value="/N01/odom_chassis"/>
-  </node>
-
-  <include file="$(find carplanner_msgs)/launch/sensors.launch">
+  <include file="$(find carplanner_msgs)/launch/sensors.launch" if="$(arg launch_sensors)">
     <arg name="use_royale"  value="$(arg use_royale)"/>
   </include>
 
-    <include file="$(find infinitam)/launch/demo.launch" if="$(arg launch_infinitam)">
+  <include file="$(find infinitam)/launch/nodelet_demo.launch" if="$(arg launch_infinitam)">
     <arg name="launch_delay"                value="5"/>
     <arg name="convert_metric"              value="false"/>
     <arg name="publish_vertices"            value="false"/>
     <arg name="world_frame_id"              value="map"/>
-    <arg name="camera_frame_id"             value="camera_depth_optical_frame"/>
     <arg name="mesh_topic"                  value="mesh"/>
-    <arg name="depth_info_topic"            value="/camera/depth/camera_info"/>
-    <arg name="depth_topic"                 value="/camera/depth/image_rect_raw"/>
-    <arg name="rgb_info_topic"              value="/camera/aligned_depth_to_color/camera_info"/>
-    <arg name="rgb_topic"                   value="/camera/aligned_depth_to_color/image_rect_raw"/>
     <arg name="enable_guess_from_tf_tree"   value="true"/>
+    <arg if="$(arg use_royale)"      name="camera_frame_id"   value="royale_camera_optical_frame"/>
+    <arg unless="$(arg use_royale)"  name="camera_frame_id"   value="camera_depth_optical_frame"/>
+    <arg if="$(arg use_royale)"      name="depth_info_topic"  value="/royale_camera/camera_info"/>
+    <arg unless="$(arg use_royale)"  name="depth_info_topic"  value="/camera/depth/camera_info"/>
+    <arg if="$(arg use_royale)"      name="depth_topic"       value="/royale_camera/depth_image"/>
+    <arg unless="$(arg use_royale)"  name="depth_topic"       value="/camera/depth/image_rect_raw"/>
+    <arg if="$(arg use_royale)"      name="rgb_info_topic"    value=""/>
+    <arg unless="$(arg use_royale)"  name="rgb_info_topic"    value="/camera/aligned_depth_to_color/camera_info"/>
+    <arg if="$(arg use_royale)"      name="rgb_topic"         value=""/>
+    <arg unless="$(arg use_royale)"  name="rgb_topic"         value="/camera/aligned_depth_to_color/image_rect_raw"/>
   </include>
 
 </launch>

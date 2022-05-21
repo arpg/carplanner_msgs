@@ -5,15 +5,19 @@
   <arg name="launch_rviz"       default="true"/>
 
   <arg name="vehicle_name"       default="N01"/>
+  <arg name="fixed_frame"        default="world"/>
+  <arg name="mocap_frame"        default="mocap"/>
+  <arg name="base_link_frame"    default="$(arg vehicle_name)/base_link"/>
+  <arg name="odom_topic"         default="/$(arg vehicle_name)/odom"/>
 
-  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_world2mocap" args="0 0 0 1.5 0 1.5 world mocap"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_world2mocap" args="0 0 0 1.5 0 1.5 $(arg fixed_frame) $(arg mocap_frame)"/>
 
   <include file="$(find vrpn_client_ros)/launch/sample.launch">
     <arg name="server"    value="tracker"/>
-    <arg name="frame_id"  value="mocap"/>
+    <arg name="frame_id"  value="$(arg mocap_frame)"/>
   </include>
 
-  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_vehicle2base_link" args="0 0 0 -1.5 -1.5 0 $(arg vehicle_name) N01/base_link"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="tf_vehicle2base_link" args="0 0 0 -1.5 -1.5 0 $(arg vehicle_name) $(arg base_link_frame)"/>
 
   <include file="$(find carplanner_msgs)/launch/demo.launch" if="$(arg launch_carplanner)">
     <arg name="launch_infinitam"  value="$(arg launch_infinitam)"/>
@@ -31,16 +35,22 @@
   </node> -->
 
   <node pkg="carplanner_msgs" type="tf2odom" name="tf2odom" output="screen">
-    <param name="parent_frame" value="world"/>
-    <param name="child_frame" value="N01/base_link"/>
-    <param name="odom_topic" value="N01/odom"/>
+    <param name="parent_frame" value="$(arg fixed_frame)"/>
+    <param name="child_frame" value="$(arg base_link_frame)"/>
+    <param name="odom_topic" value="$(arg odom_topic)"/>
     <param name="rate" value="100"/>
     <param name="vel_avg_len" value="0.1"/>
   </node>
 
   <node pkg="carplanner_msgs" type="odom_reframer" name="odom_reframer" output="screen">
-    <param name="odom_in_topic" value="N01/odom"/>
-    <param name="odom_out_topic" value="N01/odom_chassis"/>
+    <param name="odom_in_topic" value="$(arg odom_topic)"/>
+    <param name="odom_out_topic" value="$(arg odom_topic)_chassis"/>
+  </node>
+
+  <node pkg="vicon_tools" type="tf2path" name="tf2path" output="screen">
+    <param name="parent_frame" value="$(arg fixed_frame)"/>
+    <param name="child_frame" value="$(arg base_link_frame)"/>
+    <param name="rate" value="100"/>
   </node>
 
 </launch>

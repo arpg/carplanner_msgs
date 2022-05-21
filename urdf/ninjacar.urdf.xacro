@@ -14,25 +14,55 @@
     <origin xyz="0 0 0" rpy="0 0 -1.570796325" />
   </joint> -->
 
-  <link name="base_link"/>
-  <link name="royale_camera_link"/>
+  <link name="base_link"/> <!-- co-located/-oriented with bottom_plate_link -->
+  
+  <link name="bottom_plate_link"/>  <!-- at xy center of vehicle, z at bottom of bottom plate -->
+  <joint name="bottom_plate_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="bottom_plate_link" />
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </joint>
+  
+  <link name="top_plate_link"/>  <!-- at xy center of vehicle, z at top of top plate -->
+  <joint name="top_plate_joint" type="fixed">
+    <parent link="bottom_plate_link" />
+    <child link="top_plate_link" />
+    <origin xyz="0 0 0.135" rpy="0 0 0" />
+  </joint>
 
-  <!-- <joint name="cpu_imu" type="fixed">
-    <parent link="body_aligned_imu_link" />
-    <child link="cpu" />
-    <origin xyz="-0.1154054 0 0.0077934 " rpy="0 0 0" />
+  <link name="os_sensor"/> <!-- lidar sensor frame -->
+  <joint name="os_joint" type="fixed">
+    <parent link="top_plate_link" />
+    <child link="os_sensor" />
+    <origin xyz="0.0387309 0 0" rpy="0 0 -1.5708" />
+  </joint>
+  
+  <!-- body-aligned colocated with gx5_link -->
+  <!-- <link name="imu_link"/> 
+  <joint name="imu_joint" type="fixed">
+    <parent link="top_plate_link" />
+    <child link="imu_link" />
+    <origin xyz="0.0387309 0 0" rpy="0 0 0" />
   </joint> -->
+
+  <link name="gx5_link"/> <!-- imu sensor frame -->
+  <joint name="gx5_joint" type="fixed">
+    <parent link="os_sensor" />
+    <child link="gx5_link" />
+    <origin xyz="0 0 -0.007675" rpy="0 0 3.1416" />
+  </joint>
 
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
 
-  <sensor_d435 parent="base_link" name="rs_camera">
+  <sensor_d435 parent="top_plate_link" name="rs_camera">
     <origin xyz="0.2219971 0 0.0130257" rpy="0 0 0" />
   </sensor_d435>
 
+  <link name="royale_camera_link"/>
   <joint name="royale_cam_joint" type="fixed">
-    <parent link="base_link" />
+    <parent link="top_plate_link" />
     <child link="royale_camera_link" />
-    <origin xyz="0.2219971 0 0.0130257" rpy="0 0 0" />
+    <origin xyz="0.2219971 0 0.0130257" rpy="3.1416 0 0" />
   </joint>
 
 </robot>
