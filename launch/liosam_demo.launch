@@ -14,7 +14,7 @@
   </include>
   
   <include file="$(find lio_sam)/launch/loam_demo.launch" if="$(arg launch_liosam)">
-    <arg name="config_file" value="$(find lio_sam)/config/params.yaml"/>
+    <arg name="config_file" value="$(find lio_sam)/config/ninjacar_params.yaml"/>
     <arg name="launch_odom_tools" value="false"/>
   </include>
 
