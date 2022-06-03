@@ -44,6 +44,7 @@ add_message_files(
   #  ControlPlan.msg
   MotionPlan.msg
   TriangleMeshStamped.msg
+  WayPoints.msg
 )
 
 add_service_files(

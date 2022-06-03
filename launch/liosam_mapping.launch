@@ -1,0 +1,52 @@
+<launch>
+
+  <arg name="launch_localization" default="true"/>
+  <arg name="launch_sensors"      default="true"/>
+  <arg name="launch_infinitam"    default="true"/>
+  <arg name="launch_car"          default="true"/>
+  <arg name="launch_rviz"         default="true"/>
+  <arg name="use_liosam"          default="true"/>
+  <arg name="use_royale"          default="true"/> <!-- true: royale, false: rs -->
+
+  <include file="$(find carplanner_msgs)/launch/liosam_demo.launch" if="$(eval launch_localization)">
+    <arg name="launch_sensors"       value="false"/>
+    <arg name="launch_liosam"        value="$(arg use_liosam)"/>
+    <arg name="launch_odom_tools"    value="true"/>
+    <arg name="launch_car"           value="false"/>
+    <arg name="launch_rviz"          value="$(arg launch_rviz)"/>
+    <arg name="fixed_frame"          value="map"/>
+    <arg name="base_link_frame"      value="base_link"/>
+    <arg name="odom_topic"           value="odom"/>
+  </include>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="fake_localization"
+    args="0 0 0 0 0 0 map base_link" if="$(eval launch_localization and not use_liosam)"/>
+
+  <include file="$(find carplanner_msgs)/launch/sensors.launch" if="$(arg launch_sensors)">
+    <arg name="use_royale"  value="$(arg use_royale)"/>
+  </include>
+  
+  <include file="$(find drive_control)/launch/remote_control.launch" if="$(arg launch_car)">
+    <arg name="control_mode"  value="1"/>
+    <arg name="control_scale" value="10.0"/>
+  </include>
+
+  <include file="$(find infinitam)/launch/nodelet_demo.launch" if="$(arg launch_infinitam)">
+    <arg name="launch_delay"                value="5"/>
+    <arg name="convert_metric"              value="false"/>
+    <arg name="publish_vertices"            value="false"/>
+    <arg name="world_frame_id"              value="map"/>
+    <arg name="mesh_topic"                  value="mesh"/>
+    <arg name="enable_guess_from_tf_tree"   value="true"/>
+    <arg if="$(arg use_royale)"      name="camera_frame_id"   value="royale_camera_optical_frame"/>
+    <arg unless="$(arg use_royale)"  name="camera_frame_id"   value="camera_depth_optical_frame"/>
+    <arg if="$(arg use_royale)"      name="depth_info_topic"  value="/royale_camera/camera_info"/>
+    <arg unless="$(arg use_royale)"  name="depth_info_topic"  value="/camera/depth/camera_info"/>
+    <arg if="$(arg use_royale)"      name="depth_topic"       value="/royale_camera/depth_image_metric_rect"/>
+    <arg unless="$(arg use_royale)"  name="depth_topic"       value="/camera/depth/image_rect"/>
+    <arg if="$(arg use_royale)"      name="rgb_info_topic"    value=""/>
+    <arg unless="$(arg use_royale)"  name="rgb_info_topic"    value="/camera/aligned_depth_to_color/camera_info"/>
+    <arg if="$(arg use_royale)"      name="rgb_topic"         value=""/>
+    <arg unless="$(arg use_royale)"  name="rgb_topic"         value="/camera/aligned_depth_to_color/image_rect_raw"/>
+  </include>
+
+</launch>

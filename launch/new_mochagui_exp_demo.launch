@@ -1,35 +1,65 @@
 <launch>
 
-  <arg name="launch_planner"   default="false"/>
-  <!-- <arg name="launch_infinitam" default="false"/> -->
-  <arg name="launch_car"       default="true"/>
-  <arg name="launch_sensors"   default="true"/>
-  <arg name="launch_vicon"     default="true"/> <!-- true: vicon, false: liosam -->
-  <arg name="launch_rviz"      default="false"/>
+  <arg name="launch_planner"    default="false"/>
+  <arg name="launch_infinitam"  default="true"/>
+  <arg name="launch_car"        default="true"/>
+  <arg name="launch_sensors"    default="true"/>
+  <arg name="use_royale"        default="true"/>
+  <arg name="localization_mode" default="LIOSAM"/> <!-- VICON, LIOSAM, STATIC, FAKE, NONE -->
+  <arg name="launch_rviz"       default="true"/>
 
   <arg name="enable_debug"    default="false"/>
   <arg name="enable_valgrind" default="false"/>
-  <arg name="launch_prefix"   default="gdb -ex run --args" if="$(eval arg('enable_debug') and not arg('enable_valgrind') and arg('launch_manager'))"/>
-  <arg name="launch_prefix"   default="valgrind "          if="$(eval arg('enable_valgrind') and not arg('enable_debug') and arg('launch_manager'))"/>
+  <arg name="launch_prefix"   default="gdb -ex run -ex bt --args" if="$(eval arg('enable_debug') and not arg('enable_valgrind'))"/>
+  <arg name="launch_prefix"   default="valgrind "          if="$(eval arg('enable_valgrind') and not arg('enable_debug'))"/>
   <arg name="launch_prefix"   default=""                   if="$(eval not arg('enable_debug') and not arg('enable_valgrind'))"/>
 
-  <node pkg="CarPlanner" type="run_mochagui.sh" name="mochagui" output="screen" if="$(arg launch_planner)"/>
+  <node pkg="MochaGui" type="run_exp.sh" name="mochagui" output="screen" if="$(arg launch_planner)" launch-prefix="$(arg launch_prefix)"/>
 
-  <!-- <include file="$(find infinitam)/launch/demo.launch" if="$(arg launch_infinitam)">
-    <arg name="enable_debug"        value="$(arg enable_debug)"/>
-    <arg name="convert_metric"      value="false"/>
-    <arg name="publish_vertices"    value="false"/>
-    <arg name="world_frame_id"      value="map"/>
-    <arg name="camera_frame_id"     value="$(arg camera_frame_id)"/>
-    <arg name="mesh_topic"          value="$(arg mesh_topic)"/>
-    <arg name="depth_info_topic"    value="$(arg depth_info_topic)"/>
-    <arg name="depth_topic"         value="$(arg depth_topic)"/>
-    <arg name="rgb_info_topic"      value="$(arg rgb_info_topic)"/>
-    <arg name="rgb_topic"           value="$(arg rgb_topic)"/>
-    <arg name="enable_guess_from_tf_tree" value="$(arg enable_guess_from_tf_tree)"/>
-  </include> -->
+  <node pkg="carplanner_tools" type="joy_goal_generator" name="joy_goal_generator" output="log">
+    <param name="goal_topic" value="/goal"/>
+    <param name="odom_topic" value="/odom"/>
+    <param name="path_length" value="1.0"/>
+    <param name="path_angle" value="0.0"/>
+    <param name="rate" value="10"/>
+  </node>
 
-  <node pkg="rostopic" type="rostopic" name="default_waypoint_publisher" args="pub /waypoints carplanner_msgs/Waypoints -r 1 --file=$(find carplanner_msgs)/launch/straight_on_edge.waypoints"  output="screen" if="true"/>
+  <node pkg="carplanner_tools" type="waypoint_generator" name="waypoint_generator" output="log">
+    <param name="odom_topic" value="/odom"/>
+    <param name="goal_topic" value="/goal"/>
+    <param name="waypoints_topic" value="/input_waypoints"/>
+    <!-- <param name="map_frame_id" value="X1/map"/>
+    <param name="base_frame_id" value="X1/base_link"/> -->
+    <param name="rate" value="10"/>
+  </node>
+  <node pkg="topic_tools" type="relay" name="local_goal_relay2" args="/move_base_simple/goal /goal"/>
+  <node pkg="topic_tools" type="relay" name="local_goal_relay" args="/rviz/nav_goal_2d /goal"/>
+
+  <include file="$(find carplanner_msgs)/launch/sensors.launch" if="$(arg launch_sensors)">
+    <arg name="enable_depth_camera"  value="true"/> 
+    <arg name="enable_lidar"  value="$(eval localization_mode=='LIOSAM')"/> 
+    <arg name="enable_imu"  value="true"/> 
+    <arg name="use_royale"  value="$(arg use_royale)"/> 
+  </include>
+
+  <include file="$(find infinitam)/launch/nodelet_demo.launch" if="$(arg launch_infinitam)">
+    <arg name="launch_delay" value="5"/>  
+    <arg name="convert_metric"              value="false"/>
+    <arg name="publish_vertices"            value="false"/>
+    <arg name="world_frame_id"              value="map"/>
+    <arg name="mesh_topic"                  value="input_terrain_mesh"/>
+    <arg name="enable_guess_from_tf_tree"   value="true"/>
+    <arg if="$(arg use_royale)"      name="camera_frame_id"   value="royale_camera_optical_frame"/>
+    <arg unless="$(arg use_royale)"  name="camera_frame_id"   value="camera_depth_optical_frame"/>
+    <arg if="$(arg use_royale)"      name="depth_info_topic"  value="/royale_camera/camera_info"/>
+    <arg unless="$(arg use_royale)"  name="depth_info_topic"  value="/camera/depth/camera_info"/>
+    <arg if="$(arg use_royale)"      name="depth_topic"       value="/royale_camera/depth_image_metric_rect"/>
+    <arg unless="$(arg use_royale)"  name="depth_topic"       value="/camera/depth/image_rect"/>
+    <arg if="$(arg use_royale)"      name="rgb_info_topic"    value=""/>
+    <arg unless="$(arg use_royale)"  name="rgb_info_topic"    value="/camera/aligned_depth_to_color/camera_info"/>
+    <arg if="$(arg use_royale)"      name="rgb_topic"         value=""/>
+    <arg unless="$(arg use_royale)"  name="rgb_topic"         value="/camera/aligned_depth_to_color/image_rect_raw"/>
+  </include>
 
   <include file="$(find drive_control)/launch/remote_control.launch" if="$(arg launch_car)">
     <arg name="control_mode"  value="1"/>
@@ -41,19 +71,43 @@
     <remap from="drive_command"   to="/planner_command"/>
   </node>
 
-  <include file="$(find carplanner_msgs)/launch/sensors.launch" if="$(arg launch_sensors)">
-  </include>
-
-  <include file="$(find vicon_tools)/launch/vicon_demo.launch" if="$(arg launch_vicon)">
+  <include file="$(find vicon_tools)/launch/vicon_demo.launch" if="$(eval localization_mode=='VICON')">
     <arg name="launch_vicon"         value="true"/>
-    <arg name="launch_odom_tools"    value="true"/>
+    <arg name="launch_odom_tools"    value="false"/>
     <arg name="launch_rviz"          value="false"/>
     <arg name="fixed_frame"          value="map"/>
     <arg name="mocap_frame"          value="mocap"/>
     <arg name="mocap_object"         value="N02"/>
     <arg name="base_link_frame"      value="base_link"/>
   </include>
-  <include file="$(find carplanner_msgs)/launch/lio_sam.launch" unless="$(arg launch_vicon)">
+  <include file="$(find carplanner_msgs)/launch/liosam_demo.launch" if="$(eval localization_mode=='LIOSAM')">
+    <arg name="launch_sensors"       value="false"/>
+    <arg name="launch_liosam"        value="true"/>
+    <arg name="launch_odom_tools"    value="false"/>
+    <arg name="launch_car"           value="false"/>
+    <arg name="launch_rviz"          value="false"/>
+    <arg name="fixed_frame"          value="map"/>
+    <arg name="base_link_frame"      value="base_link"/>
+    <arg name="odom_topic"           value="odom"/>
+  </include>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="static_localization"
+    args="0 0 0 0 0 0 map base_link" if="$(eval localization_mode=='STATIC')"/>
+  <include file="$(find vicon_tools)/launch/fake_vicon_demo.launch" if="$(eval localization_mode=='FAKE')">
+    <arg name="launch_vicon"         value="true"/>
+    <arg name="launch_odom_tools"    value="false"/>
+    <arg name="launch_rviz"          value="false"/>
+    <arg name="fixed_frame"          value="map"/>
+    <arg name="base_link_frame"      value="base_link"/>
+    <arg name="odom_topic"           value="odom"/>
+    <arg name="offset"               value="[0.0, 0.0, 0.0]"/>
+    <arg name="radius"               value="1.0"/>
+    <arg name="speed"                value="1.0"/>
+  </include>
+  <include file="$(find vicon_tools)/launch/odom_tools.launch">
+    <arg name="launch_rviz"          value="false"/>
+    <arg name="fixed_frame"          value="map"/>
+    <arg name="base_link_frame"      value="base_link"/>
+    <arg name="odom_topic"           value="/odom"/>
   </include>
 
   <node pkg="rviz" type="rviz" name="mochagui_exp_rviz" args="-d $(find carplanner_msgs)/rviz/carplanner.rviz" if="$(arg launch_rviz)"/>

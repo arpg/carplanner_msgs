@@ -13,8 +13,9 @@
   <include file="$(find carplanner_msgs)/launch/sensors.launch" if="$(arg launch_sensors)">
   </include>
   
-  <include file="$(find lio_sam)/launch/loam.launch" if="$(arg launch_liosam)">
+  <include file="$(find lio_sam)/launch/loam_demo.launch" if="$(arg launch_liosam)">
     <arg name="config_file" value="$(find lio_sam)/config/params.yaml"/>
+    <arg name="launch_odom_tools" value="false"/>
   </include>
 
   <include file="$(find vicon_tools)/launch/odom_tools.launch" if="$(arg launch_odom_tools)">
@@ -29,6 +30,6 @@
     <arg name="control_scale" value="10.0"/>
   </include>
 
-  <node pkg="rviz" type="rviz" name="vicon_demo_rviz" args="-d $(find vicon_tools)/rviz/vicon.rviz" if="$(arg launch_rviz)"/>
+  <node pkg="rviz" type="rviz" name="liosam_rviz" args="-d $(find lio_sam)/rviz/liosam.rviz" if="$(arg launch_rviz)"/>
 
 </launch>
