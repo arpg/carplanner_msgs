@@ -2,11 +2,14 @@
 
   <arg name="launch_planner"    default="false"/>
   <arg name="launch_infinitam"  default="true"/>
-  <arg name="launch_car"        default="true"/>
+  <arg name="launch_car"        default="false"/>
   <arg name="launch_sensors"    default="true"/>
-  <arg name="use_royale"        default="true"/>
-  <arg name="localization_mode" default="LIOSAM"/> <!-- VICON, LIOSAM, STATIC, FAKE, NONE -->
+  <arg name="launch_odom_tools" default="true"/>
+  <arg name="localization_mode" default="RS"/> <!-- VICON, LIOSAM, RS, STATIC, FAKE, NONE -->
   <arg name="launch_rviz"       default="true"/>
+
+  <arg name="use_royale"        default="true"/>
+  <arg name="enable_depth_completion" default="true"/>
 
   <arg name="enable_debug"    default="false"/>
   <arg name="enable_valgrind" default="false"/>
@@ -16,7 +19,7 @@
 
   <node pkg="MochaGui" type="run_exp.sh" name="mochagui" output="screen" if="$(arg launch_planner)" launch-prefix="$(arg launch_prefix)"/>
 
-  <node pkg="carplanner_tools" type="joy_goal_generator" name="joy_goal_generator" output="log">
+  <node pkg="carplanner_tools" type="joy_goal_generator" name="joy_goal_generator" output="log" if="$(arg launch_planner)">
     <param name="goal_topic" value="/goal"/>
     <param name="odom_topic" value="/odom"/>
     <param name="path_length" value="1.0"/>
@@ -24,7 +27,7 @@
     <param name="rate" value="10"/>
   </node>
 
-  <node pkg="carplanner_tools" type="waypoint_generator" name="waypoint_generator" output="log">
+  <node pkg="carplanner_tools" type="waypoint_generator" name="waypoint_generator" output="log" if="$(arg launch_planner)">
     <param name="odom_topic" value="/odom"/>
     <param name="goal_topic" value="/goal"/>
     <param name="waypoints_topic" value="/input_waypoints"/>
@@ -42,24 +45,55 @@
     <arg name="use_royale"  value="$(arg use_royale)"/> 
   </include>
 
-  <include file="$(find infinitam)/launch/nodelet_demo.launch" if="$(arg launch_infinitam)">
-    <arg name="launch_delay" value="5"/>  
-    <arg name="convert_metric"              value="false"/>
-    <arg name="publish_vertices"            value="false"/>
-    <arg name="world_frame_id"              value="map"/>
-    <arg name="mesh_topic"                  value="input_terrain_mesh"/>
-    <arg name="enable_guess_from_tf_tree"   value="true"/>
-    <arg if="$(arg use_royale)"      name="camera_frame_id"   value="royale_camera_optical_frame"/>
-    <arg unless="$(arg use_royale)"  name="camera_frame_id"   value="camera_depth_optical_frame"/>
-    <arg if="$(arg use_royale)"      name="depth_info_topic"  value="/royale_camera/camera_info"/>
-    <arg unless="$(arg use_royale)"  name="depth_info_topic"  value="/camera/depth/camera_info"/>
-    <arg if="$(arg use_royale)"      name="depth_topic"       value="/royale_camera/depth_image_metric_rect"/>
-    <arg unless="$(arg use_royale)"  name="depth_topic"       value="/camera/depth/image_rect"/>
-    <arg if="$(arg use_royale)"      name="rgb_info_topic"    value=""/>
-    <arg unless="$(arg use_royale)"  name="rgb_info_topic"    value="/camera/aligned_depth_to_color/camera_info"/>
-    <arg if="$(arg use_royale)"      name="rgb_topic"         value=""/>
-    <arg unless="$(arg use_royale)"  name="rgb_topic"         value="/camera/aligned_depth_to_color/image_rect_raw"/>
-  </include>
+  <group if="$(arg launch_infinitam)">
+    <include file="$(find infinitam)/launch/nodelet_demo.launch">
+      <arg name="launch_delay" value="5"/>  
+      <arg name="convert_metric"              value="false"/>
+      <arg name="publish_vertices"            value="false"/>
+      <arg name="world_frame_id"              value="map"/>
+      <arg name="mesh_topic"                  value="input_terrain_mesh"/>
+      <arg name="enable_guess_from_tf_tree"   value="true"/>
+      <arg name="z_ceiling"                   value="1.0"/>
+      <arg name="z_ceiling_negative"          value="false"/>
+      <arg if="$(arg use_royale)"      
+        name="camera_frame_id"   value="royale_camera_optical_frame"/>
+      <arg unless="$(arg use_royale)"  
+        name="camera_frame_id"   value="camera_depth_optical_frame"/>
+      <arg if="$(arg use_royale)"      
+        name="depth_info_topic"  value="/royale_camera/camera_info"/>
+      <arg unless="$(arg use_royale)"  
+        name="depth_info_topic"  value="/camera/depth/camera_info"/>
+      <arg if="$(eval use_royale and not enable_depth_completion)"      
+        name="depth_topic"       value="/royale_camera/depth_image_metric_rect"/>
+      <arg if="$(eval use_royale and enable_depth_completion)"      
+        name="depth_topic"       value="/royale_camera/depth_image_metric_rect/completed"/>
+      <arg if="$(eval not use_royale and not enable_depth_completion)"      
+        name="depth_topic"       value="/camera/depth/image_rect"/>
+      <arg if="$(eval not use_royale and enable_depth_completion)"      
+        name="depth_topic"       value="/camera/depth/image_rect/completed"/>
+      <arg if="$(arg use_royale)"      
+        name="rgb_info_topic"    value=""/>
+      <arg unless="$(arg use_royale)"  
+        name="rgb_info_topic"    value="/camera/aligned_depth_to_color/camera_info"/>
+      <arg if="$(arg use_royale)"      
+        name="rgb_topic"         value=""/>
+      <arg unless="$(arg use_royale)"  
+        name="rgb_topic"         value="/camera/aligned_depth_to_color/image_rect_raw"/>
+    </include>
+    <include file="$(find ip_basic)/launch/run.launch" if="$(arg enable_depth_completion)">
+      <arg if="$(arg use_royale)" 
+        name="input_topic"  value="/royale_camera/depth_image_metric_rect"/>
+      <arg if="$(arg use_royale)" 
+        name="output_topic" value="/royale_camera/depth_image_metric_rect/completed"/>
+      <arg unless="$(arg use_royale)" 
+        name="input_topic"  value="/camera/depth/image_rect"/>
+      <arg unless="$(arg use_royale)" 
+        name="output_topic" value="/camera/depth/image_rect/completed"/>
+      <arg name="fill_type"    value="fast"/>
+      <arg name="extrapolate"  value="false"/>
+      <arg name="blur_type"    value="bilateral"/>
+    </include>
+  </group>
 
   <include file="$(find drive_control)/launch/remote_control.launch" if="$(arg launch_car)">
     <arg name="control_mode"  value="1"/>
@@ -90,6 +124,45 @@
     <arg name="base_link_frame"      value="base_link"/>
     <arg name="odom_topic"           value="odom"/>
   </include>
+  <group if="$(eval localization_mode=='RS')">
+    <include file="$(find realsense2_camera)/launch/rs_t265.launch">
+      <!-- <arg name="gyro_fps"            default="-1"/> -->
+      <!-- <arg name="accel_fps"           default="-1"/> -->
+      <!-- <arg name="enable_gyro"         default="true"/> -->
+      <!-- <arg name="enable_accel"        default="true"/> -->
+      <!-- <arg name="enable_pose"         default="true"/> -->
+      <!-- <arg name="enable_sync"           default="false"/> -->
+      <!-- <arg name="linear_accel_cov"      default="0.01"/> -->
+      <arg name="initial_reset"         default="true"/>
+      <!-- <arg name="reconnect_timeout"     default="6.0"/> -->
+      <!-- <arg name="unite_imu_method"      default=""/> -->
+      <!-- <arg name="publish_odom_tf"     default="true"/> -->
+    </include>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="rs_odom"
+      args="0 0 0 1.5708 0 0 map camera_odom_frame"/>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="rs_odom2"
+      args="0 0 0 3.1415 -1.5708 0 camera_pose_frame base_link"/>
+    <!-- <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer" output="screen">
+      <param name="listen_parent_frame_id" value="camera_odom_frame"/>
+      <param name="listen_child_frame_id" value="camera_pose_frame"/>
+      <param name="listen_rate" value="200.0"/>
+      <param name="broadcast_parent_frame_id" value="map"/>
+      <param name="broadcast_child_frame_id" value="rs_odom"/>
+      <param name="broadcast_rate" value="200.0"/> -->
+      <!-- <param name="pre_transform" value="0 0 0 0 0 0"/>
+      <param name="post_transform" value="0 0 0 0 0 0"/> -->
+    <!-- </node> -->
+    <!-- <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer2" output="screen">
+      <param name="listen_parent_frame_id" value="rs_camera_link"/>
+      <param name="listen_child_frame_id" value="base_link"/>
+      <param name="listen_rate" value="200.0"/>
+      <param name="broadcast_parent_frame_id" value="rs_odom"/>
+      <param name="broadcast_child_frame_id" value="base_link"/>
+      <param name="broadcast_rate" value="200.0"/> -->
+      <!-- <param name="pre_transform" value="0 0 0 0 0 0"/>
+      <param name="post_transform" value="0 0 0 0 0 0"/> -->
+    <!-- </node> -->
+  </group>
   <node pkg="tf2_ros" type="static_transform_publisher" name="static_localization"
     args="0 0 0 0 0 0 map base_link" if="$(eval localization_mode=='STATIC')"/>
   <include file="$(find vicon_tools)/launch/fake_vicon_demo.launch" if="$(eval localization_mode=='FAKE')">
@@ -103,7 +176,7 @@
     <arg name="radius"               value="1.0"/>
     <arg name="speed"                value="1.0"/>
   </include>
-  <include file="$(find vicon_tools)/launch/odom_tools.launch">
+  <include file="$(find vicon_tools)/launch/odom_tools.launch" if="$(arg launch_odom_tools)">
     <arg name="launch_rviz"          value="false"/>
     <arg name="fixed_frame"          value="map"/>
     <arg name="base_link_frame"      value="base_link"/>
