@@ -16,18 +16,25 @@
 
   <link name="base_link"/> <!-- co-located/-oriented with bottom_plate_link -->
   
-  <link name="bottom_plate_link"/>  <!-- at xy center of vehicle, z at bottom of bottom plate -->
-  <joint name="bottom_plate_joint" type="fixed">
+  <link name="top_plate_link"/> <!-- at xy center of vehicle, z at top of top plate -->
+  <joint name="top_plate_joint" type="fixed">
     <parent link="base_link" />
-    <child link="bottom_plate_link" />
+    <child link="top_plate_link" />
     <origin xyz="0 0 0" rpy="0 0 0" />
   </joint>
   
-  <link name="top_plate_link"/>  <!-- at xy center of vehicle, z at top of top plate -->
-  <joint name="top_plate_joint" type="fixed">
+  <link name="bottom_plate_link"/> <!-- at xy center of vehicle, z at bottom of bottom plate -->
+  <joint name="bottom_plate_joint" type="fixed">
+    <parent link="top_plate_link" />
+    <child link="bottom_plate_link" />
+    <origin xyz="0 0 -0.135" rpy="0 0 0" />
+  </joint>
+  
+  <link name="footprint_link"/> <!-- at xy center of vehicle, z at bottom of wheels at neutral suspension -->
+  <joint name="footprint_joint" type="fixed">
     <parent link="bottom_plate_link" />
-    <child link="top_plate_link" />
-    <origin xyz="0 0 0.135" rpy="0 0 0" />
+    <child link="footprint_link" />
+    <origin xyz="0 0 -0.060" rpy="0 0 0" />
   </joint>
 
   <link name="os_sensor"/> <!-- lidar sensor frame -->

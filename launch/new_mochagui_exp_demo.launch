@@ -1,15 +1,15 @@
 <launch>
 
-  <arg name="launch_planner"    default="false"/>
+  <arg name="launch_planner"    default="true"/>
   <arg name="launch_infinitam"  default="true"/>
-  <arg name="launch_car"        default="false"/>
+  <arg name="launch_car"        default="true"/>
   <arg name="launch_sensors"    default="true"/>
   <arg name="launch_odom_tools" default="true"/>
   <arg name="localization_mode" default="RS"/> <!-- VICON, LIOSAM, RS, STATIC, FAKE, NONE -->
   <arg name="launch_rviz"       default="true"/>
 
   <arg name="use_royale"        default="true"/>
-  <arg name="enable_depth_completion" default="true"/>
+  <arg name="enable_depth_completion" default="false"/>
 
   <arg name="enable_debug"    default="false"/>
   <arg name="enable_valgrind" default="false"/>
@@ -17,26 +17,32 @@
   <arg name="launch_prefix"   default="valgrind "          if="$(eval arg('enable_valgrind') and not arg('enable_debug'))"/>
   <arg name="launch_prefix"   default=""                   if="$(eval not arg('enable_debug') and not arg('enable_valgrind'))"/>
 
-  <node pkg="MochaGui" type="run_exp.sh" name="mochagui" output="screen" if="$(arg launch_planner)" launch-prefix="$(arg launch_prefix)"/>
+  <group if="$(arg launch_planner)">
+    <!-- <node pkg="MochaGui" type="run_exp.sh" name="mochagui" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"/> -->
 
-  <node pkg="carplanner_tools" type="joy_goal_generator" name="joy_goal_generator" output="log" if="$(arg launch_planner)">
-    <param name="goal_topic" value="/goal"/>
-    <param name="odom_topic" value="/odom"/>
-    <param name="path_length" value="1.0"/>
-    <param name="path_angle" value="0.0"/>
-    <param name="rate" value="10"/>
-  </node>
+    <node pkg="carplanner_tools" name="joy_goal_generator" type="joy_goal_generator" output="log">
+        <rosparam command="load" file="$(find carplanner_tools)/config/joy_goal_generator.yaml" />
+        <remap from="joy" to="/joy" />
+        <remap from="goal" to="/diff_goal" />
+    </node>
 
-  <node pkg="carplanner_tools" type="waypoint_generator" name="waypoint_generator" output="log" if="$(arg launch_planner)">
-    <param name="odom_topic" value="/odom"/>
-    <param name="goal_topic" value="/goal"/>
-    <param name="waypoints_topic" value="/input_waypoints"/>
-    <!-- <param name="map_frame_id" value="X1/map"/>
-    <param name="base_frame_id" value="X1/base_link"/> -->
-    <param name="rate" value="10"/>
-  </node>
-  <node pkg="topic_tools" type="relay" name="local_goal_relay2" args="/move_base_simple/goal /goal"/>
-  <node pkg="topic_tools" type="relay" name="local_goal_relay" args="/rviz/nav_goal_2d /goal"/>
+    <node pkg="carplanner_tools" type="diff_goal_generator" name="diff_goal_generator" output="log">
+      <param name="diff_goal_topic" value="/diff_goal"/>
+      <param name="goal_topic" value="/goal"/>
+      <param name="odom_topic" value="/odom"/>
+    </node>
+
+    <node pkg="carplanner_tools" type="waypoint_generator" name="waypoint_generator" output="log">
+      <param name="odom_topic" value="/odom"/>
+      <param name="goal_topic" value="/goal"/>
+      <param name="waypoints_topic" value="/input_waypoints"/>
+      <!-- <param name="map_frame_id" value="X1/map"/>
+      <param name="base_frame_id" value="X1/base_link"/> -->
+      <param name="rate" value="10"/>
+    </node>
+    <node pkg="topic_tools" type="relay" name="local_goal_relay2" args="/move_base_simple/goal /goal"/>
+    <node pkg="topic_tools" type="relay" name="local_goal_relay" args="/rviz/nav_goal_2d /goal"/>
+  </group>
 
   <include file="$(find carplanner_msgs)/launch/sensors.launch" if="$(arg launch_sensors)">
     <arg name="enable_depth_camera"  value="true"/> 
@@ -66,11 +72,11 @@
       <arg if="$(eval use_royale and not enable_depth_completion)"      
         name="depth_topic"       value="/royale_camera/depth_image_metric_rect"/>
       <arg if="$(eval use_royale and enable_depth_completion)"      
-        name="depth_topic"       value="/royale_camera/depth_image_metric_rect/completed"/>
+        name="depth_topic"       value="/royale_camera/depth_image_metric_rect_completed"/>
       <arg if="$(eval not use_royale and not enable_depth_completion)"      
         name="depth_topic"       value="/camera/depth/image_rect"/>
       <arg if="$(eval not use_royale and enable_depth_completion)"      
-        name="depth_topic"       value="/camera/depth/image_rect/completed"/>
+        name="depth_topic"       value="/camera/depth/image_rect_completed"/>
       <arg if="$(arg use_royale)"      
         name="rgb_info_topic"    value=""/>
       <arg unless="$(arg use_royale)"  
@@ -84,26 +90,30 @@
       <arg if="$(arg use_royale)" 
         name="input_topic"  value="/royale_camera/depth_image_metric_rect"/>
       <arg if="$(arg use_royale)" 
-        name="output_topic" value="/royale_camera/depth_image_metric_rect/completed"/>
+        name="output_topic" value="/royale_camera/depth_image_metric_rect_completed"/>
       <arg unless="$(arg use_royale)" 
         name="input_topic"  value="/camera/depth/image_rect"/>
       <arg unless="$(arg use_royale)" 
-        name="output_topic" value="/camera/depth/image_rect/completed"/>
+        name="output_topic" value="/camera/depth/image_rect_completed"/>
       <arg name="fill_type"    value="fast"/>
       <arg name="extrapolate"  value="false"/>
       <arg name="blur_type"    value="bilateral"/>
     </include>
   </group>
 
-  <include file="$(find drive_control)/launch/remote_control.launch" if="$(arg launch_car)">
-    <arg name="control_mode"  value="1"/>
-    <arg name="control_scale" value="10.0"/>
-  </include>
+  <group if="$(arg launch_car)">
+    <include file="$(find drive_control)/launch/remote_control.launch">
+      <arg name="launch_joy_node" value="true"/>
+      <arg name="launch_teleop_drive_joy" value="$(eval not launch_planner)"/>
+      <arg name="control_mode"  value="1"/>
+      <arg name="control_scale" value="10.0"/>
+    </include>
 
-  <node pkg="carplanner_tools" type="controlcommand2drivecommand" name="control2drive" if="$(arg launch_car)">
-    <remap from="control_command" to="/command"/>
-    <remap from="drive_command"   to="/planner_command"/>
-  </node>
+    <node pkg="carplanner_tools" type="controlcommand2drivecommand" name="control2drive">
+      <remap from="control_command" to="/command"/>
+      <remap from="drive_command"   to="/planner_command"/>
+    </node>
+  </group>
 
   <include file="$(find vicon_tools)/launch/vicon_demo.launch" if="$(eval localization_mode=='VICON')">
     <arg name="launch_vicon"         value="true"/>
@@ -141,7 +151,7 @@
     <node pkg="tf2_ros" type="static_transform_publisher" name="rs_odom"
       args="0 0 0 1.5708 0 0 map camera_odom_frame"/>
     <node pkg="tf2_ros" type="static_transform_publisher" name="rs_odom2"
-      args="0 0 0 3.1415 -1.5708 0 camera_pose_frame base_link"/>
+      args="-0.120 0 0 3.1415 -1.5708 0 camera_pose_frame base_link"/>
     <!-- <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer" output="screen">
       <param name="listen_parent_frame_id" value="camera_odom_frame"/>
       <param name="listen_child_frame_id" value="camera_pose_frame"/>

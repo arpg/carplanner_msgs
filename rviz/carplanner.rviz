@@ -1,6 +1,6 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 138
+    Help Height: 70
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -11,11 +11,12 @@ Panels:
         - /InfiniTAMMesh1/Show Wireframe1
         - /btTerrainMesh1/Display Type1
         - /btTerrainMesh1/Show Wireframe1
+        - /btGroundMesh1/Display Type1
         - /btChassisMesh1/Display Type1
         - /TF1
         - /TF1/Frames1
       Splitter Ratio: 0.47800585627555847
-    Tree Height: 414
+    Tree Height: 482
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -55,7 +56,7 @@ Visualization Manager:
       Offset:
         X: 0
         Y: 0
-        Z: 0.03999999910593033
+        Z: 0
       Plane: XY
       Plane Cell Count: 10
       Reference Frame: <Fixed Frame>
@@ -106,35 +107,12 @@ Visualization Manager:
         {}
       Queue Size: 100
       Value: true
-    - Alpha: 1
-      Buffer Length: 100
-      Class: rviz/Path
-      Color: 25; 255; 0
-      Enabled: false
-      Head Diameter: 0.30000001192092896
-      Head Length: 0.20000000298023224
-      Length: 0.30000001192092896
-      Line Style: Lines
-      Line Width: 0.029999999329447746
-      Name: Path
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Pose Color: 255; 85; 255
-      Pose Style: None
-      Radius: 0.029999999329447746
-      Shaft Diameter: 0.10000000149011612
-      Shaft Length: 0.10000000149011612
-      Topic: /
-      Unreliable: false
-      Value: false
     - Class: rviz_mesh_plugin/TriangleMesh
       Display Type:
         Faces Alpha: 1
         Faces Color: 160; 160; 164
         Value: Fixed Color
-      Enabled: true
+      Enabled: false
       Mesh Buffer Size: 1
       Name: InfiniTAMMesh
       Show Normals:
@@ -147,7 +125,7 @@ Visualization Manager:
         Wireframe Alpha: 0.25
         Wireframe Color: 0; 0; 0
       Topic: /input_terrain_mesh
-      Value: true
+      Value: false
     - Class: rviz_mesh_plugin/TriangleMesh
       Display Type:
         Faces Alpha: 1
@@ -166,6 +144,25 @@ Visualization Manager:
         Wireframe Alpha: 0.25
         Wireframe Color: 0; 0; 0
       Topic: /output_terrain_mesh
+      Value: true
+    - Class: rviz_mesh_plugin/TriangleMesh
+      Display Type:
+        Faces Alpha: 0.5
+        Faces Color: 150; 200; 255
+        Value: Fixed Color
+      Enabled: true
+      Mesh Buffer Size: 1
+      Name: btGroundMesh
+      Show Normals:
+        Normals Alpha: 1
+        Normals Color: 255; 0; 255
+        Normals Scaling Factor: 100
+        Value: false
+      Show Wireframe:
+        Value: true
+        Wireframe Alpha: 0.25
+        Wireframe Color: 0; 0; 0
+      Topic: /output_groundplane_mesh
       Value: true
     - Class: rviz_mesh_plugin/TriangleMesh
       Display Type:
@@ -190,11 +187,11 @@ Visualization Manager:
       Buffer Length: 1
       Class: rviz/Path
       Color: 0; 0; 255
-      Enabled: true
+      Enabled: false
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.30000001192092896
-      Line Style: Lines
+      Line Style: Billboards
       Line Width: 0.029999999329447746
       Name: SimPath
       Offset:
@@ -208,16 +205,16 @@ Visualization Manager:
       Shaft Length: 0.10000000149011612
       Topic: /gui/sim_path
       Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
       Color: 239; 41; 41
-      Enabled: true
+      Enabled: false
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.30000001192092896
-      Line Style: Lines
+      Line Style: Billboards
       Line Width: 0.029999999329447746
       Name: ControlPath
       Offset:
@@ -231,6 +228,22 @@ Visualization Manager:
       Shaft Length: 0.10000000149011612
       Topic: /gui/ctrl_path
       Unreliable: false
+      Value: false
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /gui/sim_path
+      Name: SimPath
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /gui/ctrl_path
+      Name: CtrlPath
+      Namespaces:
+        {}
+      Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
@@ -371,6 +384,21 @@ Visualization Manager:
       Topic: /vicon_path
       Unreliable: false
       Value: true
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.10000000149011612
+      Head Radius: 0.10000000149011612
+      Name: Goal
+      Shaft Length: 0.10000000149011612
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /goal
+      Unreliable: false
+      Value: true
     - Class: rviz/TF
       Enabled: true
       Frame Timeout: 15
@@ -396,6 +424,8 @@ Visualization Manager:
           Value: false
         depth_camera_link:
           Value: false
+        footprint_link:
+          Value: true
         gx5_link:
           Value: false
         inf_cam:
@@ -430,18 +460,20 @@ Visualization Manager:
           camera_odom_frame:
             camera_pose_frame:
               base_link:
-                bottom_plate_link:
-                  top_plate_link:
-                    depth_camera_link:
-                      royale_camera_link:
-                        royale_camera_optical_frame:
-                          {}
-                    os_sensor:
-                      gx5_link:
+                top_plate_link:
+                  bottom_plate_link:
+                    footprint_link:
+                      {}
+                  depth_camera_link:
+                    royale_camera_link:
+                      royale_camera_optical_frame:
                         {}
-                    rs_camera_bottom_screw_frame:
-                      rs_camera_link:
-                        {}
+                  os_sensor:
+                    gx5_link:
+                      {}
+                  rs_camera_bottom_screw_frame:
+                    rs_camera_link:
+                      {}
               camera_link:
                 camera_accel_frame:
                   camera_accel_optical_frame:
@@ -484,8 +516,8 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Class: rviz/XYOrbit
-      Distance: 1.469738483428955
+      Class: rviz/ThirdPersonFollower
+      Distance: 4.30747652053833
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -500,10 +532,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.34039849042892456
+      Pitch: 0.275398313999176
       Target Frame: depth_camera_link
-      Value: XYOrbit (rviz)
-      Yaw: 1.665398120880127
+      Value: ThirdPersonFollower (rviz)
+      Yaw: 3.6340341567993164
     Saved: ~
 Window Geometry:
   Displays:
@@ -521,5 +553,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1241
-  X: 65
+  X: 67
   Y: 24
