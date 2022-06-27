@@ -78,7 +78,7 @@
   </node>
 
   <arg name="gg_delay" default="$(eval launch_delay+0)"/>
-  <node pkg="carplanner_msgs" type="goal_generator" name="global_path2local_goal" output="log" launch-prefix="bash -c 'sleep $(arg gg_delay); $0 $@'">
+  <node pkg="carplanner_msgs" type="path_goal_generator" name="global_path2local_goal" output="log" launch-prefix="bash -c 'sleep $(arg gg_delay); $0 $@'">
     <param name="path_topic" value="planner/global_path"/>
     <param name="goal_topic" value="planner/goal"/>
     <param name="odom_topic" value="/X1/odom"/>

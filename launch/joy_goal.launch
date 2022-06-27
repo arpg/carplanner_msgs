@@ -1,0 +1,27 @@
+<launch>
+
+    <node pkg="carplanner_tools" name="joy_goal_generator" type="joy_goal_generator" output="log">
+        <rosparam command="load" file="$(find carplanner_tools)/config/joy_goal_generator.yaml" />
+        <remap from="joy" to="/joy" />
+        <remap from="goal" to="/diff_goal" />
+    </node>
+
+    <node pkg="carplanner_tools" type="diff_goal_generator" name="diff_goal_generator" output="log">
+      <param name="diff_goal_topic" value="/diff_goal"/>
+      <param name="goal_topic" value="/goal"/>
+      <param name="odom_topic" value="/odom"/>
+    </node>
+
+    <node pkg="carplanner_tools" type="waypoint_generator" name="waypoint_generator" output="log">
+      <param name="odom_topic" value="/odom"/>
+      <param name="goal_topic" value="/goal"/>
+      <param name="waypoints_topic" value="/input_waypoints"/>
+      <param name="map_frame_id" value="map"/>
+      <param name="base_frame_id" value="base_link"/>
+      <param name="rate" value="10"/>
+    </node>
+
+    <node pkg="topic_tools" type="relay" name="local_goal_relay2" args="/move_base_simple/goal /goal"/>
+    <node pkg="topic_tools" type="relay" name="local_goal_relay" args="/rviz/nav_goal_2d /goal"/>
+
+</launch>

@@ -27,7 +27,7 @@
   <joint name="bottom_plate_joint" type="fixed">
     <parent link="top_plate_link" />
     <child link="bottom_plate_link" />
-    <origin xyz="0 0 -0.135" rpy="0 0 0" />
+    <origin xyz="0 0 -0.127" rpy="0 0 0" />
   </joint>
   
   <link name="footprint_link"/> <!-- at xy center of vehicle, z at bottom of wheels at neutral suspension -->
@@ -59,25 +59,31 @@
     <origin xyz="0 0 -0.007675" rpy="0 0 3.1416" />
   </joint>
 
-  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
-
-  <sensor_d435 parent="top_plate_link" name="rs_camera">
-    <origin xyz="0.2219971 0 0.0130257" rpy="0 0 0" />
-  </sensor_d435>
-
   <link name="depth_camera_link"/>
   <joint name="depth_cam_joint" type="fixed">
     <parent link="top_plate_link" />
     <child link="depth_camera_link" />
-    <origin xyz="0.2219971 0 0.0130257" rpy="0 0 0" />
+    <!-- <origin xyz="0.2219971 0 0.130257" rpy="0 0 0" /> -->
+    <origin xyz="0.1143 0 0.13335" rpy="0 0 0" />
   </joint>
-
 
   <link name="royale_camera_link"/>
   <joint name="royale_cam_joint" type="fixed">
     <parent link="depth_camera_link" />
     <child link="royale_camera_link" />
-    <origin xyz="0 0 0" rpy="3.1415 0 3.1415" />
+    <origin xyz="0 0 0" rpy="0 0 3.1415" />
+  </joint>
+
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
+  <sensor_d435 parent="depth_camera_link" name="d435_camera">
+    <origin xyz="0 0 -0.0127" rpy="0 0 0" />
+  </sensor_d435>
+
+  <link name="t265_link"/>
+  <joint name="t265_camera_joint" type="fixed">
+    <parent link="top_plate_link" />
+    <child link="t265_link" />
+    <origin xyz="0.0254 0 0.1143" rpy="3.1415 -1.5708 0" />
   </joint>
 
 </robot>

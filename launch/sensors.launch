@@ -4,14 +4,16 @@
   <arg name="enable_lidar"  default="true"/> 
   <arg name="enable_imu"  default="true"/> 
   <arg name="use_royale"  default="true"/> <!-- true: royale, false: realsense -->
+
   <arg name="filter_ouster_points" default="false"/> 
 
   <arg name="royale_enable_processing" default="true"/>  
   <arg name="royale_node_name"         default="royale_camera"/>
 
-  <!-- <arg name="rs" default="832112071706"/> -->
+  <arg name="rs_id" default="832112071706"/>
   <!-- <arg name="rs_low" default="838212073252"/> -->
-  <arg name="rs_filters" default="temporal,spatial,hole_filling"/>
+  <arg name="rs_filters" default=""/>
+  <!-- <arg name="rs_filters" default="hole_filling,temporal,spatial"/> -->
 
   <include file="$(find carplanner_msgs)/launch/robot_state_publisher.launch">
     <arg name="urdf_path" value="$(find carplanner_msgs)/urdf/ninjacar.urdf.xacro"/>
@@ -27,22 +29,18 @@
   </include>
 
   <include file="$(find realsense2_camera)/launch/rs_camera.launch" if="$(eval enable_depth_camera and not use_royale)">
-    <!-- <arg name="serial_no"         value="$(arg rs)"/> -->
-    <!-- <arg name="camera"            value="camera_fwd"/> -->
+    <arg name="serial_no"         value="$(arg rs_id)"/>
+    <arg name="camera"            value="d435_camera"/>
     <arg name="align_depth"       value="true"/>
     <arg name="filters"           value="$(arg rs_filters)"/>
-    <arg name="initial_reset"     value="true"/>
+    <!-- <arg name="initial_reset"     value="true"/> -->
     <!-- <arg name="enable_pointcloud" value="true"/> -->
   </include>
-
-  <!-- <include file="$(find realsense2_camera)/launch/rs_camera.launch">
-    <arg name="serial_no"         value="$(arg rs_low)"/>
-    <arg name="camera"            value="camera_low"/>
-    <arg name="align_depth"       value="true"/>
-    <arg name="filters"           value="temporal,spatial,hole_filling"/>
-    <arg name="initial_reset"     value="true"/>
-    <arg name="enable_pointcloud" value="true"/>
-  </include> -->
+  <node pkg="nodelet" type="nodelet" name="convert_metric_depth" respawn="true" if="$(eval enable_depth_camera and not use_royale)"
+        args="standalone depth_image_proc/convert_metric">
+      <remap from="image_raw" to="d435_camera/depth/image_rect_raw"/>
+      <remap from="image" to="d435_camera/depth/image_rect_metric"/>
+  </node>
 
   <include file="$(find ouster_ros)/ouster.launch" if="$(arg enable_lidar)">
     <arg name="sensor_hostname" value="192.168.20.21" doc="hostname or IP in dotted decimal form of the sensor"/>

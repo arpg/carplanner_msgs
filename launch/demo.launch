@@ -115,7 +115,7 @@
     <param name="set_state_service" value="vehicle/set_state"/>
   </node>
 
-  <!-- <node pkg="carplanner_msgs" type="goal_generator" name="global_path2local_goal" output="log">
+  <!-- <node pkg="carplanner_msgs" type="path_goal_generator" name="global_path2local_goal" output="log">
     <param name="path_topic" value="planner/global_path"/>
     <param name="goal_topic" value="planner/goal"/>
     <param name="odom_topic" value="odom"/>

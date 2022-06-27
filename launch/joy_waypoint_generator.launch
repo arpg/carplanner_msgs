@@ -1,0 +1,27 @@
+<launch>
+
+    <arg name="machine" default=""/>
+
+    <arg name="launch_joy_node" default="true"/>
+    <arg name="launch_teleop_drive_joy" default="true"/>
+
+    <arg name="joy_config" default="xbox360_speed_metric" />
+    <arg name="joy_dev" default="/dev/input/js0" />
+    <arg name="config_filepath" default="$(find drive_control)/config/$(arg joy_config).config.yaml" />
+    <arg name="joy_topic" default="joy" />
+    <arg name="command_topic" default="drive/command"/>
+    
+    <node pkg="joy" type="joy_node" name="joy_node" if="$(arg launch_joy_node)">
+        <param name="dev" value="$(arg joy_dev)" />
+        <param name="deadzone" value="0.1" />
+        <param name="autorepeat_rate" value="20" />
+        <remap from="joy" to="$(arg joy_topic)" />
+    </node> 
+
+    <node pkg="drive_control" name="teleop_drive_joy" type="teleop_drive_joy_node" if="$(arg launch_teleop_drive_joy)">
+        <rosparam command="load" file="$(arg config_filepath)" />
+        <remap from="joy" to="$(arg joy_topic)" />
+        <remap from="drive/command" to="$(arg command_topic)" />
+    </node>
+
+</launch>
