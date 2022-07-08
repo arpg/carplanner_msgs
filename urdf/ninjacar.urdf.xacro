@@ -64,7 +64,8 @@
     <parent link="top_plate_link" />
     <child link="depth_camera_link" />
     <!-- <origin xyz="0.2219971 0 0.130257" rpy="0 0 0" /> -->
-    <origin xyz="0.1143 0 0.13335" rpy="0 0 0" />
+    <!-- <origin xyz="0.1143 0 0.13335" rpy="0 0 0" /> -->
+    <origin xyz="0.1143 0 0." rpy="0 0 0" />
   </joint>
 
   <link name="royale_camera_link"/>

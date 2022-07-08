@@ -18,9 +18,23 @@
   <arg name="launch_prefix"   default=""                   if="$(eval not arg('enable_debug') and not arg('enable_valgrind'))"/>
 
   <group if="$(arg launch_planner)">
-    <rosparam param="/gui/waypoints_config">'eight'</rosparam>
+    <rosparam param="/gui/waypoints_config">'ellipse'</rosparam>
+    <!-- <rosparam param="/gui/waypoints_config">'eight'</rosparam> -->
+    <rosparam param="/gui/waypoints_radius">1.5</rosparam>
+    <rosparam param="/gui/waypoints_offset_y">2</rosparam>
     <rosparam param="/gui/waypoints_vel_min">4.0</rosparam>
-    <rosparam param="/gui/mesh_import_rate">INFINITY</rosparam>
+    <rosparam param="/gui/waypoints_vel_max">4.0</rosparam>
+    <rosparam param="/gui/mesh_import_rate">1.</rosparam>
+    <rosparam param="/gui/xyz_weight">2.0</rosparam>
+    <rosparam param="/gui/theta_weight">0.5</rosparam>
+    <rosparam param="/gui/vel_weight_point">1.0</rosparam>
+    <rosparam param="/gui/vel_weight_traj">0.5</rosparam>
+    <rosparam param="/gui/tilt_weight">0.001</rosparam>
+    <rosparam param="/gui/contact_weight">0.001</rosparam>
+    <rosparam param="/gui/collision_weight">100.0</rosparam>
+    <rosparam param="/gui/curv_weight">0.001</rosparam>
+    <rosparam param="/gui/time_weight">0.05</rosparam>
+    <rosparam param="/gui/max_plan_norm">50.0</rosparam>
 
     <!-- <node pkg="MochaGui" type="run_exp.sh" name="mochagui" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"/> -->
   </group>
@@ -41,7 +55,7 @@
       <arg name="mesh_topic"                  value="input_terrain_mesh"/>
       <arg name="enable_guess_from_tf_tree"   value="true"/>
       <arg name="z_floor"                     value="-1.0"/>
-      <!-- <arg name="z_ceiling"                   value="0.185"/> -->
+      <!-- <arg name="z_ceiling"                   value="0.0"/> -->
       <!-- <arg name="z_ceiling"                   value="0.0"/> -->
       <arg name="z_ceiling"                   value="0.5"/>
       <!-- <arg name="z_floor"                     value="-2.0"/> -->
@@ -161,7 +175,7 @@
       <param name="post_transform" value="0 0 0 0 0 0"/> -->
       <!-- <param name="override_z" value="0.0"/> -->
     </node>
-    <!-- <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer3" output="screen">
+    <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer3" output="screen">
       <param name="listen_parent_frame_id" value="map"/>
       <param name="listen_child_frame_id" value="base_link"/>
       <param name="listen_rate" value="0.0"/>
@@ -189,7 +203,7 @@
       <arg name="mocap_frame"          value="mocap"/>
       <arg name="mocap_object"         value="N02"/>
       <arg name="base_link_frame"      value="base_link/vicon"/>
-    </include> -->
+    </include>
   </group>
   <node pkg="tf2_ros" type="static_transform_publisher" name="static_localization"
     args="0 0 0 0 0 0 map base_link" if="$(eval localization_mode=='STATIC')"/>

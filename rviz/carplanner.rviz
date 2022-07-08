@@ -16,7 +16,7 @@ Panels:
         - /TF1
         - /TF1/Frames1
       Splitter Ratio: 0.6352941393852234
-    Tree Height: 371
+    Tree Height: 392
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -56,7 +56,7 @@ Visualization Manager:
       Offset:
         X: 0
         Y: 0
-        Z: -0.2777000069618225
+        Z: -0.3149999976158142
       Plane: XY
       Plane Cell Count: 1000
       Reference Frame: <Fixed Frame>
@@ -397,7 +397,7 @@ Visualization Manager:
       Frames:
         All Enabled: false
         N02:
-          Value: false
+          Value: true
         base_link:
           Value: false
         base_link/vicon:
@@ -479,7 +479,12 @@ Visualization Manager:
         map:
           base_link_initial:
             base_link_initial2:
-              {}
+              map/vicon:
+                mocap:
+                  N02:
+                    base_link/vicon:
+                      base_link/vicon2:
+                        {}
           camera_odom_frame2:
             camera_pose_frame2:
               base_link:
@@ -541,25 +546,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 9.010076522827148
+      Distance: 5.403301239013672
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.7838859558105469
-        Y: -0.014719530940055847
-        Z: -0.2776988744735718
+        X: 0.16674835979938507
+        Y: -0.3208920359611511
+        Z: -0.27770134806632996
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 0.8397969007492065
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 3.155402183532715
+      Yaw: 1.5572181940078735
     Saved: ~
 Window Geometry:
   Displays:
