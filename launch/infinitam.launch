@@ -1,0 +1,60 @@
+<launch>
+
+  <arg name="use_royale"        default="false"/>
+  <arg name="enable_depth_completion" default="false"/>
+
+  <include file="$(find infinitam)/launch/nodelet_demo.launch">
+    <arg name="launch_delay" value="5"/>  
+    <arg name="convert_metric"              value="false"/>
+    <arg name="publish_vertices"            value="false"/>
+    <arg name="world_frame_id"              value="map"/>
+    <arg name="mesh_topic"                  value="input_terrain_mesh"/>
+    <arg name="enable_guess_from_tf_tree"   value="true"/>
+    <arg name="enable_lc"                   value="false"/>
+    <arg name="enable_tracker"              value="false"/>
+    <arg name="z_floor"                     value="-1.0"/>
+    <!-- <arg name="z_ceiling"                   value="0.0"/> -->
+    <!-- <arg name="z_ceiling"                   value="0.0"/> -->
+    <arg name="z_ceiling"                   value="0.5"/>
+    <!-- <arg name="z_floor"                     value="-2.0"/> -->
+    <!-- <arg name="z_ceiling"                   value="-1.0"/> -->
+    <arg if="$(arg use_royale)"      
+      name="camera_frame_id"   value="royale_camera_optical_frame"/>
+    <arg unless="$(arg use_royale)"  
+      name="camera_frame_id"   value="d435_camera_depth_optical_frame"/>
+    <arg if="$(arg use_royale)"      
+      name="depth_info_topic"  value="/royale_camera/camera_info"/>
+    <arg unless="$(arg use_royale)"  
+      name="depth_info_topic"  value="/d435_camera/depth/camera_info"/>
+    <arg if="$(eval use_royale and not enable_depth_completion)"      
+      name="depth_topic"       value="/royale_camera/depth_image_metric_rect"/>
+    <arg if="$(eval use_royale and enable_depth_completion)"      
+      name="depth_topic"       value="/royale_camera/depth_image_metric_rect_completed"/>
+    <arg if="$(eval not use_royale and not enable_depth_completion)"      
+      name="depth_topic"       value="/d435_camera/depth/image_rect_raw"/>
+    <arg if="$(eval not use_royale and enable_depth_completion)"      
+      name="depth_topic"       value="/d435_camera/depth/image_rect_raw_completed"/>
+    <arg if="$(arg use_royale)"      
+      name="rgb_info_topic"    value=""/>
+    <arg unless="$(arg use_royale)"  
+      name="rgb_info_topic"    value="/d435_camera/aligned_depth_to_color/camera_info"/>
+    <arg if="$(arg use_royale)"      
+      name="rgb_topic"         value=""/>
+    <arg unless="$(arg use_royale)"  
+      name="rgb_topic"         value="/d435_camera/aligned_depth_to_color/image_rect_raw"/>
+  </include>
+  <include file="$(find ip_basic)/launch/run.launch" if="$(arg enable_depth_completion)">
+    <arg if="$(arg use_royale)" 
+      name="input_topic"  value="/royale_camera/depth_image_metric_rect"/>
+    <arg if="$(arg use_royale)" 
+      name="output_topic" value="/royale_camera/depth_image_metric_rect_completed"/>
+    <arg unless="$(arg use_royale)" 
+      name="input_topic"  value="/d435_camera/depth/image_rect_raw"/>
+    <arg unless="$(arg use_royale)" 
+      name="output_topic" value="/d435_camera/depth/image_rect_raw_completed"/>
+    <arg name="fill_type"    value="fast"/>
+    <arg name="extrapolate"  value="false"/>
+    <arg name="blur_type"    value="gaussian"/>
+  </include>
+
+</launch>

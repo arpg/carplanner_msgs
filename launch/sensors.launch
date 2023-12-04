@@ -3,7 +3,8 @@
   <arg name="enable_depth_camera"  default="true"/> 
   <arg name="enable_lidar"  default="true"/> 
   <arg name="enable_imu"  default="true"/> 
-  <arg name="use_royale"  default="true"/> <!-- true: royale, false: realsense -->
+  <arg name="use_royale"  default="false"/> <!-- true: royale, false: realsense -->
+  <arg name="enable_t265" default="true"/>
 
   <arg name="filter_ouster_points" default="false"/> 
 
@@ -20,7 +21,7 @@
   </include>
 
   <include file="$(find microstrain_mips)/launch/microstrain.launch" if="$(arg enable_imu)">
-    <arg name="imu_rate" value="500"/>
+    <arg name="imu_rate" value="1000"/>
   </include>
 
   <include file="$(find royale_in_ros)/launch/camera_driver.launch" if="$(eval enable_depth_camera and use_royale)">
@@ -31,7 +32,7 @@
   <include file="$(find realsense2_camera)/launch/rs_camera.launch" if="$(eval enable_depth_camera and not use_royale)">
     <arg name="serial_no"         value="$(arg rs_id)"/>
     <arg name="camera"            value="d435_camera"/>
-    <arg name="align_depth"       value="true"/>
+    <arg name="align_depth"       value="false"/>
     <arg name="filters"           value="$(arg rs_filters)"/>
     <!-- <arg name="initial_reset"     value="true"/> -->
     <!-- <arg name="enable_pointcloud" value="true"/> -->
@@ -42,9 +43,25 @@
       <remap from="image" to="d435_camera/depth/image_rect_metric"/>
   </node>
 
+  <include file="$(find realsense2_camera)/launch/rs_t265.launch" if="$(arg enable_t265)">
+    <arg name="camera"                   value="t265_camera"/>
+    <arg name="serial_no"                value="845412110073"/>
+    <!-- <arg name="gyro_fps"            default="-1"/> -->
+    <!-- <arg name="accel_fps"           default="-1"/> -->
+    <!-- <arg name="enable_gyro"         default="true"/> -->
+    <!-- <arg name="enable_accel"        default="true"/> -->
+    <!-- <arg name="enable_pose"         default="true"/> -->
+    <!-- <arg name="enable_sync"           default="false"/> -->
+    <!-- <arg name="linear_accel_cov"      default="0.01"/> -->
+    <!-- <arg name="initial_reset"            value="true"/> -->
+    <!-- <arg name="reconnect_timeout"     default="6.0"/> -->
+    <!-- <arg name="unite_imu_method"      default=""/> -->
+    <!-- <arg name="publish_odom_tf"     default="true"/> -->
+  </include>
+
   <include file="$(find ouster_ros)/ouster.launch" if="$(arg enable_lidar)">
-    <arg name="sensor_hostname" value="192.168.20.21" doc="hostname or IP in dotted decimal form of the sensor"/>
-    <arg name="udp_dest" value="192.168.20.20" doc="hostname or IP where the sensor will send data packets"/>
+    <arg name="sensor_hostname" value="192.168.40.21" doc="hostname or IP in dotted decimal form of the sensor"/>
+    <arg name="udp_dest" value="192.168.40.20" doc="hostname or IP where the sensor will send data packets"/>
     <!-- <arg name="lidar_port" value="0" doc="port to which the sensor should send lidar data"/> -->
     <!-- <arg name="imu_port" value="0" doc="port to which the sensor should send imu data"/> -->
     <!-- <arg name="replay" value="false" doc="do not connect to a sensor; expect /os_node/{lidar,imu}_packets from replay"/> -->

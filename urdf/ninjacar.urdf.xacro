@@ -65,7 +65,7 @@
     <child link="depth_camera_link" />
     <!-- <origin xyz="0.2219971 0 0.130257" rpy="0 0 0" /> -->
     <!-- <origin xyz="0.1143 0 0.13335" rpy="0 0 0" /> -->
-    <origin xyz="0.1143 0 0." rpy="0 0 0" />
+    <origin xyz="0.1143 0 0.11" rpy="0.01 0 0" />
   </joint>
 
   <link name="royale_camera_link"/>
@@ -77,7 +77,9 @@
 
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
   <sensor_d435 parent="depth_camera_link" name="d435_camera">
-    <origin xyz="0 0 -0.0127" rpy="0 0 0" />
+    <!-- <origin xyz="0 0 -0.0127" rpy="0 0 0" /> -->
+    <!-- <origin xyz="0 0 0" rpy="0 0 0" /> -->
+    <origin xyz="0 0 0" rpy="$(eval 1*0.0175) $(eval 3.5*0.0175) 0" />
   </sensor_d435>
 
   <link name="t265_link"/>

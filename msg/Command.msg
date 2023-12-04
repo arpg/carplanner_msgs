@@ -7,5 +7,6 @@ float64[3] torques
 float64 dt
 float64 dphi
 float64 time
+float64 target_vel
 
 

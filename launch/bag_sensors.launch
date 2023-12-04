@@ -1,0 +1,42 @@
+<launch>
+
+  <arg name="split_size_in_mb" value="10000"/>
+  <arg name="max_num_of_splits" value="8"/>
+  <node pkg="rosbag" type="record" name="rosbag" output="screen"
+    args=" --split --size=$(arg split_size_in_mb) --max-splits $(arg max_num_of_splits) --buffsize 0 --output-prefix /media/arpg/1tbb/holeman
+    
+    /tf
+    /tf_static
+    /gx5/imu/data
+    /os_cloud_node/points
+    /d435_camera/color/camera_info
+    /d435_camera/color/image_raw
+    /d435_camera/depth/camera_info
+    /d435_camera/depth/image_rect_raw
+    ">
+  </node>
+
+  <include file="$(find carplanner_msgs)/launch/sensors.launch"/>
+
+  <!-- <node pkg="topic_tools" type="throttle" name="camera_fwd_color_throttle"
+    args="messages $(arg ns)/camera_fwd/color/image_raw 2 $(arg ns)/camera_fwd/color/image_raw/throttled"/> -->
+
+</launch>
+
+<!-- POTENTIAL TOPICS -->
+<!--
+/tf
+/tf_static
+$(arg ns)/imu_raw
+$(arg ns)/os1_cloud_node/points
+$(arg ns)/camera_fwd/color/camera_info
+$(arg ns)/camera_fwd/color/image_raw
+$(arg ns)/camera_fwd/aligned_depth_to_color/camera_info
+$(arg ns)/camera_fwd/aligned_depth_to_color/image_raw
+$(arg ns)/camera_fwd/depth/color/points
+$(arg ns)/camera_low/color/camera_info
+$(arg ns)/camera_low/color/image_raw
+$(arg ns)/camera_low/aligned_depth_to_color/camera_info
+$(arg ns)/camera_low/aligned_depth_to_color/image_raw
+$(arg ns)/camera_low/depth/color/points
+-->

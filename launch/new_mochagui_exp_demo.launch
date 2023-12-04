@@ -4,12 +4,15 @@
   <arg name="launch_infinitam"  default="true"/>
   <arg name="launch_car"        default="true"/>
   <arg name="launch_sensors"    default="true"/>
-  <arg name="launch_odom_tools" default="true"/>
+  <arg name="launch_odom_tools" default="false"/>
   <arg name="localization_mode" default="RS"/> <!-- VICON, LIOSAM, RS, STATIC, FAKE, NONE -->
-  <arg name="launch_rviz"       default="true"/>
+  <arg name="launch_rviz"       default="false"/>
+  <arg name="launch_recording"  default="false"/>
 
   <arg name="use_royale"        default="false"/>
   <arg name="enable_depth_completion" default="false"/>
+
+  <arg name="waypoints_config" default="eight"/> <!-- circle, ellipse, eight -->
 
   <arg name="enable_debug"    default="false"/>
   <arg name="enable_valgrind" default="false"/>
@@ -17,24 +20,59 @@
   <arg name="launch_prefix"   default="valgrind "          if="$(eval arg('enable_valgrind') and not arg('enable_debug'))"/>
   <arg name="launch_prefix"   default=""                   if="$(eval not arg('enable_debug') and not arg('enable_valgrind'))"/>
 
+  <node pkg="carplanner_tools" type="cpu_stats_publisher" name="cpu_stats_publisher" if="$(arg launch_recording)"/>
+
   <group if="$(arg launch_planner)">
-    <rosparam param="/gui/waypoints_config">'ellipse'</rosparam>
-    <!-- <rosparam param="/gui/waypoints_config">'eight'</rosparam> -->
-    <rosparam param="/gui/waypoints_radius">1.5</rosparam>
-    <rosparam param="/gui/waypoints_offset_y">2</rosparam>
-    <rosparam param="/gui/waypoints_vel_min">4.0</rosparam>
-    <rosparam param="/gui/waypoints_vel_max">4.0</rosparam>
+    <param name="/gui/waypoints_config" value="$(arg waypoints_config)"/>
+    <group if="$(eval waypoints_config=='circle')">
+      <!-- <rosparam param="/gui/waypoints_config">'circle'</rosparam> -->
+      <rosparam param="/gui/waypoints_radius">1.5</rosparam>
+      <rosparam param="/gui/waypoints_offset_x">0</rosparam>
+      <rosparam param="/gui/waypoints_offset_y">2</rosparam>
+      <rosparam param="/gui/waypoints_offset_z">0.3</rosparam>
+      <rosparam param="/gui/waypoints_offset_roll">0</rosparam>
+      <rosparam param="/gui/waypoints_offset_pitch">0</rosparam>
+      <rosparam param="/gui/waypoints_offset_yaw">0</rosparam>
+      <rosparam param="/gui/waypoints_vel_min">2.0</rosparam>
+    </group>
+    <group if="$(eval waypoints_config=='ellipse')">
+      <!-- <rosparam param="/gui/waypoints_config">'ellipse'</rosparam> -->
+      <rosparam param="/gui/waypoints_radius">1.5</rosparam>
+      <rosparam param="/gui/waypoints_offset_x">-1.5</rosparam>
+      <rosparam param="/gui/waypoints_offset_y">1.5</rosparam>
+      <rosparam param="/gui/waypoints_offset_z">0.3</rosparam>
+      <rosparam param="/gui/waypoints_offset_roll">0</rosparam>
+      <rosparam param="/gui/waypoints_offset_pitch">0</rosparam>
+      <rosparam param="/gui/waypoints_offset_yaw">0</rosparam>
+      <rosparam param="/gui/waypoints_vel_min">1.0</rosparam>
+      <rosparam param="/gui/waypoints_vel_max">4.0</rosparam>
+    </group>
+    <group if="$(eval waypoints_config=='eight')">
+      <!-- <rosparam param="/gui/waypoints_config">'eight'</rosparam> -->
+      <rosparam param="/gui/waypoints_radius">1.5</rosparam>
+      <rosparam param="/gui/waypoints_offset_x">0</rosparam>
+      <rosparam param="/gui/waypoints_offset_y">2</rosparam>
+      <rosparam param="/gui/waypoints_offset_z">0.3</rosparam>
+      <rosparam param="/gui/waypoints_offset_roll">0</rosparam>
+      <rosparam param="/gui/waypoints_offset_pitch">0</rosparam>
+      <rosparam param="/gui/waypoints_offset_yaw">0</rosparam>
+      <rosparam param="/gui/waypoints_vel_min">2.0</rosparam>
+    </group>
     <rosparam param="/gui/mesh_import_rate">1.</rosparam>
+    <rosparam param="/gui/raycast_len">0.2</rosparam>
+    <!-- PLANNER PARAMS -->
     <rosparam param="/gui/xyz_weight">2.0</rosparam>
     <rosparam param="/gui/theta_weight">0.5</rosparam>
     <rosparam param="/gui/vel_weight_point">1.0</rosparam>
     <rosparam param="/gui/vel_weight_traj">0.5</rosparam>
-    <rosparam param="/gui/tilt_weight">0.001</rosparam>
-    <rosparam param="/gui/contact_weight">0.001</rosparam>
-    <rosparam param="/gui/collision_weight">100.0</rosparam>
+    <!-- <rosparam param="/gui/tilt_weight">0.001</rosparam> -->
+    <!-- <rosparam param="/gui/contact_weight">0.001</rosparam> -->
+    <!-- <rosparam param="/gui/collision_weight">100.0</rosparam> -->
     <rosparam param="/gui/curv_weight">0.001</rosparam>
     <rosparam param="/gui/time_weight">0.05</rosparam>
+    <!-- CONTROLLER PARAMS -->
     <rosparam param="/gui/max_plan_norm">50.0</rosparam>
+    <rosparam param="/speed_scale">3.0</rosparam>
 
     <!-- <node pkg="MochaGui" type="run_exp.sh" name="mochagui" output="screen" respawn="true" launch-prefix="$(arg launch_prefix)"/> -->
   </group>
@@ -42,61 +80,15 @@
   <include file="$(find carplanner_msgs)/launch/sensors.launch" if="$(arg launch_sensors)">
     <arg name="enable_depth_camera"  value="true"/> 
     <arg name="enable_lidar"  value="$(eval localization_mode=='LIOSAM')"/> 
-    <arg name="enable_imu"  value="true"/> 
-    <arg name="use_royale"  value="$(arg use_royale)"/> 
+    <arg name="enable_imu"  value="$(eval localization_mode=='LIOSAM')"/> 
+    <arg name="use_royale"  value="$(arg use_royale)"/>
+    <arg name="enable_t265" value="$(eval launch_recording and localization_mode=='LIOSAM')"/>
   </include>
 
   <group if="$(arg launch_infinitam)">
-    <include file="$(find infinitam)/launch/nodelet_demo.launch">
-      <arg name="launch_delay" value="5"/>  
-      <arg name="convert_metric"              value="false"/>
-      <arg name="publish_vertices"            value="false"/>
-      <arg name="world_frame_id"              value="map"/>
-      <arg name="mesh_topic"                  value="input_terrain_mesh"/>
-      <arg name="enable_guess_from_tf_tree"   value="true"/>
-      <arg name="z_floor"                     value="-1.0"/>
-      <!-- <arg name="z_ceiling"                   value="0.0"/> -->
-      <!-- <arg name="z_ceiling"                   value="0.0"/> -->
-      <arg name="z_ceiling"                   value="0.5"/>
-      <!-- <arg name="z_floor"                     value="-2.0"/> -->
-      <!-- <arg name="z_ceiling"                   value="-1.0"/> -->
-      <arg if="$(arg use_royale)"      
-        name="camera_frame_id"   value="royale_camera_optical_frame"/>
-      <arg unless="$(arg use_royale)"  
-        name="camera_frame_id"   value="d435_camera_depth_optical_frame"/>
-      <arg if="$(arg use_royale)"      
-        name="depth_info_topic"  value="/royale_camera/camera_info"/>
-      <arg unless="$(arg use_royale)"  
-        name="depth_info_topic"  value="/d435_camera/depth/camera_info"/>
-      <arg if="$(eval use_royale and not enable_depth_completion)"      
-        name="depth_topic"       value="/royale_camera/depth_image_metric_rect"/>
-      <arg if="$(eval use_royale and enable_depth_completion)"      
-        name="depth_topic"       value="/royale_camera/depth_image_metric_rect_completed"/>
-      <arg if="$(eval not use_royale and not enable_depth_completion)"      
-        name="depth_topic"       value="/d435_camera/depth/image_rect_raw"/>
-      <arg if="$(eval not use_royale and enable_depth_completion)"      
-        name="depth_topic"       value="/d435_camera/depth/image_rect_raw_completed"/>
-      <arg if="$(arg use_royale)"      
-        name="rgb_info_topic"    value=""/>
-      <arg unless="$(arg use_royale)"  
-        name="rgb_info_topic"    value="/d435_camera/aligned_depth_to_color/camera_info"/>
-      <arg if="$(arg use_royale)"      
-        name="rgb_topic"         value=""/>
-      <arg unless="$(arg use_royale)"  
-        name="rgb_topic"         value="/d435_camera/aligned_depth_to_color/image_rect_raw"/>
-    </include>
-    <include file="$(find ip_basic)/launch/run.launch" if="$(arg enable_depth_completion)">
-      <arg if="$(arg use_royale)" 
-        name="input_topic"  value="/royale_camera/depth_image_metric_rect"/>
-      <arg if="$(arg use_royale)" 
-        name="output_topic" value="/royale_camera/depth_image_metric_rect_completed"/>
-      <arg unless="$(arg use_royale)" 
-        name="input_topic"  value="/d435_camera/depth/image_rect_raw"/>
-      <arg unless="$(arg use_royale)" 
-        name="output_topic" value="/d435_camera/depth/image_rect_raw_completed"/>
-      <arg name="fill_type"    value="fast"/>
-      <arg name="extrapolate"  value="false"/>
-      <arg name="blur_type"    value="gaussian"/>
+    <include file="$(find carplanner_msgs)/launch/infinitam.launch">
+      <arg name="use_royale" value="$(arg use_royale)"/>  
+      <arg name="enable_depth_completion" value="$(arg enable_depth_completion)"/>  
     </include>
   </group>
 
@@ -114,7 +106,7 @@
     </node>
   </group>
 
-  <include file="$(find vicon_tools)/launch/vicon_demo.launch" if="$(eval localization_mode=='VICON')"> -->
+  <include file="$(find vicon_tools)/launch/vicon_demo.launch" if="$(eval localization_mode=='VICON')"> 
     <arg name="launch_vicon"         value="true"/>
     <arg name="launch_odom_tools"    value="false"/>
     <arg name="launch_rviz"          value="false"/>
@@ -123,16 +115,18 @@
     <arg name="mocap_object"         value="N02"/>
     <arg name="base_link_frame"      value="base_link"/>
   </include>
-  <include file="$(find carplanner_msgs)/launch/liosam_demo.launch" if="$(eval localization_mode=='LIOSAM')">
-    <arg name="launch_sensors"       value="false"/>
-    <arg name="launch_liosam"        value="true"/>
-    <arg name="launch_odom_tools"    value="false"/>
-    <arg name="launch_car"           value="false"/>
-    <arg name="launch_rviz"          value="false"/>
-    <arg name="fixed_frame"          value="map"/>
-    <arg name="base_link_frame"      value="base_link"/>
-    <arg name="odom_topic"           value="odom"/>
-  </include>
+  <group if="$(eval localization_mode=='LIOSAM')">
+    <include file="$(find carplanner_msgs)/launch/liosam_demo.launch" >
+      <arg name="launch_sensors"       value="false"/>
+      <arg name="launch_liosam"        value="true"/>
+      <arg name="launch_odom_tools"    value="false"/>
+      <arg name="launch_car"           value="false"/>
+      <arg name="launch_rviz"          value="false"/>
+      <arg name="fixed_frame"          value="map"/>
+      <arg name="base_link_frame"      value="base_link"/>
+      <arg name="odom_topic"           value="odom"/>
+    </include>
+  </group>
   <group if="$(eval localization_mode=='RS')">
     <include file="$(find realsense2_camera)/launch/rs_t265.launch">
       <arg name="camera"                   value="t265_camera"/>
@@ -150,60 +144,28 @@
       <!-- <arg name="publish_odom_tf"     default="true"/> -->
     </include>
     <node pkg="tf2_ros" type="static_transform_publisher" name="rs_odom"
-      args="0 0 0 3.1415 0 0 map camera_odom_frame2"/>
+      args="0 0 0 3.1415 0 0 map t265_camera_odom_frame"/>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="rs_odom2"
+      args="-0.1143 0 -0.0254 3.1415 -1.5708 0 t265_camera_pose_frame base_link"/>
     <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="rs_odom2"
       args="-0.120 0 0 3.1415 -1.5708 0 camera_pose_frame2 base_link"/> -->
-    <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer" output="screen">
+    <!-- <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer" output="screen">
       <param name="listen_parent_frame_id" value="t265_camera_odom_frame"/>
       <param name="listen_child_frame_id" value="t265_camera_pose_frame"/>
-      <param name="listen_rate" value="200.0"/>
+      <param name="listen_rate" value="100.0"/>
       <param name="broadcast_parent_frame_id" value="camera_odom_frame2"/>
       <param name="broadcast_child_frame_id" value="camera_pose_frame2"/>
-      <param name="broadcast_rate" value="200.0"/>
-      <!-- <param name="pre_transform" value="0 0 0 0 0 0"/>
-      <param name="post_transform" value="0 0 0 0 0 0"/> -->
+      <param name="broadcast_rate" value="100.0"/>
       <param name="override_z" value="0.0"/>
-    </node>
-    <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer2" output="screen">
+    </node> -->
+    <!-- <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer2" output="screen">
       <param name="listen_parent_frame_id" value="t265_link"/>
       <param name="listen_child_frame_id" value="base_link"/>
-      <param name="listen_rate" value="200.0"/>
+      <param name="listen_rate" value="100.0"/>
       <param name="broadcast_parent_frame_id" value="camera_pose_frame2"/>
       <param name="broadcast_child_frame_id" value="base_link"/>
-      <param name="broadcast_rate" value="200.0"/>
-      <!-- <param name="pre_transform" value="0 0 0 0 0 0"/>
-      <param name="post_transform" value="0 0 0 0 0 0"/> -->
-      <!-- <param name="override_z" value="0.0"/> -->
-    </node>
-    <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer3" output="screen">
-      <param name="listen_parent_frame_id" value="map"/>
-      <param name="listen_child_frame_id" value="base_link"/>
-      <param name="listen_rate" value="0.0"/>
-      <param name="broadcast_parent_frame_id" value="map"/>
-      <param name="broadcast_child_frame_id" value="base_link_initial"/>
-      <param name="broadcast_rate" value="200.0"/>
-    </node>
-    <node pkg="tf2_ros" type="static_transform_publisher" name="rs_tf_reframer5"
-      args="0 0 0 3.1415 0 0 base_link_initial base_link_initial2"/>
-    <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer4" output="screen">
-      <param name="listen_parent_frame_id" value="base_link/vicon"/>
-      <param name="listen_child_frame_id" value="map/vicon"/>
-      <param name="listen_rate" value="0.0"/>
-      <param name="broadcast_parent_frame_id" value="base_link_initial2"/>
-      <param name="broadcast_child_frame_id" value="map/vicon"/>
-      <param name="broadcast_rate" value="200.0"/>
-    </node>
-    <node pkg="tf2_ros" type="static_transform_publisher" name="rs_tf_reframer6"
-      args="0 0 0 3.1415 0 0 base_link/vicon base_link/vicon2"/>
-    <include file="$(find vicon_tools)/launch/vicon_demo.launch"> 
-      <arg name="launch_vicon"         value="true"/>
-      <arg name="launch_odom_tools"    value="false"/>
-      <arg name="launch_rviz"          value="false"/>
-      <arg name="fixed_frame"          value="map/vicon"/>
-      <arg name="mocap_frame"          value="mocap"/>
-      <arg name="mocap_object"         value="N02"/>
-      <arg name="base_link_frame"      value="base_link/vicon"/>
-    </include>
+      <param name="broadcast_rate" value="100.0"/>
+    </node> -->
   </group>
   <node pkg="tf2_ros" type="static_transform_publisher" name="static_localization"
     args="0 0 0 0 0 0 map base_link" if="$(eval localization_mode=='STATIC')"/>
@@ -218,6 +180,37 @@
     <arg name="radius"               value="1.0"/>
     <arg name="speed"                value="1.0"/>
   </include>
+  <group if="$(arg launch_recording)">
+    <!-- <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer3" output="screen">
+      <param name="listen_parent_frame_id" value="map"/>
+      <param name="listen_child_frame_id" value="base_link"/>
+      <param name="listen_rate" value="0.0"/>
+      <param name="broadcast_parent_frame_id" value="map"/>
+      <param name="broadcast_child_frame_id" value="base_link_initial"/>
+      <param name="broadcast_rate" value="0.0"/>
+    </node> -->
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="rs_tf_reframer5"
+      args="0 0 0 0 0 0 base_link_initial base_link_initial2"/> -->
+    <!-- <node pkg="vicon_tools" type="tf_reframer" name="rs_tf_reframer4" output="screen">
+      <param name="listen_parent_frame_id" value="base_link/vicon"/>
+      <param name="listen_child_frame_id" value="map/vicon"/>
+      <param name="listen_rate" value="0.0"/>
+      <param name="broadcast_parent_frame_id" value="base_link_initial"/>
+      <param name="broadcast_child_frame_id" value="map/vicon"/>
+      <param name="broadcast_rate" value="0.0"/>
+    </node> -->
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="rs_tf_reframer6"
+      args="0 0 0 3.1415 0 0 base_link/vicon base_link/vicon2"/> -->
+    <include file="$(find vicon_tools)/launch/vicon_demo.launch"> 
+      <arg name="launch_vicon"         value="true"/>
+      <arg name="launch_odom_tools"    value="false"/>
+      <arg name="launch_rviz"          value="false"/>
+      <arg name="fixed_frame"          value="map/vicon"/>
+      <arg name="mocap_frame"          value="mocap"/>
+      <arg name="mocap_object"         value="N02"/>
+      <arg name="base_link_frame"      value="base_link/vicon"/>
+    </include>
+  </group>
   <include file="$(find vicon_tools)/launch/odom_tools.launch" if="$(arg launch_odom_tools)">
     <arg name="launch_rviz"          value="false"/>
     <arg name="fixed_frame"          value="map"/>
